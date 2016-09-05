@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wolfie.eskey.activity.MainActivity">
+
+    <!--
+ * @attr ref android.R.styleable#ExpandableListView_groupIndicator
+ * @attr ref android.R.styleable#ExpandableListView_indicatorLeft
+ * @attr ref android.R.styleable#ExpandableListView_indicatorRight
+ * @attr ref android.R.styleable#ExpandableListView_childIndicator
+ * @attr ref android.R.styleable#ExpandableListView_childIndicatorLeft
+ * @attr ref android.R.styleable#ExpandableListView_childIndicatorRight
+ * @attr ref android.R.styleable#ExpandableListView_childDivider
+ * @attr ref android.R.styleable#ExpandableListView_indicatorStart
+ * @attr ref android.R.styleable#ExpandableListView_indicatorEnd
+ * @attr ref android.R.styleable#ExpandableListView_childIndicatorStart
+ * @attr ref android.R.styleable#ExpandableListView_childIndicatorEnd
+
+    -->
+    <!--
+    android:groupIndicator="@null"
+    -->
+
+    <ExpandableListView
+        android:id="@+id/list_expandable"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:groupIndicator="@null"
+        android:divider="@color/colorBackground"
+        />
+</RelativeLayout>
