@@ -1,6 +1,7 @@
 package com.wolfie.eskey.custom.database;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -19,14 +20,18 @@ public class Helper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + MetaData.ENTRIES_TABLE + " ("
-                + MetaData.ENTRIES_ID + " INTEGER PRIMARY KEY,"
-                + MetaData.ENTRIES_GROUP + " TEXT NOT NULL,"
-                + MetaData.ENTRIES_ENTRY + " TEXT NOT NULL,"
-                + MetaData.ENTRIES_CONTENT + " TEXT NOT NULL);");
-        db.execSQL("CREATE TABLE " + MetaData.MASTER_TABLE + " ("
-                + MetaData.MASTER_SALT + " TEXT NOT NULL,"
-                + MetaData.MASTER_KEY + " TEXT NOT NULL);");
+        try {
+            db.execSQL("CREATE TABLE " + MetaData.ENTRIES_TABLE + " ("
+                    + MetaData.ENTRIES_ID + " INTEGER PRIMARY KEY,"
+                    + MetaData.ENTRIES_GROUP + " TEXT NOT NULL,"
+                    + MetaData.ENTRIES_ENTRY + " TEXT NOT NULL,"
+                    + MetaData.ENTRIES_CONTENT + " TEXT NOT NULL);");
+            db.execSQL("CREATE TABLE " + MetaData.MASTER_TABLE + " ("
+                    + MetaData.MASTER_SALT + " TEXT NOT NULL,"
+                    + MetaData.MASTER_KEY + " TEXT NOT NULL);");
+        } catch (SQLException e) {
+            Log.d(TAG, "SQLite exception: " + e.getLocalizedMessage());
+        }
 
         /*
             private static final String MASTER_KEY_CREATE =
@@ -40,6 +45,15 @@ public class Helper extends SQLiteOpenHelper {
          */
     }
 
+    public void dropTables(SQLiteDatabase db) {
+        try {
+            db.execSQL("DROP TABLE " + MetaData.ENTRIES_TABLE);
+            db.execSQL("DROP TABLE " + MetaData.MASTER_TABLE);
+        } catch (SQLException e) {
+            Log.d(TAG, "SQLite exception: " + e.getLocalizedMessage());
+        }
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "upgrading database from version " + oldVersion + " to " + newVersion);
@@ -47,7 +61,6 @@ public class Helper extends SQLiteOpenHelper {
 //            db.execSQL("ALTER ENTRIES_TABLE " + SpendsTableMetaData.SPEND_TABLE_NAME + " ADD COLUMN " + SpendsTableMetaData.SPEND_ACCOUNT + " TEXT");
 //            db.execSQL("UPDATE " + SpendsTableMetaData.SPEND_TABLE_NAME + " SET " + SpendsTableMetaData.SPEND_ACCOUNT + " = 'PERSONAL'");
         }
-        //db.execSQL("DROP ENTRIES_TABLE IF EXISTS " + SpendsTableMetaData.TABLE_NAME);
         onCreate(db);
     }
 }

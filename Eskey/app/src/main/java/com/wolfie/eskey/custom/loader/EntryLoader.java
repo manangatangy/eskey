@@ -1,7 +1,10 @@
 package com.wolfie.eskey.custom.loader;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.wolfie.eskey.custom.crypto.Crypter;
 import com.wolfie.eskey.custom.database.Source;
@@ -14,76 +17,90 @@ import java.util.List;
  * Created by david on 4/09/16.
  */
 
-public class EntryLoader extends DataLoader<DataSet> {
+public class EntryLoader {
+    private Context mContext;
     private Source mDataSource;
     private Crypter mCrypter;
 
     public EntryLoader(Context context, Source dataSource, Crypter crypter) {
-        super(context);
+        mContext = context;
         mDataSource = dataSource;
         mCrypter = crypter;
     }
 
+    public void read(AsyncListeningTask.Listener<DataSet> listener) {
+        new ReadTask(listener).execute();
+    }
+
     public void insert(Entry entry) {
-        new InsertTask(this).execute(entry);
+        new InsertTask(new ToastListener("insert")).execute(entry);
     }
 
     public void update(Entry entry) {
-        new UpdateTask(this).execute(entry);
+        new UpdateTask(new ToastListener("modify")).execute(entry);
     }
 
     public void delete(Entry entry) {
-        new DeleteTask(this).execute(entry);
+        new DeleteTask(new ToastListener("delete")).execute(entry);
     }
 
-    @Override
-    protected DataSet buildLoadable() {
-        DataSet dataSet = mDataSource.read();
-        if (!dataSet.isEmpty()) {
+    private class ReadTask extends AsyncListeningTask<Void, DataSet> {
+        public ReadTask(@Nullable Listener<DataSet> listener) {
+            super(listener);
+        }
+        @Override
+        public DataSet runInBackground(Void v) {
+            DataSet dataSet = mDataSource.read();
             List<Entry> entries = dataSet.getEntries();
             for (int i = 0; i < entries.size(); i++) {
-                entries.get(i).encrypt(mCrypter);
+                entries.get(i).decrypt(mCrypter);
             }
-        }
-        return dataSet;
-    }
-
-    private class InsertTask extends AsyncDataTask<Entry, Void, DataSet> {
-        InsertTask(EntryLoader loader) {
-            super(loader);
-        }
-        @Override
-        protected DataSet doInBackground(Entry... entries) {
-            Entry entry = entries[0];
-            entry.encrypt(mCrypter);
-            mDataSource.insert(entry);
-            return null;
+            return dataSet;
         }
     }
 
-    private class UpdateTask extends AsyncDataTask<Entry, Void, DataSet> {
-        UpdateTask(EntryLoader loader) {
-            super(loader);
+    private class InsertTask extends AsyncListeningTask<Entry, Boolean> {
+        public InsertTask(@Nullable Listener<Boolean> listener) {
+            super(listener);
         }
         @Override
-        protected DataSet doInBackground(Entry... entries) {
-            Entry entry = entries[0];
+        public Boolean runInBackground(Entry entry) {
             entry.encrypt(mCrypter);
-            mDataSource.update(entry);
-            return null;
+            return mDataSource.insert(entry);
         }
     }
 
-    private class DeleteTask extends AsyncDataTask<Entry, Void, DataSet> {
-        DeleteTask(EntryLoader loader) {
-            super(loader);
+    private class UpdateTask extends AsyncListeningTask<Entry, Boolean> {
+        public UpdateTask(@Nullable Listener<Boolean> listener) {
+            super(listener);
         }
         @Override
-        protected DataSet doInBackground(Entry... entries) {
-            Entry entry = entries[0];
+        public Boolean runInBackground(Entry entry) {
             entry.encrypt(mCrypter);
-            mDataSource.delete(entry);
-            return null;
+            return mDataSource.update(entry);
+        }
+    }
+
+    private class DeleteTask extends AsyncListeningTask<Entry, Boolean> {
+        public DeleteTask(@Nullable Listener<Boolean> listener) {
+            super(listener);
+        }
+        @Override
+        public Boolean runInBackground(Entry entry) {
+            entry.encrypt(mCrypter);
+            return mDataSource.delete(entry);
+        }
+    }
+
+    private class ToastListener implements AsyncListeningTask.Listener<Boolean> {
+        private String mPrefix;
+        public ToastListener(String prefix) {
+            mPrefix = prefix;
+        }
+        @Override
+        public void onCompletion(Boolean success) {
+            String msg = mPrefix + (success ? " succeeded" : " failed");
+            Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
         }
     }
 }

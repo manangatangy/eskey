@@ -1,35 +1,21 @@
 package com.wolfie.eskey.custom.model;
 
-import com.wolfie.eskey.custom.loader.DataLoader;
-
 import java.util.List;
 
 /**
  * Created by david on 4/09/16.
  */
 
-public class DataSet implements DataLoader.Loadable {
+public class DataSet {
 
-    private List<Entry> pEntries;
+    private List<Entry> mEntries;
 
     public List<Entry> getEntries() {
-        return pEntries;
+        return mEntries;
     }
 
     public void setEntries(List<Entry> pEntries) {
-        this.pEntries = pEntries;
+        this.mEntries = pEntries;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return pEntries == null || pEntries.size() == 0;
-    }
-
-    @Override
-    public void clear() {
-        if (pEntries != null) {
-            pEntries.clear();
-        }
-
-    }
 }

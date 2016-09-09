@@ -9,7 +9,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.expandingadaper.DataSet;
 
 /**
  * Created by david on 30/08/16.
@@ -29,7 +28,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getGroup(int groupPosition) {
         String text = mDataSet.getGroupNames().get(groupPosition);
-        System.out.println("getGroup " + groupPosition + " ==> " + text);
+//        System.out.println("getGroup " + groupPosition + " ==> " + text);
         return text;
     }
 
@@ -50,7 +49,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public Object getChild(int groupPosition, int childPosition) {
         String groupName = (String)getGroup(groupPosition);
         String text = mDataSet.getChildNamesMap().get(groupName).get(childPosition);
-        System.out.println("getChild " + groupPosition + ", " + childPosition + " ==> " + text);
+//        System.out.println("getChild " + groupPosition + ", " + childPosition + " ==> " + text);
         return text;
     }
 
@@ -78,7 +77,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View convertView, ViewGroup parent) {
         String childName = (String)getChild(groupPosition, childPosition);
-        return getView(childName, R.layout.list_child, convertView, parent, false);
+        return getView(childName, R.layout.expanding_list_child, convertView, parent, false);
     }
 
     /**
@@ -88,7 +87,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         String groupName = (String)getGroup(groupPosition);
-        return getView(groupName, R.layout.list_group, convertView, parent, true);
+        return getView(groupName, R.layout.expanding_list_group, convertView, parent, true);
     }
 
     private View getView(String text, int layoutResource,

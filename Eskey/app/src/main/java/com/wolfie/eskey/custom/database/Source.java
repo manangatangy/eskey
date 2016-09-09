@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.wolfie.eskey.custom.model.DataSet;
@@ -25,6 +26,9 @@ public class Source {
         mDatabase = database;
     }
 
+    /**
+     * @return null if there was an error
+     */
     public MasterData readMaster() {
         MasterData masterData = null;
         Cursor cursor = mDatabase.query(MetaData.MASTER_TABLE, MetaData.MASTER_ALL_COLUMNS, null,
@@ -38,6 +42,9 @@ public class Source {
         return masterData;
     }
 
+    /**
+     * @return false if there was an error
+     */
     public boolean storeMaster(MasterData masterData) {
         mDatabase.delete(MetaData.MASTER_TABLE, null, null);
         long result = mDatabase.insert(MetaData.MASTER_TABLE, null, makeContentValues(masterData));
@@ -60,7 +67,7 @@ public class Source {
         return result != 0;
     }
 
-    public DataSet read() {
+    public @NonNull DataSet read() {
         Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
                 null, null, null, MetaData.QUERY_ORDER);
         List<Entry> entries = new ArrayList<>();

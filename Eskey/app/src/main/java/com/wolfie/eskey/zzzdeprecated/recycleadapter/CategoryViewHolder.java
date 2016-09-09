@@ -1,4 +1,4 @@
-package com.wolfie.eskey.recycleadapter;
+package com.wolfie.eskey.zzzdeprecated.recycleadapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

@@ -36,13 +36,16 @@ public class MasterLoader {
         new RetrieveTask().execute();
     }
 
-    private class StoreTask extends AsyncTask<MasterData, Void, Void> {
+    private class StoreTask extends AsyncTask<MasterData, Void, Boolean> {
         @Override
-        protected Void doInBackground(MasterData... params) {
+        protected Boolean doInBackground(MasterData... params) {
             MasterData masterData = params[0];
-            mDataSource.storeMaster(masterData);
-            return null;
+            return mDataSource.storeMaster(masterData);
         }
+        @Override
+        protected void onPostExecute(Boolean success) {
+        }
+
     }
 
     private class RetrieveTask extends AsyncTask<Void, Void, MasterData> {
