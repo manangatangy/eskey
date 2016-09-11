@@ -18,6 +18,7 @@ import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import com.wolfie.eskey.R;
@@ -54,15 +55,7 @@ public class EntryListActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        new ContextThemeWrapper(EntryListActivity.this,
-                                R.style.full_screen_dialog));
-                builder.create().show();
-//                Dialog dialog=new Dialog(EntryListActivity.this, R.style.Theme_MyGreenTheme);
-//                dialog.create();
-//                dialog.show();
-
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -83,7 +76,15 @@ public class EntryListActivity
         mEntryLoader = new EntryLoader(this, mSource, mCrypter);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setLayoutManager(
+                new LinearLayoutManager(getApplicationContext()) {
+                    @Override
+                    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                        return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+                    }
+
+                });
         mAdapter = new RecyclerAdapter(getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -142,27 +143,27 @@ public class EntryListActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.entry_list_action_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
