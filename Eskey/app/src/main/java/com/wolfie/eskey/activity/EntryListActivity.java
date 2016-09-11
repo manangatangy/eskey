@@ -20,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.custom.adapter.GroupingRecyclerAdapter;
 import com.wolfie.eskey.custom.adapter.RecyclerAdapter;
 import com.wolfie.eskey.custom.crypto.Crypter;
 import com.wolfie.eskey.custom.database.Helper;
@@ -30,6 +32,7 @@ import com.wolfie.eskey.custom.loader.AsyncListeningTask;
 import com.wolfie.eskey.custom.loader.EntryLoader;
 import com.wolfie.eskey.custom.model.DataSet;
 import com.wolfie.eskey.custom.model.Entry;
+import com.wolfie.eskey.custom.model.EntryGroup;
 import com.wolfie.eskey.expandingadaper.ExpandableListAdapter;
 
 import java.util.ArrayList;
@@ -42,6 +45,9 @@ import java.util.List;
 public class EntryListActivity
         extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    View mStickyHeaderFrame;
+    TextView mStickyHeaderText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +74,8 @@ public class EntryListActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mStickyHeaderFrame = findViewById(R.id.sticky_header);
+        mStickyHeaderText = (TextView)findViewById(R.id.text_heading);
 
         mHelper = new Helper(this.getApplicationContext());
         mDatabase = mHelper.getWritableDatabase();
@@ -85,32 +93,64 @@ public class EntryListActivity
                     }
 
                 });
-        mAdapter = new RecyclerAdapter(getApplicationContext());
-        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter = new RecyclerAdapter(getApplicationContext());
+//        mRecyclerView.setAdapter(mAdapter);
+        mGroupingRecyclerAdapter = new GroupingRecyclerAdapter();
+        mRecyclerView.setAdapter(mGroupingRecyclerAdapter);
 
-//        loadSome(3, 5);
+//        loadSome();
         loadAdapter();
     }
+
+    private void handlePaymentItemScroll(int position) {
+        Object item = mGroupingRecyclerAdapter.getItemAt(position);
+        if (item instanceof PaymentSummaryViewModel) {
+            PaymentSummaryViewModel model = (PaymentSummaryViewModel) item;
+            String headerText = model.getSectionHeaderText();
+            if (headerText != null) {
+                mTxtStickyItemHeader.setText(headerText);
+                mTxtStickyItemHeader.setVisibility(View.VISIBLE);
+            } else {
+                mTxtStickyItemHeader.setVisibility(View.GONE);
+            }
+        } else {
+            mTxtStickyItemHeader.setVisibility(View.GONE);
+        }
+
+    }
+
 
     private void loadAdapter() {
         mEntryLoader.read(new AsyncListeningTask.Listener<DataSet>() {
             @Override
             public void onCompletion(DataSet dataSet) {
-                mAdapter.setEntries(dataSet.getEntries());
+                List<EntryGroup> groups = EntryGroup.buildGroups(null, dataSet);
+                mGroupingRecyclerAdapter.setGroups(groups);
+//                mAdapter.setEntries(dataSet.getEntries());
+
+
 //                for (Entry entry : dataSet.getEntries()) {
-//                    mEntry = entry;
-//                    System.out.println(mEntry.getId() + ": " + mEntry.getGroupName() +
-//                            " " + mEntry.getEntryName() + " '" + mEntry.getContent() + "'");
+//                    System.out.println(entry.getId() + ": " + entry.getGroupName() +
+//                            " " + entry.getEntryName() + " '" + entry.getContent() + "'");
+//                }
+//                for (EntryGroup group : groups) {
+//                    System.out.println("----- group " + group.getHeading() + " --------");
+//                    for (Entry entry : group.getEntries()) {
+//                        System.out.println(entry.getId() + ": " + entry.getGroupName() +
+//                                " " + entry.getEntryName() + " '" + entry.getContent() + "'");
+//                    }
+//                    System.out.println("-----  --------");
 //                }
             }
         });
     }
 
-    private void loadSome(int groupCount, int entryCount) {
-        for (int g = 0; g < groupCount; g++) {
-            for (int e = 0; e < entryCount; e++) {
-                mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + g, "content"));
-            }
+    private void loadSome() {
+        for (int e = 5; e < 15; e++) {
+            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 1, "content"));
+        }
+        for (int e = 5; e < 10; e++) {
+            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 2, "content"));
         }
     }
 
@@ -131,7 +171,8 @@ public class EntryListActivity
     }
 
     private RecyclerView mRecyclerView;
-    private RecyclerAdapter mAdapter;
+//    private RecyclerAdapter mAdapter;
+    private GroupingRecyclerAdapter mGroupingRecyclerAdapter;
 
     @Override
     public void onBackPressed() {
