@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Top level app layout, includes the content layout and specifies the navigation layout.
+-->
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+    <include
+        layout="@layout/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/navigation_header" />
+
+            <RadioGroup
+                android:id="@+id/navigation_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/radio_pirates"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:button="@null"
+                    android:paddingLeft="20dp"
+                    android:background="@drawable/navigation_item_selector"
+                    android:text="piracet"
+                    />
+                <RadioButton
+                    android:id="@+id/radio_ninjas"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:button="@null"
+                    android:paddingLeft="20dp"
+                    android:background="@drawable/navigation_item_selector"
+                    android:text="ninjas"
+                    />
+            </RadioGroup>
+
+        </LinearLayout>
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>

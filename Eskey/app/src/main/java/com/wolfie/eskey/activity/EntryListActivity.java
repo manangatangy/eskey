@@ -1,7 +1,5 @@
 package com.wolfie.eskey.activity;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,29 +12,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.custom.adapter.GroupingRecyclerAdapter;
-import com.wolfie.eskey.custom.adapter.RecyclerAdapter;
-import com.wolfie.eskey.custom.crypto.Crypter;
-import com.wolfie.eskey.custom.database.Helper;
-import com.wolfie.eskey.custom.database.Source;
-import com.wolfie.eskey.custom.loader.AsyncListeningTask;
-import com.wolfie.eskey.custom.loader.EntryLoader;
-import com.wolfie.eskey.custom.model.DataSet;
-import com.wolfie.eskey.custom.model.Entry;
-import com.wolfie.eskey.custom.model.EntryGroup;
-import com.wolfie.eskey.expandingadaper.ExpandableListAdapter;
+import com.wolfie.eskey.adapter.GroupingRecyclerAdapter;
+import com.wolfie.eskey.adapter.ScrollListeningRecyclerView;
+import com.wolfie.eskey.controller.NavigationMenuController;
+import com.wolfie.eskey.crypto.Crypter;
+import com.wolfie.eskey.database.Helper;
+import com.wolfie.eskey.database.Source;
+import com.wolfie.eskey.loader.AsyncListeningTask;
+import com.wolfie.eskey.loader.EntryLoader;
+import com.wolfie.eskey.model.DataSet;
+import com.wolfie.eskey.model.Entry;
+import com.wolfie.eskey.model.EntryGroup;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by david on 7/09/16.
@@ -44,38 +42,66 @@ import java.util.List;
 
 public class EntryListActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationMenuController.OnNavItemSelectedListener,
+        ScrollListeningRecyclerView.ItemScrollListener {
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @Bind(R.id.fab)
+    FloatingActionButton mFab;
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawer;
+
+    @Bind(R.id.navigation_view)
+    NavigationView mNavigationView;
+
+    @Bind(R.id.sticky_header)
     View mStickyHeaderFrame;
+
+    @Bind(R.id.heading_text_view)
     TextView mStickyHeaderText;
+
+    @Bind(R.id.recycler_view)
+    ScrollListeningRecyclerView mRecyclerView;
+
+    NavigationMenuController mNavigationMenuController;
+
+    private GroupingRecyclerAdapter mGroupingRecyclerAdapter;
+    private Helper mHelper;
+    private SQLiteDatabase mDatabase;
+    private Source mSource;
+    private Crypter mCrypter;
+    private EntryLoader mEntryLoader;
+
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.entry_list_activity);
+        setContentView(R.layout.navigation);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationMenuController = new NavigationMenuController(mNavigationView);
+        mNavigationMenuController.setOnNavItemSelectedListener(this);
 
-        mStickyHeaderFrame = findViewById(R.id.sticky_header);
-        mStickyHeaderText = (TextView)findViewById(R.id.text_heading);
+//        mMenu = mNavigationView.getMenu();
+//        mMenu.setGroupCheckable(R.id.menu_group_headings, true, true);
 
         mHelper = new Helper(this.getApplicationContext());
         mDatabase = mHelper.getWritableDatabase();
@@ -83,18 +109,14 @@ public class EntryListActivity
         mCrypter = new Crypter();
         mEntryLoader = new EntryLoader(this, mSource, mCrypter);
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(
-                new LinearLayoutManager(getApplicationContext()) {
-                    @Override
-                    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                        return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-                    }
-
-                });
-//        mAdapter = new RecyclerAdapter(getApplicationContext());
-//        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()) {
+            @Override
+            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+        });
+        mRecyclerView.setItemScrollListener(this);
         mGroupingRecyclerAdapter = new GroupingRecyclerAdapter();
         mRecyclerView.setAdapter(mGroupingRecyclerAdapter);
 
@@ -102,63 +124,69 @@ public class EntryListActivity
         loadAdapter();
     }
 
-    private void handlePaymentItemScroll(int position) {
+    @Override
+    public void onItemAlignedToTop(int position) {
         Object item = mGroupingRecyclerAdapter.getItemAt(position);
-        if (item instanceof PaymentSummaryViewModel) {
-            PaymentSummaryViewModel model = (PaymentSummaryViewModel) item;
-            String headerText = model.getSectionHeaderText();
-            if (headerText != null) {
-                mTxtStickyItemHeader.setText(headerText);
-                mTxtStickyItemHeader.setVisibility(View.VISIBLE);
-            } else {
-                mTxtStickyItemHeader.setVisibility(View.GONE);
+        String headerText;
+        if (item instanceof Entry) {
+            Entry entry = (Entry) item;
+            headerText = entry.getGroupName();
+            if (headerText == null || headerText.length() == 0) {
+                return;
             }
         } else {
-            mTxtStickyItemHeader.setVisibility(View.GONE);
+            headerText = (String) item;
         }
-
+        mStickyHeaderText.setText(headerText);
+        mStickyHeaderFrame.setVisibility(View.VISIBLE);
     }
 
+    private DataSet mDataSet;   // Set by loadAdapter.
 
+    /**
+     * Cause a reload of the DataSet from the EntryLoader.
+     * This will refresh the heading in the nav menu, which
+     * then sets the groups in the adapter and list.
+     */
     private void loadAdapter() {
         mEntryLoader.read(new AsyncListeningTask.Listener<DataSet>() {
             @Override
             public void onCompletion(DataSet dataSet) {
-                List<EntryGroup> groups = EntryGroup.buildGroups(null, dataSet);
-                mGroupingRecyclerAdapter.setGroups(groups);
-//                mAdapter.setEntries(dataSet.getEntries());
-
-
-//                for (Entry entry : dataSet.getEntries()) {
-//                    System.out.println(entry.getId() + ": " + entry.getGroupName() +
-//                            " " + entry.getEntryName() + " '" + entry.getContent() + "'");
-//                }
-//                for (EntryGroup group : groups) {
-//                    System.out.println("----- group " + group.getHeading() + " --------");
-//                    for (Entry entry : group.getEntries()) {
-//                        System.out.println(entry.getId() + ": " + entry.getGroupName() +
-//                                " " + entry.getEntryName() + " '" + entry.getContent() + "'");
-//                    }
-//                    System.out.println("-----  --------");
-//                }
+                mDataSet = dataSet;
+                List<String> headings = EntryGroup.buildHeadingsList(mDataSet);
+                mNavigationMenuController.setItemsTexts(headings);
             }
         });
     }
 
+    /**
+     * Using the selected nav menu item as the group name, create a subset of
+     * Entry's from the DataSet, passing it to the adapter for viewing.
+     */
+    @Override
+    public void onNavItemSelected(String itemText) {
+        // Handle navigation view item clicks here.
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        String groupName
+                = (NavigationMenuController.ALL_GROUPS_NAV_HEADING.equals(itemText))
+                ? null : itemText;
+        List<EntryGroup> groups = EntryGroup.buildGroups(groupName, mDataSet);
+        mGroupingRecyclerAdapter.setGroups(groups);
+        // Briefly hide the sticky heading since its text won't be correctly
+        // set until a scroll event occurs.
+        mRecyclerView.scrollToPosition(0);
+//        mStickyHeaderFrame.setVisibility(View.GONE);
+    }
+
     private void loadSome() {
-        for (int e = 5; e < 15; e++) {
-            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 1, "content"));
+        for (int e = 1; e < 20; e++) {
+            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 3, "content"));
         }
-        for (int e = 5; e < 10; e++) {
+        for (int e = 10; e < 15; e++) {
             mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 2, "content"));
         }
     }
-
-    private Helper mHelper;
-    private SQLiteDatabase mDatabase;
-    private Source mSource;
-    private Crypter mCrypter;
-    private EntryLoader mEntryLoader;
 
     @Override
     public void onDestroy() {
@@ -169,10 +197,6 @@ public class EntryListActivity
         mDatabase = null;
         mHelper = null;
     }
-
-    private RecyclerView mRecyclerView;
-//    private RecyclerAdapter mAdapter;
-    private GroupingRecyclerAdapter mGroupingRecyclerAdapter;
 
     @Override
     public void onBackPressed() {
@@ -206,27 +230,4 @@ public class EntryListActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }
