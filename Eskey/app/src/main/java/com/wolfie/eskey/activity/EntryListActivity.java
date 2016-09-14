@@ -1,6 +1,9 @@
 package com.wolfie.eskey.activity;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,10 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
@@ -30,6 +35,7 @@ import com.wolfie.eskey.loader.EntryLoader;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
+import com.wolfie.eskey.util.BitmapWorkerTask;
 
 import java.util.List;
 
@@ -57,8 +63,14 @@ public class EntryListActivity
     @Bind(R.id.navigation_view)
     NavigationView mNavigationView;
 
+    @Bind(R.id.background_image)
+    ImageView mBackgroundImageView;
+
     @Bind(R.id.sticky_header)
     View mStickyHeaderFrame;
+
+    @Bind(R.id.heading_divider_top)
+    View mStickyHeaderDividerTop;
 
     @Bind(R.id.heading_text_view)
     TextView mStickyHeaderText;
@@ -97,6 +109,14 @@ public class EntryListActivity
         mDrawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
+        // adapt the image to the size of the display
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(
+                mBackgroundImageView, getResources(), R.drawable.st_basils_cathedral_1, size.x, size.y);
+
         mNavigationMenuController = new NavigationMenuController(mNavigationView);
         mNavigationMenuController.setOnNavItemSelectedListener(this);
 
@@ -131,14 +151,15 @@ public class EntryListActivity
         if (item instanceof Entry) {
             Entry entry = (Entry) item;
             headerText = entry.getGroupName();
-            if (headerText == null || headerText.length() == 0) {
-                return;
-            }
+//            if (headerText == null || headerText.length() == 0) {
+//                return;
+//            }
         } else {
             headerText = (String) item;
         }
         mStickyHeaderText.setText(headerText);
         mStickyHeaderFrame.setVisibility(View.VISIBLE);
+        mStickyHeaderDividerTop.setVisibility(View.GONE);
     }
 
     private DataSet mDataSet;   // Set by loadAdapter.
