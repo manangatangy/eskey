@@ -1,5 +1,6 @@
 package com.wolfie.eskey.adapter.viewholder;
 
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.transition.TransitionManager;
 import android.view.View;
@@ -28,6 +29,7 @@ public class ItemViewHolder extends BaseViewHolder {
     // height=maxFrameHeight when "expanded".
     @Bind(R.id.item_detail_frame)
     View mDetailLayoutFrame;
+
     @Bind(R.id.item_detail_view)
     View mDetailLayoutView;
     private int mLeftSpacedWidth;
@@ -50,18 +52,10 @@ public class ItemViewHolder extends BaseViewHolder {
     public void bind(Object item) {
         mEntry = (Entry)item;
         mTitleTextView.setText(mEntry.getEntryName());
-//            System.out.println("max frame size = " + mDetailLayoutFrame.getWidth() + " / " + mDetailLayoutFrame.getHeight());
-//            maxFrameWidth = mDetailLayoutView.getWidth();
-//            maxFrameHeight = mDetailLayoutView.getHeight();
-//            maxFrameWidth = 974;
-//            maxFrameHeight = 184;
     }
+
     public void toggleDetailView() {
         boolean doExpand = (mDetailLayoutFrame.getHeight() == 0);
-
-//        System.out.println("mLayoutView is " + mLayoutView.getWidth() + " / " + mLayoutView.getHeight());
-//        System.out.println("mDetailLayoutView is " + mDetailLayoutView.getWidth() + " / " + mDetailLayoutView.getHeight());
-//        System.out.println("mDetailLayoutFrame is " + mDetailLayoutFrame.getWidth() + " / " + mDetailLayoutFrame.getHeight());
 
         // Of the three dimensions that are animated, two have target values that are determined
         // from other (fixed) view dimensions, but the third does not. Therefore we must store
@@ -70,20 +64,9 @@ public class ItemViewHolder extends BaseViewHolder {
             mLeftSpacedWidth = mDetailLeftSpacerView.getWidth();        // should be 53
         }
 
-        // onExpand mDetailLayoutFrame    animates from 0 --> mLayoutView.getWidth()
-        // onExpand mDetailLayoutFrame    animates from 0 --> mDetailLayoutView.getHeight()
-        // onExpand mDetailLeftSpacerView animates from mDetailLeftSpacerView.getWidth() --> 0
-
-//        int targetWidth = 0;
-//        int targetHeight = 0;
-//        int targetSpacerWidth = 0;
-//        if (doExpand) {
-//            targetWidth = mLayoutView.getWidth();           // should be 974
-//            targetHeight = mDetailLayoutView.getHeight();         // should be 184
-//            mLeftSpacedWidth = mDetailLeftSpacerView.getWidth();        // should be 53
-//        } else {
-//            targetSpacerWidth = mLeftSpacedWidth;
-//        }
+        // onExpand mDetailLayoutFrame    animates from 0 --> mLayoutView.getWidth() [974]
+        // onExpand mDetailLayoutFrame    animates from 0 --> mDetailLayoutView.getHeight() [184]
+        // onExpand mDetailLeftSpacerView animates from mDetailLeftSpacerView.getWidth() [53] --> 0
 
         ViewWidthParamAnimator frameWidthAnimator = new ViewWidthParamAnimator(mDetailLayoutFrame);
         ViewHeightParamAnimator frameHeightAnimator = new ViewHeightParamAnimator(mDetailLayoutFrame);
@@ -94,29 +77,10 @@ public class ItemViewHolder extends BaseViewHolder {
         anim1.start();
         anim2.start();
         anim3.start();
-
+        AnimatorSet set = new AnimatorSet();
+        set.play(anim1).with(anim2).with(anim3);
+        set.start();
         // ref https://developer.android.com/guide/topics/graphics/prop-animation.html
-//        animateWidthTo(targetWidth);
-//        animateHeightTo(targetHeight);
-//        animateSpacerWidthTo(targetSpacerWidth);
-    }
-
-    public void animateWidthTo(int targetWidth) {
-        ViewWidthParamAnimator frameWidthAnimator = new ViewWidthParamAnimator(mDetailLayoutFrame);
-        ValueAnimator anim1 = frameWidthAnimator.build(targetWidth);
-        anim1.start();
-    }
-
-    public void animateHeightTo(int targetHeight) {
-        ViewHeightParamAnimator frameHeightAnimator = new ViewHeightParamAnimator(mDetailLayoutFrame);
-        ValueAnimator anim2 = frameHeightAnimator.build(targetHeight);
-        anim2.start();
-    }
-
-    public void animateSpacerWidthTo(int targetWidth) {
-        ViewWidthParamAnimator spacerWidthAnimator = new ViewWidthParamAnimator(mDetailLeftSpacerView);
-        ValueAnimator anim3 = spacerWidthAnimator.build(targetWidth);
-        anim3.start();
     }
 
     /**
