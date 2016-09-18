@@ -1,47 +1,48 @@
 package com.wolfie.eskey.adapter;
 
+import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
-import android.transition.ChangeBounds;
-import android.transition.Transition;
-import android.transition.TransitionManager;
-import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.adapter.viewholder.BaseViewHolder;
+import com.wolfie.eskey.adapter.viewholder.HeadingViewHolder;
+import com.wolfie.eskey.adapter.viewholder.ItemViewHolder;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * Created by david on 11/09/16.
  */
 
 public class GroupingRecyclerAdapter
-        extends PlaceholderRecyclerAdapter<GroupingRecyclerAdapter.GroupingViewHolder> {
+        extends PlaceholderRecyclerAdapter<BaseViewHolder> {
 
     private static final int VIEW_TYPE_TITLE = 0;
     private static final int VIEW_TYPE_ENTRY = 1;
 
     private OnItemInListClickedListener mOnItemInListClickedListener;
     private List<EntryGroup> mGroups = new ArrayList<>();
+    private static Context mContext;
+
+    public GroupingRecyclerAdapter(Context context) {
+        this.mContext = context;
+    }
 
     @Override
-    public GroupingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == -1) {
             return null;
         }
 
         View view;
-        final GroupingViewHolder viewHolder;
+        final BaseViewHolder viewHolder;
         switch (viewType) {
             case VIEW_TYPE_TITLE:
                 view = inflateView(parent, R.layout.list_heading);
@@ -55,11 +56,11 @@ public class GroupingRecyclerAdapter
                     @Override
                     public void onClick(View view) {
                         ((ItemViewHolder)viewHolder).toggleDetailView();
-                        if (mOnItemInListClickedListener != null) {
-                            int position = viewHolder.getAdapterPosition();
-                            Entry entry = (Entry) getItemAt(position);
-                            mOnItemInListClickedListener.onListItemClick(entry);
-                        }
+//                        if (mOnItemInListClickedListener != null) {
+//                            int position = viewHolder.getAdapterPosition();
+//                            Entry entry = (Entry) getItemAt(position);
+//                            mOnItemInListClickedListener.onListItemClick(entry);
+//                        }
                     }
                 });
                 break;
@@ -75,7 +76,7 @@ public class GroupingRecyclerAdapter
      * Update the viewHolder with the contents of the item at the given position in the data set.
      */
     @Override
-    public void onBindViewHolder(GroupingViewHolder holder, int position) {
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
         Object item = getItemAt(position);
         if (holder != null && item != null) {
             holder.bind(item);
@@ -155,76 +156,4 @@ public class GroupingRecyclerAdapter
         void onListItemClick(Entry selectedEntry);
     }
 
-    public abstract static class GroupingViewHolder extends RecyclerView.ViewHolder {
-        protected ViewGroup mItemView;
-        public GroupingViewHolder(View itemView) {
-            super(itemView);
-            mItemView = (ViewGroup)itemView;
-        }
-        public abstract void bind(Object item);
-    }
-
-    public static class HeadingViewHolder extends GroupingViewHolder {
-
-        @Bind(R.id.heading_text_view)
-        TextView mTextView;
-
-        public HeadingViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
-        }
-        public void bind(Object item) {
-            String text = (String)item;
-            mTextView.setText(text);
-        }
-    }
-
-    public static class ItemViewHolder extends GroupingViewHolder {
-
-        @Bind(R.id.item_layout)
-        View mLayoutView;
-
-        @Bind(R.id.item_detail_view)
-        View mDetailLayoutView;
-
-        @Bind(R.id.item_left_spacer)
-        View mDetailLeftSpacerView;
-
-        @Bind(R.id.item_text_view)
-        TextView mTitleTextView;
-
-        @Bind(R.id.content_text_view)
-        TextView mContentTextView;
-
-        private Entry mEntry;
-
-        public ItemViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
-        }
-        public void bind(Object item) {
-            mEntry = (Entry)item;
-            mTitleTextView.setText(mEntry.getEntryName());
-        }
-        public void toggleDetailView() {
-            boolean targetShowDetail = (mDetailLayoutView.getVisibility() == View.GONE);
-            showDetailView(targetShowDetail, true);
-        }
-        public void showDetailView(boolean showDetail, boolean animate) {
-            // Check the current state of detail
-            int targetVisibility = (showDetail ? View.VISIBLE : View.GONE);
-            if (mDetailLayoutView.getVisibility() != targetVisibility) {
-                if (animate) {
-                     TransitionManager.beginDelayedTransition(mItemView);
-//                    TransitionSet mStaggeredTransition = new TransitionSet();
-//                    Transition first = new ChangeBounds();
-//                    first.addTarget(mLayoutView);
-//                    mStaggeredTransition.addTransition(first);
-//                    TransitionManager.beginDelayedTransition(mItemView, mStaggeredTransition);
-                }
-                mDetailLayoutView.setVisibility(showDetail ? View.VISIBLE : View.GONE);
-                mDetailLeftSpacerView.setVisibility(showDetail ? View.GONE : View.VISIBLE);
-            }
-        }
-    }
 }

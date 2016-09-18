@@ -84,21 +84,24 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:orientation="horizontal"
         >
+
         <View
             android:id="@+id/item_left_spacer"
             android:layout_width="20dp"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
             android:visibility="visible"
-            tools:visibility="gone"
+            tools:visibility="visible"
             />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
             android:orientation="vertical"
             android:background="@drawable/rounded_corners">
 
@@ -116,34 +119,42 @@
                 android:textSize="15sp"
                 android:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/item_detail_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
+            <FrameLayout
+                android:id="@+id/item_detail_frame"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="visible"
                 tools:visibility="visible"
                 >
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/item_border"
-                    />
+                <LinearLayout
+                    android:id="@+id/item_detail_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:orientation="vertical"
+                    >
 
-                <TextView
-                    android:id="@+id/content_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="some long string of words\nanothe long line\nand a nother the final loe"
-                    android:textColor="@android:color/black"
-                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/item_border"
+                        />
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/content_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="some long string of words\nanothe long line\nand a nother the final loe"
+                        android:textColor="@android:color/black"
+                        />
+
+                </LinearLayout>
+
+            </FrameLayout>
 
         </LinearLayout>
 

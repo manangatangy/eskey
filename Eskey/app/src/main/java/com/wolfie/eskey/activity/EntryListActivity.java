@@ -137,7 +137,7 @@ public class EntryListActivity
             }
         });
         mRecyclerView.setItemScrollListener(this);
-        mGroupingRecyclerAdapter = new GroupingRecyclerAdapter();
+        mGroupingRecyclerAdapter = new GroupingRecyclerAdapter(this.getApplicationContext());
         mRecyclerView.setAdapter(mGroupingRecyclerAdapter);
 
 //        loadSome();
