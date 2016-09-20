@@ -1,13 +1,15 @@
 package com.wolfie.eskey.activity;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,6 +32,8 @@ import com.wolfie.eskey.controller.NavigationMenuController;
 import com.wolfie.eskey.crypto.Crypter;
 import com.wolfie.eskey.database.Helper;
 import com.wolfie.eskey.database.Source;
+import com.wolfie.eskey.fragment.ActionSheetFragment;
+import com.wolfie.eskey.fragment.ItemDetailFragment;
 import com.wolfie.eskey.loader.AsyncListeningTask;
 import com.wolfie.eskey.loader.EntryLoader;
 import com.wolfie.eskey.model.DataSet;
@@ -92,7 +96,7 @@ public class EntryListActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.navigation);
+        setContentView(R.layout.activity_navigation);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -100,7 +104,16 @@ public class EntryListActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                final ItemDetailFragment itemDetailFragment = addItemDetailFragment();
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        itemDetailFragment.open();
+                    }
+                });
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -186,7 +199,7 @@ public class EntryListActivity
      */
     @Override
     public void onNavItemSelected(String itemText) {
-        // Handle navigation view item clicks here.
+        // Handle activity_navigation view item clicks here.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         String groupName
@@ -207,6 +220,42 @@ public class EntryListActivity
         for (int e = 10; e < 15; e++) {
             mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 2, "content"));
         }
+    }
+
+    private final static String FRAGTAG = "ITEM_DETAIL_FRAGMENT";
+
+    /**
+     * Create and show the ItemDetailFragment
+     * Handler handler = new Handler(Looper.getMainLooper());
+     handler.post(new Runnable() {
+    @Override
+    public void run() {
+    mActionSheetFragment.showSheet(animate);
+    }
+    });
+     */
+    private ItemDetailFragment addItemDetailFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        final ItemDetailFragment itemDetailFragment = new ItemDetailFragment();
+        itemDetailFragment.setContext(getApplicationContext());
+        itemDetailFragment.setActionSheetListener(new ActionSheetFragment.ActionSheetListener() {
+            @Override
+            public void onCloseActionSheet() {
+                removeItemDetailFragment();
+            }
+            @Override
+            public void onActionSheetBackgroundClick() {
+                itemDetailFragment.close();
+            }
+        });
+        fragmentManager.beginTransaction().add(android.R.id.content, itemDetailFragment, FRAGTAG).commit();
+        return itemDetailFragment;
+    }
+
+    private void removeItemDetailFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(FRAGTAG);
+        fragmentManager.beginTransaction().remove(fragment).commit();
     }
 
     @Override

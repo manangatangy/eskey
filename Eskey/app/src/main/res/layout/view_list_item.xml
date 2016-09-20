@@ -93,8 +93,7 @@
             android:id="@+id/item_left_spacer"
             android:layout_width="20dp"
             android:layout_height="40dp"
-            android:visibility="visible"
-            tools:visibility="visible"
+            tools:layout_width="0dp"
             />
 
         <LinearLayout
@@ -103,7 +102,8 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:orientation="vertical"
-            android:background="@drawable/rounded_corners">
+            android:background="@drawable/rounded_corners"
+            >
 
             <TextView
                 android:id="@+id/item_text_view"
@@ -123,8 +123,8 @@
                 android:id="@+id/item_detail_frame"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:visibility="visible"
-                tools:visibility="visible"
+                tools:layout_width="wrap_content"
+                tools:layout_height="wrap_content"
                 >
 
                 <LinearLayout

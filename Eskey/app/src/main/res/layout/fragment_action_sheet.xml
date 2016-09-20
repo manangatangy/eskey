@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/action_sheet_background_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#77000000"
+    android:clickable="true"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <FrameLayout
+        android:id="@+id/action_sheet_holder_view"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        >
+    </FrameLayout>
+
+</LinearLayout>

@@ -20,6 +20,8 @@ import butterknife.ButterKnife;
 
 public class ItemViewHolder extends BaseViewHolder {
 
+    private static int ANIM_DURATION = 200;
+
     // item_layout gives the expanded with, excluding the left hand spacer
     @Bind(R.id.item_layout)
     View mLayoutView;
@@ -108,7 +110,7 @@ public class ItemViewHolder extends BaseViewHolder {
                     mView.setLayoutParams(layoutParams);
                 }
             });
-            anim.setDuration(300);
+            anim.setDuration(ANIM_DURATION);
             return anim;
         }
     }

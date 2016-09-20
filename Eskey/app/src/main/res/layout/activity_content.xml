@@ -55,7 +55,7 @@ Main app content layout, specifies the app bar layout and the main body layout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-            <include layout="@layout/list_heading"/>
+            <include layout="@layout/view_list_heading"/>
         </FrameLayout>
 
     </RelativeLayout>

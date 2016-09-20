@@ -2,7 +2,6 @@ package com.wolfie.eskey.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +44,12 @@ public class GroupingRecyclerAdapter
         final BaseViewHolder viewHolder;
         switch (viewType) {
             case VIEW_TYPE_TITLE:
-                view = inflateView(parent, R.layout.list_heading);
+                view = inflateView(parent, R.layout.view_list_heading);
                 viewHolder = new HeadingViewHolder(view);
                 break;
             case VIEW_TYPE_ENTRY:
             default:
-                view = inflateView(parent, R.layout.list_item);
+                view = inflateView(parent, R.layout.view_list_item);
                 viewHolder = new ItemViewHolder(view);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
