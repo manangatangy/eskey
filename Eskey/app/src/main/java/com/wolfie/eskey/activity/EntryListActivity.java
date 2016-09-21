@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -104,15 +105,7 @@ public class EntryListActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ItemDetailFragment itemDetailFragment = addItemDetailFragment();
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        itemDetailFragment.open();
-                    }
-                });
-
+                popupItemDetail(null);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
@@ -215,29 +208,38 @@ public class EntryListActivity
 
     private void loadSome() {
         for (int e = 1; e < 20; e++) {
-            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 3, "content"));
+            mEntryLoader.insert(Entry.create("entry-name-" + e, "group-name-" + 3, "content"));
         }
         for (int e = 10; e < 15; e++) {
-            mEntryLoader.insert(new Entry(0, "entry-name-" + e, "group-name-" + 2, "content"));
+            mEntryLoader.insert(Entry.create("entry-name-" + e, "group-name-" + 2, "content"));
         }
     }
 
+    // -----------------------------------------------------------------------------
     private final static String FRAGTAG = "ITEM_DETAIL_FRAGMENT";
 
     /**
-     * Create and show the ItemDetailFragment
-     * Handler handler = new Handler(Looper.getMainLooper());
-     handler.post(new Runnable() {
-    @Override
-    public void run() {
-    mActionSheetFragment.showSheet(animate);
-    }
-    });
+     * Create the ItemDetailFragment, for the specified entry, adding it to the
+     * fragment manager.  Then show the action sheet.  On close of the action sheet,
+     * the fragment will be removed from the frag manager
      */
-    private ItemDetailFragment addItemDetailFragment() {
+    private void popupItemDetail(@Nullable Entry entry) {
+        final ItemDetailFragment itemDetailFragment = addItemDetailFragment(entry);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                itemDetailFragment.open();
+            }
+        });
+    }
+
+    private ItemDetailFragment addItemDetailFragment(@Nullable Entry entry) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         final ItemDetailFragment itemDetailFragment = new ItemDetailFragment();
+        // The ItemDetailFragment must be set with its data before onCreateView is called.
         itemDetailFragment.setContext(getApplicationContext());
+        itemDetailFragment.setEntry(entry);
         itemDetailFragment.setActionSheetListener(new ActionSheetFragment.ActionSheetListener() {
             @Override
             public void onCloseActionSheet() {
@@ -257,6 +259,7 @@ public class EntryListActivity
         Fragment fragment = fragmentManager.findFragmentByTag(FRAGTAG);
         fragmentManager.beginTransaction().remove(fragment).commit();
     }
+    // -----------------------------------------------------------------------------
 
     @Override
     public void onDestroy() {

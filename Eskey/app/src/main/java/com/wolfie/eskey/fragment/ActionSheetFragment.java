@@ -28,6 +28,14 @@ import butterknife.OnClick;
  * Base class for Action sheet behaviour, which animates the open and close, calling onClose
  * and onOpen (which may be overridden) when the action is complete.  Subclass may override
  * the onBackgroundClick method, if they wish to for example close the action sheet.
+ *
+ * TODO deal with keyboard taking up space
+ * ref http://stackoverflow.com/questions/2150078/how-to-check-visibility-of-software-keyboard-in-android
+ * in particular http://stackoverflow.com/a/26152562
+ *
+ * how to close keyboard
+ * ref http://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard?rq=1
+ *
  */
 public class ActionSheetFragment extends Fragment {
 
@@ -42,6 +50,13 @@ public class ActionSheetFragment extends Fragment {
     private Context mContext;
     private ActionSheetListener mActionSheetListener;
 
+    public void setContext(Context context) {
+        mContext = context;
+    }
+    public void setActionSheetListener(ActionSheetListener actionSheetListener) {
+        mActionSheetListener = actionSheetListener;
+    }
+
     /**
      * Subclass to overide this and inflate their layout into the action_sheet_holder_view
      */
@@ -50,13 +65,6 @@ public class ActionSheetFragment extends Fragment {
         // Must bind only the ActionSheetFrag else the other subclass members cause a problem?
         ButterKnife.bind(ActionSheetFragment.this, view);
         return view;
-    }
-
-    public void setContext(Context context) {
-        mContext = context;
-    }
-    public void setActionSheetListener(ActionSheetListener actionSheetListener) {
-        mActionSheetListener = actionSheetListener;
     }
 
     @OnClick(R.id.action_sheet_background_view)

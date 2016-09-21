@@ -1,6 +1,9 @@
 package com.wolfie.eskey.model;
 
+import android.database.Cursor;
+
 import com.wolfie.eskey.crypto.Crypter;
+import com.wolfie.eskey.database.MetaData;
 
 /**
  * Created by david on 4/09/16.
@@ -12,11 +15,25 @@ public class Entry {
     private String mGroupName;
     private String mContent;
 
-    public Entry(int id, String entryName, String groupName, String content) {
+    private Entry(int id, String entryName, String groupName, String content) {
         mId = id;
         mEntryName = entryName;
         mGroupName = groupName;
         mContent = content;
+    }
+
+    public static Entry create(String entryName, String groupName, String content) {
+        Entry entry = new Entry(-1, entryName, groupName, content);
+        return entry;
+    }
+
+    public static Entry from(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(MetaData.ENTRIES_ID));
+        String groupName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_GROUP));
+        String entryName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_ENTRY));
+        String content = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_CONTENT));
+        Entry entry = new Entry(id, entryName, groupName, content);
+        return entry;
     }
 
     public void encrypt(Crypter crypter) {

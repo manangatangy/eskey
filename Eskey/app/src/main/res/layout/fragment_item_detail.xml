@@ -1,98 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/somethingw"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     >
 
-    <Button
-        android:id="@+id/item_detail_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="SAVE"
-        />
-
-    <Button
-        android:id="@+id/item_detail_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="CANCEL"
-        />
-</LinearLayout>
-
-<!--
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@drawable/rounded_corners"
-    >
-
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:padding="5dp"
-        android:textSize="15sp"
-        tools:text="hello"
-        />
-    <TextView
-        android:id="@+id/item_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:padding="5dp"
-        android:textSize="15sp"
-        tools:text="hello"
-        />
-    <TextView
-        android:id="@+id/item_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:padding="5dp"
-        android:textSize="15sp"
-        tools:text="hello"
-        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         >
-        <Button
-            android:id="@+id/button_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Cancel"
-            />
-        <Button
-            android:id="@+id/button_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OK"
-            />
-    </LinearLayout>
 
-</LinearLayout>
--->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            >
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="Create/Modify Entry"
+                />
+            <View
+                android:id="@+id/image_view_close"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorAccent"
+                >
+
+            </View>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/item_body"
+            >
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <EditText
+                    android:id="@+id/edit_text_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Name"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <EditText
+                    android:id="@+id/edit_text_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Group"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <EditText
+                    android:id="@+id/edit_text_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Content"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:paddingTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/button_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                tools:visibility="gone"
+                android:text="Delete" />
+
+            <Button
+                android:id="@+id/button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Save" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+
+    <!--
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@drawable/rounded_corners"
+        >
+
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:background="@android:color/white"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:padding="5dp"
+            android:textSize="15sp"
+            tools:text="hello"
+            />
+        <TextView
+            android:id="@+id/item_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:background="@android:color/white"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:padding="5dp"
+            android:textSize="15sp"
+            tools:text="hello"
+            />
+        <TextView
+            android:id="@+id/item_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:background="@android:color/white"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:padding="5dp"
+            android:textSize="15sp"
+            tools:text="hello"
+            />
+
+    </LinearLayout>
+    -->

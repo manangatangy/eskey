@@ -71,11 +71,11 @@ public class Source {
         List<Entry> entries = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int id = cursor.getInt(cursor.getColumnIndex(MetaData.ENTRIES_ID));
-                String groupName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_GROUP));
-                String entryName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_ENTRY));
-                String content = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_CONTENT));
-                Entry entry = new Entry(id, entryName, groupName, content);
+//                int id = cursor.getInt(cursor.getColumnIndex(MetaData.ENTRIES_ID));
+//                String groupName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_GROUP));
+//                String entryName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_ENTRY));
+//                String content = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_CONTENT));
+                Entry entry = Entry.from(cursor);
                 entries.add(entry);
                 cursor.moveToNext();
             }
