@@ -172,19 +172,23 @@ public class EntryListActivity
 
     /**
      * Cause a reload of the DataSet from the EntryLoader.
-     * This will refresh the heading in the nav menu, which
+     * This will refresh the headings in the nav menu, which
      * then sets the groups in the adapter and list.
      */
     private void loadAdapter() {
-        mEntryLoader.read(new AsyncListeningTask.Listener<DataSet>() {
-            @Override
-            public void onCompletion(DataSet dataSet) {
-                mDataSet = dataSet;
-                List<String> headings = EntryGroup.buildHeadingsList(mDataSet);
-                mNavigationMenuController.setItemsTexts(headings);
-            }
-        });
+        mEntryLoader.read(mDataSetReadListener);
     }
+
+    private AsyncListeningTask.Listener<DataSet> mDataSetReadListener =
+            new AsyncListeningTask.Listener<DataSet>() {
+                @Override
+                public void onCompletion(DataSet dataSet) {
+                    mDataSet = dataSet;
+                    List<String> headings = EntryGroup.buildHeadingsList(mDataSet);
+                    // Causes call to onNavItemSelected(ALL_GROUPS_NAV_HEADING)
+                    mNavigationMenuController.setItemsTexts(headings);
+                }
+            };
 
     /**
      * Using the selected nav menu item as the group name, create a subset of
@@ -221,7 +225,7 @@ public class EntryListActivity
     /**
      * Create the ItemDetailFragment, for the specified entry, adding it to the
      * fragment manager.  Then show the action sheet.  On close of the action sheet,
-     * the fragment will be removed from the frag manager
+     * the fragment will be removed from the frag manager.
      */
     private void popupItemDetail(@Nullable Entry entry) {
         final ItemDetailFragment itemDetailFragment = addItemDetailFragment(entry);
@@ -229,7 +233,7 @@ public class EntryListActivity
         handler.post(new Runnable() {
             @Override
             public void run() {
-                itemDetailFragment.open();
+                itemDetailFragment.show();
             }
         });
     }
@@ -240,14 +244,32 @@ public class EntryListActivity
         // The ItemDetailFragment must be set with its data before onCreateView is called.
         itemDetailFragment.setContext(getApplicationContext());
         itemDetailFragment.setEntry(entry);
-        itemDetailFragment.setActionSheetListener(new ActionSheetFragment.ActionSheetListener() {
+        itemDetailFragment.setItemEditListener(new ItemDetailFragment.ItemEditListener() {
             @Override
-            public void onCloseActionSheet() {
+            public void onHideActionSheet() {
+                // After the sheet closes, remove and delete the fragment
                 removeItemDetailFragment();
             }
             @Override
-            public void onActionSheetBackgroundClick() {
-                itemDetailFragment.close();
+            public void onBackgroundClick() {
+                // TODO - maybe this should be disabled, so that user doesn't inadvertently
+                // lose their edits.  Note that the close button click listener in ItemDetailFragment
+                // should probably do this check and ask for confirmation before moving away.
+                // itemDetailFragment.close();
+            }
+            @Override
+            public void onSave(Entry entry, boolean isCreate) {
+                if (isCreate) {
+                    mEntryLoader.insert(entry, mDataSetReadListener);
+                } else {
+                    mEntryLoader.update(entry, mDataSetReadListener);
+                }
+                itemDetailFragment.hide();
+            }
+            @Override
+            public void onDelete(Entry entry) {
+                mEntryLoader.delete(entry, mDataSetReadListener);
+                itemDetailFragment.hide();
             }
         });
         fragmentManager.beginTransaction().add(android.R.id.content, itemDetailFragment, FRAGTAG).commit();

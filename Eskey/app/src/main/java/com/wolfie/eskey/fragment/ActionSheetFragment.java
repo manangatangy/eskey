@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.util.KeyboardVisibilityObserver;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,12 +47,14 @@ public class ActionSheetFragment extends Fragment {
     @Bind(R.id.action_sheet_holder_view)
     FrameLayout mActionSheetHolderView;         // This is animated.
 
-    private Context mContext;
+    private KeyboardVisibilityObserver mKeyboardVisibilityObserver;
+    protected Context mContext;
     private ActionSheetListener mActionSheetListener;
 
     public void setContext(Context context) {
         mContext = context;
     }
+
     public void setActionSheetListener(ActionSheetListener actionSheetListener) {
         mActionSheetListener = actionSheetListener;
     }
@@ -69,55 +71,67 @@ public class ActionSheetFragment extends Fragment {
 
     @OnClick(R.id.action_sheet_background_view)
     public void backGroundViewClicked() {
-        if (isOpen()) {
+        if (isShowing()) {
             if (mActionSheetListener != null) {
-                mActionSheetListener.onActionSheetBackgroundClick();
+                mActionSheetListener.onBackgroundClick();
             }
         }
     }
 
-    public boolean isOpen() {
+    protected boolean isShowing() {
         return mActionSheetBackgroundView != null && mActionSheetBackgroundView.getVisibility() == View.VISIBLE;
     }
 
-    public void close() {
-        if (isOpen()) {
+    public void hide() {
+        if (isShowing()) {
             Animation bottomDown = AnimationUtils.loadAnimation(mContext, R.anim.action_sheet_down);
             bottomDown.setAnimationListener(new SimpleListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mActionSheetBackgroundView.setVisibility(View.GONE);
-                    invokeHandler();            // Callback on ui thread.
+                    mKeyboardVisibilityObserver = null;     // Stop observing the keyboard.
+                    invokeShowHideHandler();                // Callback on ui thread.
                 }
             });
             mActionSheetHolderView.startAnimation(bottomDown);
         }
     }
 
-    public void open() {
-        if (!isOpen()) {
+    public void show() {
+        if (!isShowing()) {
             Animation bottomUp = AnimationUtils.loadAnimation(mContext, R.anim.action_sheet_up);
             bottomUp.setAnimationListener(new SimpleListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    invokeHandler();            // Callback on ui thread.
+                    invokeShowHideHandler();            // Callback on ui thread.
                 }
             });
             mActionSheetHolderView.startAnimation(bottomUp);
             mActionSheetBackgroundView.setVisibility(View.VISIBLE);
+            mKeyboardVisibilityObserver = new KeyboardVisibilityObserver(mActionSheetBackgroundView,
+                    new KeyboardVisibilityObserver.KeyboardVisibilityListener() {
+                        @Override
+                        public void onShow(int keyboardHeight) {
+                            mActionSheetBackgroundView.setPadding(0, 0, 0, keyboardHeight);
+                        }
+                        @Override
+                        public void onHide() {
+                            mActionSheetBackgroundView.setPadding(0, 0, 0, 0);
+                        }
+                    });
         }
     }
 
-    private void invokeHandler() {
+    private void invokeShowHideHandler() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
                 if (mActionSheetListener != null) {
-                    if (isOpen()) {
-                        mActionSheetListener.onOpenActionSheet();
+                    if (isShowing()) {
+                        mActionSheetListener.onShowActionSheet();
                     } else {
-                        mActionSheetListener.onCloseActionSheet();
+                        mActionSheetListener.onHideActionSheet();
                     }
                 }
             }
@@ -125,11 +139,11 @@ public class ActionSheetFragment extends Fragment {
     }
 
     public static class ActionSheetListener {
-        public void onOpenActionSheet() {
+        public void onShowActionSheet() {
         }
-        public void onCloseActionSheet() {
+        public void onHideActionSheet() {
         }
-        public void onActionSheetBackgroundClick() {
+        public void onBackgroundClick() {
         }
     }
 

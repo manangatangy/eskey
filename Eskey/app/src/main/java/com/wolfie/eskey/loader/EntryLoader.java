@@ -31,15 +31,36 @@ public class EntryLoader {
     }
 
     public void insert(Entry entry) {
-        new InsertTask(new ToastListener("insert")).execute(entry);
+        ToastListener toastListener = new ToastListener("insert " + entry.getEntryName());
+        new InsertTask(toastListener).execute(entry);
     }
 
     public void update(Entry entry) {
-        new UpdateTask(new ToastListener("modify")).execute(entry);
+        ToastListener toastListener = new ToastListener("modify " + entry.getEntryName());
+        new UpdateTask(toastListener).execute(entry);
     }
 
     public void delete(Entry entry) {
-        new DeleteTask(new ToastListener("delete")).execute(entry);
+        ToastListener toastListener = new ToastListener("delete " + entry.getEntryName());
+        new DeleteTask(toastListener).execute(entry);
+    }
+
+    public void insert(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+        ToastListenerReader toastListenerReader
+                = new ToastListenerReader("insert " + entry.getEntryName(), listener);
+        new InsertTask(toastListenerReader).execute(entry);
+    }
+
+    public void update(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+        ToastListenerReader toastListenerReader
+                = new ToastListenerReader("modify " + entry.getEntryName(), listener);
+        new UpdateTask(toastListenerReader).execute(entry);
+    }
+
+    public void delete(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+        ToastListenerReader toastListenerReader
+                = new ToastListenerReader("delete " + entry.getEntryName(), listener);
+        new DeleteTask(toastListenerReader).execute(entry);
     }
 
     private class ReadTask extends AsyncListeningTask<Void, DataSet> {
@@ -89,7 +110,7 @@ public class EntryLoader {
             return mDataSource.delete(entry);
         }
     }
-
+    
     private class ToastListener implements AsyncListeningTask.Listener<Boolean> {
         private String mPrefix;
         public ToastListener(String prefix) {
@@ -99,6 +120,24 @@ public class EntryLoader {
         public void onCompletion(Boolean success) {
             String msg = mPrefix + (success ? " succeeded" : " failed");
             Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * After the ToastListener completes, this class starts a ReadTask for the dataset
+     * listener.
+     */
+    private class ToastListenerReader extends ToastListener {
+        private AsyncListeningTask.Listener<DataSet> mDataSetReadListener;
+        public ToastListenerReader(String prefix,
+                                   AsyncListeningTask.Listener<DataSet> dataSetReadListener) {
+            super(prefix);
+            mDataSetReadListener = dataSetReadListener;
+        }
+        @Override
+        public void onCompletion(Boolean success) {
+            super.onCompletion(success);
+            new ReadTask(mDataSetReadListener).execute();
         }
     }
 }

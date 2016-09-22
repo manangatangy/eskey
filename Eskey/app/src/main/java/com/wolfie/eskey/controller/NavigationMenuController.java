@@ -39,7 +39,7 @@ public class NavigationMenuController implements RadioGroup.OnCheckedChangeListe
 
     public void setItemsTexts(List<String> itemTexts) {
         mRadioGroup.removeAllViews();
-        addItem(ALL_GROUPS_NAV_HEADING).setChecked(true);
+        addItem(ALL_GROUPS_NAV_HEADING).setChecked(true);       // Causes call to onCheckedChanged()
         for (String itemText : itemTexts) {
             addItem(itemText);
         }
