@@ -144,6 +144,12 @@ public class EntryListActivity
         });
         mRecyclerView.setItemScrollListener(this);
         mGroupingRecyclerAdapter = new GroupingRecyclerAdapter(this.getApplicationContext());
+        mGroupingRecyclerAdapter.setOnItemInListClickerListener(new GroupingRecyclerAdapter.OnItemInListClickedListener() {
+            @Override
+            public void onListItemClick(Entry selectedEntry) {
+                popupItemDetail(selectedEntry);
+            }
+        });
         mRecyclerView.setAdapter(mGroupingRecyclerAdapter);
 
 //        loadSome();
@@ -228,6 +234,7 @@ public class EntryListActivity
      * the fragment will be removed from the frag manager.
      */
     private void popupItemDetail(@Nullable Entry entry) {
+        // TODO - check that there is not one instance already before starting a new one
         final ItemDetailFragment itemDetailFragment = addItemDetailFragment(entry);
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {

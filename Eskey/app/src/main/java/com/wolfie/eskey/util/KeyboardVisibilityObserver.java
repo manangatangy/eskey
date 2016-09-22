@@ -27,7 +27,7 @@ public class KeyboardVisibilityObserver implements ViewTreeObserver.OnGlobalLayo
     @Override
     public void onGlobalLayout() {
         View rootView = mView.getRootView();
-
+        // Ref http://stackoverflow.com/a/26152562
         // 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard
         final int SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128;
 

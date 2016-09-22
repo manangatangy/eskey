@@ -9,6 +9,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.adapter.GroupingRecyclerAdapter;
 import com.wolfie.eskey.model.Entry;
 
 import butterknife.Bind;
@@ -34,7 +35,6 @@ public class ItemViewHolder extends BaseViewHolder {
 
     @Bind(R.id.item_detail_view)
     View mDetailLayoutView;
-    private int mLeftSpacedWidth;
 
     @Bind(R.id.item_left_spacer)
     View mDetailLeftSpacerView;
@@ -45,15 +45,30 @@ public class ItemViewHolder extends BaseViewHolder {
     @Bind(R.id.content_text_view)
     TextView mContentTextView;
 
-    private Entry mEntry;
+    @Bind(R.id.edit_image)
+    View mEditView;
 
-    public ItemViewHolder(View view) {
+    private int mLeftSpacedWidth;
+    private Entry mEntry;
+    private GroupingRecyclerAdapter.OnItemInListClickedListener mListener;
+
+    public ItemViewHolder(View view, GroupingRecyclerAdapter.OnItemInListClickedListener listener) {
         super(view);
+        mListener = listener;
         ButterKnife.bind(this, view);
     }
     public void bind(Object item) {
         mEntry = (Entry)item;
         mTitleTextView.setText(mEntry.getEntryName());
+        mContentTextView.setText(mEntry.getContent());
+        mEditView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onListItemClick(mEntry);
+                }
+            }
+        });
     }
 
     public void toggleDetailView() {

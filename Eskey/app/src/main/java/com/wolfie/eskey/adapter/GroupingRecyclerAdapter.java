@@ -50,7 +50,7 @@ public class GroupingRecyclerAdapter
             case VIEW_TYPE_ENTRY:
             default:
                 view = inflateView(parent, R.layout.view_list_item);
-                viewHolder = new ItemViewHolder(view);
+                viewHolder = new ItemViewHolder(view, mOnItemInListClickedListener);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

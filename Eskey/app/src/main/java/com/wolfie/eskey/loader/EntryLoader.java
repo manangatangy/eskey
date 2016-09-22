@@ -45,6 +45,11 @@ public class EntryLoader {
         new DeleteTask(toastListener).execute(entry);
     }
 
+    /**
+     * Insert a new Entry ino the database. On completion a toast shows the
+     * success or failure.  If successful, then a ReadTask is started for the
+     * listener.
+     */
     public void insert(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
         ToastListenerReader toastListenerReader
                 = new ToastListenerReader("insert " + entry.getEntryName(), listener);
@@ -110,7 +115,7 @@ public class EntryLoader {
             return mDataSource.delete(entry);
         }
     }
-    
+
     private class ToastListener implements AsyncListeningTask.Listener<Boolean> {
         private String mPrefix;
         public ToastListener(String prefix) {
