@@ -4,6 +4,6 @@
         android:state_checked="true"
         />
     <item
-        android:drawable="@android:color/white"
+        android:drawable="@android:drawable/screen_background_dark_transparent"
         />
 </selector>

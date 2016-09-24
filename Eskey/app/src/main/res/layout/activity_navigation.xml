@@ -22,19 +22,28 @@ Top level app layout, includes the content layout and specifies the activity_nav
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
         >
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <include layout="@layout/activity_navigation_header" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/navigation_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+            </android.support.v7.widget.RecyclerView>
 
             <RadioGroup
                 android:id="@+id/navigation_radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="vertical">
                 <RadioButton
                     android:id="@+id/radio_pirates"
@@ -42,6 +51,7 @@ Top level app layout, includes the content layout and specifies the activity_nav
                     android:layout_height="30dp"
                     android:button="@null"
                     android:paddingLeft="20dp"
+                    android:textColor="@android:color/white"
                     android:background="@drawable/navigation_item_selector"
                     android:text="piracet"
                     />

@@ -41,6 +41,7 @@ import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
 import com.wolfie.eskey.util.BitmapWorkerTask;
+import com.wolfie.eskey.util.DefaultLayoutManager;
 
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class EntryListActivity
         BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(
                 mBackgroundImageView, getResources(), R.drawable.st_basils_cathedral_1, size.x, size.y);
 
-        mNavigationMenuController = new NavigationMenuController(mNavigationView);
+        mNavigationMenuController = new NavigationMenuController(getApplicationContext(), mNavigationView);
         mNavigationMenuController.setOnNavItemSelectedListener(this);
 
 //        mMenu = mNavigationView.getMenu();
@@ -135,13 +136,7 @@ public class EntryListActivity
         mCrypter = new Crypter();
         mEntryLoader = new EntryLoader(this, mSource, mCrypter);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()) {
-            @Override
-            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
-        });
+        mRecyclerView.setLayoutManager(new DefaultLayoutManager(this.getApplicationContext()));
         mRecyclerView.setItemScrollListener(this);
         mGroupingRecyclerAdapter = new GroupingRecyclerAdapter(this.getApplicationContext());
         mGroupingRecyclerAdapter.setOnItemInListClickerListener(new GroupingRecyclerAdapter.OnItemInListClickedListener() {
@@ -191,7 +186,7 @@ public class EntryListActivity
                 public void onCompletion(DataSet dataSet) {
                     mDataSet = dataSet;
                     List<String> headings = EntryGroup.buildHeadingsList(mDataSet);
-                    // Causes call to onNavItemSelected(ALL_GROUPS_NAV_HEADING)
+                    // The below causes a call to onNavItemSelected, for the first menu item.
                     mNavigationMenuController.setItemsTexts(headings);
                 }
             };
@@ -201,13 +196,10 @@ public class EntryListActivity
      * Entry's from the DataSet, passing it to the adapter for viewing.
      */
     @Override
-    public void onNavItemSelected(String itemText) {
+    public void onNavItemSelected(String groupName, boolean changed) {
         // Handle activity_navigation view item clicks here.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        String groupName
-                = (NavigationMenuController.ALL_GROUPS_NAV_HEADING.equals(itemText))
-                ? null : itemText;
         List<EntryGroup> groups = EntryGroup.buildGroups(groupName, mDataSet);
         mGroupingRecyclerAdapter.setGroups(groups);
         // Briefly hide the sticky heading since its text won't be correctly
