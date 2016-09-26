@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/action_sheet_background_view"
+    android:id="@+id/resizing_background_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#77000000"
@@ -13,7 +13,7 @@
     tools:visibility="visible">
 
     <FrameLayout
-        android:id="@+id/action_sheet_holder_view"
+        android:id="@+id/resizing_holder_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout_height="300dp"
@@ -23,7 +23,7 @@
     </FrameLayout>
 </RelativeLayout>
 
-<!--
-The bottom padding in action_sheet_background_view is used to offset the
-holder from the bottom, when the keyboard is visible.
--->
+    <!--
+    The bottom padding in resizing_background_view is used to offset the
+    holder from the bottom, when the keyboard is visible.
+    -->

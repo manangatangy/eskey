@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.loader.EntryLoader;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.util.KeyboardUtils;
 
@@ -23,7 +22,7 @@ import butterknife.ButterKnife;
  * Created by david on 20/09/16.
  */
 
-public class ItemDetailFragment extends ActionSheetFragment {
+public class ItemDetailFragment extends ResizingFragment {
 
     @Nullable
     @Bind(R.id.text_title)
@@ -70,7 +69,7 @@ public class ItemDetailFragment extends ActionSheetFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         View content = inflater.inflate(R.layout.fragment_item_detail, container, false);
-        mActionSheetHolderView.addView(content);
+        mResizingHolderView.addView(content);
         // This bind will re-bind the superclass members, so the entire view hierarchy must be
         // available, hence the content should be added to the parent view first.
         ButterKnife.bind(this, view);
@@ -142,7 +141,7 @@ public class ItemDetailFragment extends ActionSheetFragment {
         }
     }
 
-    public static class ItemEditListener extends ActionSheetListener {
+    public static class ItemEditListener extends ResizingListener {
         public void onSave(Entry entry, boolean isCreate) {
         }
         public void onDelete(Entry entry) {

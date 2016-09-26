@@ -8,21 +8,17 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +29,6 @@ import com.wolfie.eskey.controller.NavigationMenuController;
 import com.wolfie.eskey.crypto.Crypter;
 import com.wolfie.eskey.database.Helper;
 import com.wolfie.eskey.database.Source;
-import com.wolfie.eskey.fragment.ActionSheetFragment;
 import com.wolfie.eskey.fragment.ItemDetailFragment;
 import com.wolfie.eskey.loader.AsyncListeningTask;
 import com.wolfie.eskey.loader.EntryLoader;
@@ -245,7 +240,7 @@ public class EntryListActivity
         itemDetailFragment.setEntry(entry);
         itemDetailFragment.setItemEditListener(new ItemDetailFragment.ItemEditListener() {
             @Override
-            public void onHideActionSheet() {
+            public void onHide() {
                 // After the sheet closes, remove and delete the fragment
                 removeItemDetailFragment();
             }

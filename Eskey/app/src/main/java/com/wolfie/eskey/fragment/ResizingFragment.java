@@ -22,6 +22,9 @@ import butterknife.OnClick;
 
 /**
  * Created by david on 20/09/16.
+ * Simple full screen fragment that observes keyboard appearance, and then resizes to
+ * occupy the remaining space above the keyboard.  The client layout will therefore
+ * always be fully visible.
  */
 
 /**
@@ -37,49 +40,49 @@ import butterknife.OnClick;
  * ref http://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard?rq=1
  *
  */
-public class ActionSheetFragment extends Fragment {
+public class ResizingFragment extends Fragment {
 
     @Nullable
-    @Bind(R.id.action_sheet_background_view)
-    View mActionSheetBackgroundView;            // This is GONE/VISIBLE
+    @Bind(R.id.resizing_background_view)
+    View mResizingBackgroundView;            // This is GONE/VISIBLE
 
     @Nullable
-    @Bind(R.id.action_sheet_holder_view)
-    FrameLayout mActionSheetHolderView;         // This is animated.
+    @Bind(R.id.resizing_holder_view)
+    FrameLayout mResizingHolderView;         // This is animated.
 
     private KeyboardVisibilityObserver mKeyboardVisibilityObserver;
     protected Context mContext;
-    private ActionSheetListener mActionSheetListener;
+    private ResizingListener mResizingListener;
 
     public void setContext(Context context) {
         mContext = context;
     }
 
-    public void setActionSheetListener(ActionSheetListener actionSheetListener) {
-        mActionSheetListener = actionSheetListener;
+    public void setActionSheetListener(ResizingListener resizingListener) {
+        mResizingListener = resizingListener;
     }
 
     /**
      * Subclass to overide this and inflate their layout into the action_sheet_holder_view
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_action_sheet, container, false);
-        // Must bind only the ActionSheetFrag else the other subclass members cause a problem?
-        ButterKnife.bind(ActionSheetFragment.this, view);
+        View view = inflater.inflate(R.layout.fragment_resizing, container, false);
+        // Must bind only the ResizingFrag else the other subclass members cause a problem?
+        ButterKnife.bind(ResizingFragment.this, view);
         return view;
     }
 
-    @OnClick(R.id.action_sheet_background_view)
+    @OnClick(R.id.resizing_background_view)
     public void backGroundViewClicked() {
         if (isShowing()) {
-            if (mActionSheetListener != null) {
-                mActionSheetListener.onBackgroundClick();
+            if (mResizingListener != null) {
+                mResizingListener.onBackgroundClick();
             }
         }
     }
 
     protected boolean isShowing() {
-        return mActionSheetBackgroundView != null && mActionSheetBackgroundView.getVisibility() == View.VISIBLE;
+        return mResizingBackgroundView != null && mResizingBackgroundView.getVisibility() == View.VISIBLE;
     }
 
     public void hide() {
@@ -88,12 +91,12 @@ public class ActionSheetFragment extends Fragment {
             bottomDown.setAnimationListener(new SimpleListener() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    mActionSheetBackgroundView.setVisibility(View.GONE);
+                    mResizingBackgroundView.setVisibility(View.GONE);
                     mKeyboardVisibilityObserver = null;     // Stop observing the keyboard.
                     invokeShowHideHandler();                // Callback on ui thread.
                 }
             });
-            mActionSheetHolderView.startAnimation(bottomDown);
+            mResizingHolderView.startAnimation(bottomDown);
         }
     }
 
@@ -106,17 +109,17 @@ public class ActionSheetFragment extends Fragment {
                     invokeShowHideHandler();            // Callback on ui thread.
                 }
             });
-            mActionSheetHolderView.startAnimation(bottomUp);
-            mActionSheetBackgroundView.setVisibility(View.VISIBLE);
-            mKeyboardVisibilityObserver = new KeyboardVisibilityObserver(mActionSheetBackgroundView,
+            mResizingHolderView.startAnimation(bottomUp);
+            mResizingBackgroundView.setVisibility(View.VISIBLE);
+            mKeyboardVisibilityObserver = new KeyboardVisibilityObserver(mResizingBackgroundView,
                     new KeyboardVisibilityObserver.KeyboardVisibilityListener() {
                         @Override
                         public void onShow(int keyboardHeight) {
-                            mActionSheetBackgroundView.setPadding(0, 0, 0, keyboardHeight);
+                            mResizingBackgroundView.setPadding(0, 0, 0, keyboardHeight);
                         }
                         @Override
                         public void onHide() {
-                            mActionSheetBackgroundView.setPadding(0, 0, 0, 0);
+                            mResizingBackgroundView.setPadding(0, 0, 0, 0);
                         }
                     });
         }
@@ -127,21 +130,21 @@ public class ActionSheetFragment extends Fragment {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (mActionSheetListener != null) {
+                if (mResizingListener != null) {
                     if (isShowing()) {
-                        mActionSheetListener.onShowActionSheet();
+                        mResizingListener.onShow();
                     } else {
-                        mActionSheetListener.onHideActionSheet();
+                        mResizingListener.onHide();
                     }
                 }
             }
         });
     }
 
-    public static class ActionSheetListener {
-        public void onShowActionSheet() {
+    public static class ResizingListener {
+        public void onShow() {
         }
-        public void onHideActionSheet() {
+        public void onHide() {
         }
         public void onBackgroundClick() {
         }
