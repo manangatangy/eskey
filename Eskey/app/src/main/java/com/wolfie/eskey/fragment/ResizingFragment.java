@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.util.KeyboardVisibilityObserver;
@@ -44,11 +46,19 @@ public class ResizingFragment extends Fragment {
 
     @Nullable
     @Bind(R.id.resizing_background_view)
-    View mResizingBackgroundView;            // This is GONE/VISIBLE
+    View mResizingBackgroundView;               // This is GONE/VISIBLE
+
+    @Nullable
+    @Bind(R.id.resizing_padding_view)
+    View mResizingPaddingView;                  // This has variable bottom padding
+
+    @Nullable
+    @Bind(R.id.resizing_animating_view)
+    RelativeLayout mResizingAnimatingView;      // This animates open/close
 
     @Nullable
     @Bind(R.id.resizing_holder_view)
-    FrameLayout mResizingHolderView;         // This is animated.
+    ScrollView mResizingHolderView;             // This holds the content
 
     private KeyboardVisibilityObserver mKeyboardVisibilityObserver;
     protected Context mContext;
@@ -96,7 +106,7 @@ public class ResizingFragment extends Fragment {
                     invokeShowHideHandler();                // Callback on ui thread.
                 }
             });
-            mResizingHolderView.startAnimation(bottomDown);
+            mResizingAnimatingView.startAnimation(bottomDown);
         }
     }
 
@@ -109,17 +119,19 @@ public class ResizingFragment extends Fragment {
                     invokeShowHideHandler();            // Callback on ui thread.
                 }
             });
-            mResizingHolderView.startAnimation(bottomUp);
+            mResizingAnimatingView.startAnimation(bottomUp);
             mResizingBackgroundView.setVisibility(View.VISIBLE);
-            mKeyboardVisibilityObserver = new KeyboardVisibilityObserver(mResizingBackgroundView,
+            invokeShowHideHandler();                // Callback on ui thread.
+
+            mKeyboardVisibilityObserver = new KeyboardVisibilityObserver(mResizingPaddingView,
                     new KeyboardVisibilityObserver.KeyboardVisibilityListener() {
                         @Override
                         public void onShow(int keyboardHeight) {
-                            mResizingBackgroundView.setPadding(0, 0, 0, keyboardHeight);
+                            mResizingPaddingView.setPadding(0, 0, 0, keyboardHeight);
                         }
                         @Override
                         public void onHide() {
-                            mResizingBackgroundView.setPadding(0, 0, 0, 0);
+                            mResizingPaddingView.setPadding(0, 0, 0, 0);
                         }
                     });
         }

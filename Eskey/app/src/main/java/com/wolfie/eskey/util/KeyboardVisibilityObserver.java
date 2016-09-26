@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.wolfie.eskey.R;
+
 public class KeyboardVisibilityObserver implements ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final String TAG = "KeyboardVisibility";
@@ -27,6 +29,8 @@ public class KeyboardVisibilityObserver implements ViewTreeObserver.OnGlobalLayo
     @Override
     public void onGlobalLayout() {
         View rootView = mView.getRootView();
+        View toolBar = rootView.findViewById(R.id.toolbar);
+        int toolBarHeight = (toolBar == null) ? 0 : toolBar.getHeight();
         // Ref http://stackoverflow.com/a/26152562
         // 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard
         final int SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128;
@@ -43,13 +47,15 @@ public class KeyboardVisibilityObserver implements ViewTreeObserver.OnGlobalLayo
 
         @KeyboardState int newState = isKeyboardShown ? KeyboardState.SHOWING : KeyboardState.HIDDEN;
 
-        Log.d(TAG, "isKeyboardShown: " + newState + ", (was: " + mCurrentState + "), heightDiff:" + heightDiff
-                + ", density:" + dm.density + "root view height:" + rootView.getHeight() + ", visibleRect:" + visibleRect);
+//        Log.d(TAG, "isKeyboardShown: " + newState + ", (was: " + mCurrentState +
+//                "), heightDiff:" + heightDiff + ", density:" + dm.density +
+//                ", root view height:" + rootView.getHeight() + ", visibleRect:" + visibleRect +
+//                ", toolbarHeight=" + toolBarHeight);
         if (mCurrentState != newState) {
             mCurrentState = newState;
             if (mListener != null) {
                 if (isKeyboardShown) {
-                    mListener.onShow(heightDiff);
+                    mListener.onShow(heightDiff - toolBarHeight);
                 } else {
                     mListener.onHide();
                 }

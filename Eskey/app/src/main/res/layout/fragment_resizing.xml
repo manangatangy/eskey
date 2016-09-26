@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,21 +9,34 @@
     android:background="#77000000"
     android:clickable="true"
     android:visibility="gone"
-    android:paddingBottom="0dp"
     tools:visibility="visible">
-
     <FrameLayout
-        android:id="@+id/resizing_holder_view"
+        android:id="@+id/resizing_padding_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_height="300dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:layout_height="match_parent"
+        android:paddingBottom="0dp"
         >
-    </FrameLayout>
-</RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/resizing_animating_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            >
+            <ScrollView
+                android:id="@+id/resizing_holder_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_centerInParent="true"
+                >
 
-    <!--
-    The bottom padding in resizing_background_view is used to offset the
-    holder from the bottom, when the keyboard is visible.
-    -->
+            </ScrollView>
+        </RelativeLayout>
+    </FrameLayout>
+</FrameLayout>
+
+<!--
+
+        <include layout="@layout/fragment_item_detail" />
+
+-->
