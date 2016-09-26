@@ -11,6 +11,9 @@
     <color name="header_border">#555555</color>
     <color name="header_body">#f7f7f7</color>
     <color name="item_border">#aaaaaa</color>
-    <color name="item_body">#f7f7f7</color>
+    <color name="item_body">#80000000</color>
+
+    <color name="edit_item_body">#f7f7f7</color>
+
 
 </resources>
