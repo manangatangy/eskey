@@ -1,4 +1,4 @@
-package com.wolfie.eskey.adapter;
+package com.wolfie.eskey.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

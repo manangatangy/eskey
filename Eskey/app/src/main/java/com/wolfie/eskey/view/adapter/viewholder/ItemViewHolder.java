@@ -1,18 +1,17 @@
-package com.wolfie.eskey.adapter.viewholder;
+package com.wolfie.eskey.view.adapter.viewholder;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
-import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.adapter.GroupingRecyclerAdapter;
+import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
 import com.wolfie.eskey.model.Entry;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -24,28 +23,28 @@ public class ItemViewHolder extends BaseViewHolder {
     private static int ANIM_DURATION = 200;
 
     // item_layout gives the expanded with, excluding the left hand spacer
-    @Bind(R.id.item_layout)
+    @BindView(R.id.item_layout)
     View mLayoutView;
 
     // item_detail_frame is the parent of a single child item_detail_view
     // it is width=0/height=0 when "collapsed" and is width=maxFrameWidth/
     // height=maxFrameHeight when "expanded".
-    @Bind(R.id.item_detail_frame)
+    @BindView(R.id.item_detail_frame)
     View mDetailLayoutFrame;
 
-    @Bind(R.id.item_detail_view)
+    @BindView(R.id.item_detail_view)
     View mDetailLayoutView;
 
-    @Bind(R.id.item_left_spacer)
+    @BindView(R.id.item_left_spacer)
     View mDetailLeftSpacerView;
 
-    @Bind(R.id.item_text_view)
+    @BindView(R.id.item_text_view)
     TextView mTitleTextView;
 
-    @Bind(R.id.content_text_view)
+    @BindView(R.id.content_text_view)
     TextView mContentTextView;
 
-    @Bind(R.id.edit_image)
+    @BindView(R.id.edit_image)
     View mEditView;
 
     private int mLeftSpacedWidth;

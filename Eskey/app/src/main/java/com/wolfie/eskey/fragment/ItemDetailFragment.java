@@ -15,7 +15,7 @@ import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.util.KeyboardUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -25,31 +25,31 @@ import butterknife.ButterKnife;
 public class ItemDetailFragment extends ResizingFragment {
 
     @Nullable
-    @Bind(R.id.text_title)
+    @BindView(R.id.text_title)
     TextView mTextTitle;
 
     @Nullable
-    @Bind(R.id.image_view_close)
+    @BindView(R.id.image_view_close)
     View mViewClose;
 
     @Nullable
-    @Bind(R.id.edit_text_name)
+    @BindView(R.id.edit_text_name)
     EditText mEditName;
 
     @Nullable
-    @Bind(R.id.edit_text_group)
+    @BindView(R.id.edit_text_group)
     EditText mEditGroup;
 
     @Nullable
-    @Bind(R.id.edit_text_content)
+    @BindView(R.id.edit_text_content)
     EditText mEditContent;
 
     @Nullable
-    @Bind(R.id.button_save)
+    @BindView(R.id.button_save)
     Button mButtonSave;
 
     @Nullable
-    @Bind(R.id.button_delete)
+    @BindView(R.id.button_delete)
     Button mButtonDelete;
 
     private boolean isCreate;

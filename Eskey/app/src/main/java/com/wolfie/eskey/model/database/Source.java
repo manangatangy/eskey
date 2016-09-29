@@ -1,4 +1,4 @@
-package com.wolfie.eskey.database;
+package com.wolfie.eskey.model.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -6,6 +6,7 @@ Main app content layout, specifies the app bar layout and the main body layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -43,7 +44,7 @@ Main app content layout, specifies the app bar layout and the main body layout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-            <com.wolfie.eskey.adapter.ScrollListeningRecyclerView
+            <com.wolfie.eskey.view.adapter.ScrollListeningRecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

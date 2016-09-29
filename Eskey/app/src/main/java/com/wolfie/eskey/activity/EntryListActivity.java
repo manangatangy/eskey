@@ -23,15 +23,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.adapter.GroupingRecyclerAdapter;
-import com.wolfie.eskey.adapter.ScrollListeningRecyclerView;
+import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
+import com.wolfie.eskey.view.adapter.ScrollListeningRecyclerView;
 import com.wolfie.eskey.controller.NavigationMenuController;
-import com.wolfie.eskey.crypto.Crypter;
-import com.wolfie.eskey.database.Helper;
-import com.wolfie.eskey.database.Source;
+import com.wolfie.eskey.util.crypto.Crypter;
+import com.wolfie.eskey.model.database.Helper;
+import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.fragment.ItemDetailFragment;
-import com.wolfie.eskey.loader.AsyncListeningTask;
-import com.wolfie.eskey.loader.EntryLoader;
+import com.wolfie.eskey.model.loader.AsyncListeningTask;
+import com.wolfie.eskey.model.loader.EntryLoader;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
@@ -40,7 +40,7 @@ import com.wolfie.eskey.util.DefaultLayoutManager;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -52,31 +52,31 @@ public class EntryListActivity
         implements NavigationMenuController.OnNavItemSelectedListener,
         ScrollListeningRecyclerView.ItemScrollListener {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionButton mFab;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawer;
 
-    @Bind(R.id.navigation_view)
+    @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
 
-    @Bind(R.id.background_image)
+    @BindView(R.id.background_image)
     ImageView mBackgroundImageView;
 
-    @Bind(R.id.sticky_header)
+    @BindView(R.id.sticky_header)
     View mStickyHeaderFrame;
 
-    @Bind(R.id.heading_divider_top)
+    @BindView(R.id.heading_divider_top)
     View mStickyHeaderDividerTop;
 
-    @Bind(R.id.heading_text_view)
+    @BindView(R.id.heading_text_view)
     TextView mStickyHeaderText;
 
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     ScrollListeningRecyclerView mRecyclerView;
 
     NavigationMenuController mNavigationMenuController;
@@ -271,9 +271,9 @@ public class EntryListActivity
     }
 
     private void removeItemDetailFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(FRAGTAG);
-        fragmentManager.beginTransaction().remove(fragment).commit();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(FRAGTAG);
+            fragmentManager.beginTransaction().remove(fragment).commit();
     }
     // -----------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-package com.wolfie.eskey.database;
+package com.wolfie.eskey.model.database;
 
 /**
  * Created by david on 4/09/16.

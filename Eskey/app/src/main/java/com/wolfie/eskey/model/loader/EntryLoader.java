@@ -1,11 +1,11 @@
-package com.wolfie.eskey.loader;
+package com.wolfie.eskey.model.loader;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.wolfie.eskey.crypto.Crypter;
-import com.wolfie.eskey.database.Source;
+import com.wolfie.eskey.util.crypto.Crypter;
+import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 

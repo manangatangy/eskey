@@ -1,4 +1,4 @@
-package com.wolfie.eskey.loader;
+package com.wolfie.eskey.model.loader;
 
 import android.os.AsyncTask;
 

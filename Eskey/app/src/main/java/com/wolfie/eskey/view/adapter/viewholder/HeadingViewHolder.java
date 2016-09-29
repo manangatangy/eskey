@@ -1,11 +1,11 @@
-package com.wolfie.eskey.adapter.viewholder;
+package com.wolfie.eskey.view.adapter.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 
 public class HeadingViewHolder extends BaseViewHolder {
 
-    @Bind(R.id.heading_text_view)
+    @BindView(R.id.heading_text_view)
     TextView mTextView;
 
     public HeadingViewHolder(View view) {

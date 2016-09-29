@@ -2,8 +2,8 @@ package com.wolfie.eskey.model;
 
 import android.database.Cursor;
 
-import com.wolfie.eskey.crypto.Crypter;
-import com.wolfie.eskey.database.MetaData;
+import com.wolfie.eskey.util.crypto.Crypter;
+import com.wolfie.eskey.model.database.MetaData;
 
 /**
  * Created by david on 4/09/16.

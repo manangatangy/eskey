@@ -1,4 +1,4 @@
-package com.wolfie.eskey.adapter;
+package com.wolfie.eskey.view.adapter;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

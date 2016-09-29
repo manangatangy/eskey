@@ -13,7 +13,7 @@ import com.wolfie.eskey.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -85,13 +85,13 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
         private View mItemView;
         private Item mItem;
 
-        @Bind(R.id.navigation_item_text)
+        @BindView(R.id.navigation_item_text)
         TextView mTextView;
 
-        @Bind(R.id.navigation_item_top_separator)
+        @BindView(R.id.navigation_item_top_separator)
         View mTopSeparator;
 
-        @Bind(R.id.navigation_item_chevron)
+        @BindView(R.id.navigation_item_chevron)
         ImageView mChevron;
 
         public MenuItemViewHolder(View view) {

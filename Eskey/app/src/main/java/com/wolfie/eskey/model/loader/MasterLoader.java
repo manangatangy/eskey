@@ -1,11 +1,11 @@
-package com.wolfie.eskey.loader;
+package com.wolfie.eskey.model.loader;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.wolfie.eskey.crypto.Crypter;
-import com.wolfie.eskey.database.Source;
+import com.wolfie.eskey.util.crypto.Crypter;
+import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.MasterData;
 
 /**

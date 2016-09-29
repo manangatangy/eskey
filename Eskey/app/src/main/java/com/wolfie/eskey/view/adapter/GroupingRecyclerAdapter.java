@@ -1,4 +1,4 @@
-package com.wolfie.eskey.adapter;
+package com.wolfie.eskey.view.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.adapter.viewholder.BaseViewHolder;
-import com.wolfie.eskey.adapter.viewholder.HeadingViewHolder;
-import com.wolfie.eskey.adapter.viewholder.ItemViewHolder;
+import com.wolfie.eskey.view.adapter.viewholder.BaseViewHolder;
+import com.wolfie.eskey.view.adapter.viewholder.HeadingViewHolder;
+import com.wolfie.eskey.view.adapter.viewholder.ItemViewHolder;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
 

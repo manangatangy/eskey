@@ -1,4 +1,4 @@
-package com.wolfie.eskey.crypto;
+package com.wolfie.eskey.util.crypto;
 
 import android.support.annotation.Nullable;
 

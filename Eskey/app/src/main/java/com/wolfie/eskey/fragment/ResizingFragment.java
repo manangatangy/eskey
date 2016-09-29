@@ -11,14 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.util.KeyboardVisibilityObserver;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -45,19 +44,19 @@ import butterknife.OnClick;
 public class ResizingFragment extends Fragment {
 
     @Nullable
-    @Bind(R.id.resizing_background_view)
+    @BindView(R.id.resizing_background_view)
     View mResizingBackgroundView;               // This is GONE/VISIBLE
 
     @Nullable
-    @Bind(R.id.resizing_padding_view)
+    @BindView(R.id.resizing_padding_view)
     View mResizingPaddingView;                  // This has variable bottom padding
 
     @Nullable
-    @Bind(R.id.resizing_animating_view)
+    @BindView(R.id.resizing_animating_view)
     RelativeLayout mResizingAnimatingView;      // This animates open/close
 
     @Nullable
-    @Bind(R.id.resizing_holder_view)
+    @BindView(R.id.resizing_holder_view)
     ScrollView mResizingHolderView;             // This holds the content
 
     private KeyboardVisibilityObserver mKeyboardVisibilityObserver;

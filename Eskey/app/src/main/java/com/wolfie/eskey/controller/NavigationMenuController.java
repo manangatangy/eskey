@@ -4,21 +4,15 @@ import android.content.Context;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.adapter.GroupingRecyclerAdapter;
-import com.wolfie.eskey.model.Entry;
+import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
 import com.wolfie.eskey.util.DefaultLayoutManager;
 import com.wolfie.eskey.controller.NavMenuRecyclerAdapter.MenuItemViewHolder;
 import com.wolfie.eskey.controller.NavMenuRecyclerAdapter.OnNavMenuItemClickListener;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -27,7 +21,7 @@ import butterknife.ButterKnife;
 
 public class NavigationMenuController implements OnNavMenuItemClickListener {
 
-    @Bind(R.id.navigation_recycler_view)
+    @BindView(R.id.navigation_recycler_view)
     RecyclerView mNavRecyclerList;
 
     private NavMenuRecyclerAdapter mNavMenuRecyclerAdapter;
