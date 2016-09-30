@@ -51,7 +51,7 @@ public class NavigationMenuController implements OnNavMenuItemClickListener {
             public void run() {
                 MenuItemViewHolder viewHolder
                         = (MenuItemViewHolder)mNavRecyclerList.findViewHolderForAdapterPosition(0);
-                viewHolder.setSelected();       // WIll cause call to onNavMenuItemClick
+                viewHolder.setSelected(true);       // WIll cause call to onNavMenuItemClick
             }
         });
     }

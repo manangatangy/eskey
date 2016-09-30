@@ -11,8 +11,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.view.fragment.BaseFragment;
+import com.wolfie.eskey.view.fragment.ListFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * BaseActivity defaults to having no presenter, override this is yo need one.
+     */
     @Nullable
     public Presenter getPresenter() {
         return null;
@@ -80,6 +85,30 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         return ret;
+    }
+
+    public <T extends BaseFragment> T findFragment(Class<T> fragClass) {
+        List<BaseFragment> fragmentList = getActiveBaseFragments();
+        for (BaseFragment fragment : fragmentList) {
+            if (fragment != null) {
+                Class c = fragment.getClass();
+                if (c.equals(fragClass)) {
+                    // noinspection unchecked
+                    return (T)fragment;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Can be used for inter-presenter communication.
+     */
+    @Nullable
+    public <F extends BaseFragment, P extends Presenter> P findPresenter(Class<F> fragClass) {
+        F frag = findFragment(fragClass);
+        // noinspection unchecked
+        return (frag == null) ? null : (P)frag.getPresenter();
     }
 
     @Override

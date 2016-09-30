@@ -6,17 +6,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.view.activity.BaseActivity;
 import com.wolfie.eskey.view.activity.BaseActivity.KeyboardVisibility;
+import com.wolfie.eskey.view.activity.DrawerActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public abstract class BaseFragment extends Fragment implements BaseUi {
 
-    protected Activity mActivity;
+    protected BaseActivity mBaseActivity;
     protected Unbinder unbinder;
 
     @Override
@@ -34,7 +36,7 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
+        mBaseActivity = (BaseActivity)getActivity();
         if (getPresenter() != null) {
             getPresenter().onCreate(savedInstanceState);
         }
@@ -98,6 +100,25 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
     public abstract Presenter getPresenter();
 
     /**
+     * WIll return the Presenter corresponding to the specified fragment, or null if
+     * the fragment doesn't yet been created.  As an assistance, specifying null for
+     * the fragment class will return the MainPresenter for the DrawerActivity (or
+     * null if the activity is the wrong type).
+     */
+    @Nullable
+    @Override
+    public <F extends BaseFragment, P extends Presenter> P findPresenter(Class<F> fragClass) {
+        if (fragClass != null) {
+            return mBaseActivity.findPresenter(fragClass);
+        }
+        if (mBaseActivity instanceof DrawerActivity) {
+            // noinspection unchecked
+            return (P)((DrawerActivity)mBaseActivity).getPresenter();
+        }
+        return null;
+    }
+
+    /**
      * Should return true, to let the framework handle the back press.
      * If handled here, then return false.
      */
@@ -121,8 +142,8 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
 
     public KeyboardVisibility getKeyboardVisibility() {
         KeyboardVisibility visibility = KeyboardVisibility.UNKNOWN;
-        if (mActivity != null && mActivity instanceof BaseActivity) {
-            return ((BaseActivity) mActivity).getKeyboardVisibility();
+        if (mBaseActivity != null) {
+            return mBaseActivity.getKeyboardVisibility();
         }
         return visibility;
     }

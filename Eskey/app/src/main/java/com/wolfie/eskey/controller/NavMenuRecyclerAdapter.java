@@ -62,6 +62,16 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
 //        notifyListener(ALL_GROUPS, true);
     }
 
+    public int getAdapterPositionForItem(String group) {
+        for (int position = 0; position < mItemList.size(); position++) {
+            Item item = mItemList.get(position);
+            if (item.mText.equals(group)) {
+                return position;
+            }
+        }
+        return -1;      // Not found.
+    }
+
     @Override
     public MenuItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.navigation_menu_item, null);
@@ -108,7 +118,7 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
             mItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    setSelected();
+                    setSelected(true);
                 }
             });
         }
@@ -118,7 +128,7 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
          * The previously selected viewHolder and item is de-selected.
          * Use the reference to the item to indicate which is selected.
          */
-        public void setSelected() {
+        public void setSelected(boolean notify) {
             boolean hasChanged = (mSelectedItem != this.mItem);
 
             if (mSelectedViewHolder != null) {
@@ -132,7 +142,9 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
             mSelectedViewHolder.setSelectedChevronVisibility(true);
             mSelectedItem.mIsSelected = true;
 
-            notifyListener(mItem.mText, hasChanged);
+            if (notify) {
+                notifyListener(mItem.mText, hasChanged);
+            }
         }
 
         public void setSelectedChevronVisibility(boolean selected) {
