@@ -1,12 +1,10 @@
 package com.wolfie.eskey.view.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.view.activity.BaseActivity;
@@ -27,10 +25,20 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         // Normally the inject call would go here
     }
 
+    /**
+     * This method will bind the views, unless the Unbinder has already been used.
+     * This means that subclasses may perform their binding in their implementation
+     * of onCreateView, after they have inflated the view.  This could be necessary
+     * for subclasses that can't wait until onViewCreated to do the binding.
+     * Note that unbinding is still performed here (in onDestroyView) regardless
+     * of where the bind is called.
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        unbinder = ButterKnife.bind(this, view);
+        if (unbinder == null) {
+            unbinder = ButterKnife.bind(this, view);
+        }
     }
 
     @Override
@@ -100,8 +108,8 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
     public abstract Presenter getPresenter();
 
     /**
-     * WIll return the Presenter corresponding to the specified fragment, or null if
-     * the fragment doesn't yet been created.  As an assistance, specifying null for
+     * Will return the Presenter corresponding to the specified fragment, or null if
+     * the fragment hasn't yet been created.  As an assistance, specifying null for
      * the fragment class will return the MainPresenter for the DrawerActivity (or
      * null if the activity is the wrong type).
      */
@@ -141,18 +149,16 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
     }
 
     public KeyboardVisibility getKeyboardVisibility() {
-        KeyboardVisibility visibility = KeyboardVisibility.UNKNOWN;
-        if (mBaseActivity != null) {
-            return mBaseActivity.getKeyboardVisibility();
-        }
-        return visibility;
+        return (mBaseActivity != null) ? mBaseActivity.getKeyboardVisibility() : KeyboardVisibility.UNKNOWN;
     }
 
     /**
      * A listener for keyboard visibility change events.
      */
-    public boolean onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility) {
-        return getPresenter() != null && getPresenter().onKeyboardVisibilityChanged(keyboardVisibility);
+    public void onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility) {
+        if (getPresenter() != null) {
+            getPresenter().onKeyboardVisibilityChanged(keyboardVisibility);
+        }
     }
 
 }

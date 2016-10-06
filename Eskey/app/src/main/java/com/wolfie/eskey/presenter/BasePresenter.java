@@ -34,8 +34,7 @@ public abstract class BasePresenter<T extends BaseUi> implements Presenter {
     }
 
     @Override
-    public boolean onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility) {
-        return false;
+    public void onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility) {
     }
 
     /**

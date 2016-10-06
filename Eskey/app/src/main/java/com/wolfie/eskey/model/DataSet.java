@@ -1,5 +1,6 @@
 package com.wolfie.eskey.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class DataSet {
 
-    private List<Entry> mEntries;
+    private List<Entry> mEntries = new ArrayList<>();
 
     public List<Entry> getEntries() {
         return mEntries;

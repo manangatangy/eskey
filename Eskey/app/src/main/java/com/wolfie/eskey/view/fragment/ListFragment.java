@@ -8,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
 import com.wolfie.eskey.presenter.ListPresenter;
-import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.util.DefaultLayoutManager;
 import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
 import com.wolfie.eskey.view.adapter.ScrollListeningRecyclerView;
@@ -54,7 +52,7 @@ public class ListFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sample, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
@@ -102,9 +100,7 @@ public class ListFragment extends BaseFragment implements
 
     @Override
     public void onListItemClick(Entry selectedEntry) {
-//        popupItemDetail(selectedEntry);
+        mListPresenter.onListItemClick(selectedEntry);
     }
-
-
 
 }

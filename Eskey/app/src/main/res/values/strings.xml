@@ -5,4 +5,15 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="st001">First time Eskey login</string>
+    <string name="st002">Eskey login</string>
+    <string name="st003">Please define a new master password</string>
+    <string name="st004">Please enter your master password</string>
+    <string name="st005">Session has timed out</string>
+    <string name="st006">Wrong password</string>
+    <string name="st007">Password and confirm-password don\'t match</string>
+    <string name="st008">Password write failed</string>
+    <string name="st009">Initialisation succeeded, you may now login\nPlease enter your master password</string>
+
 </resources>

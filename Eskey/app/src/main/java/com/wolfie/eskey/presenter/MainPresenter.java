@@ -4,33 +4,66 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.wolfie.eskey.model.database.Helper;
-import com.wolfie.eskey.model.database.Source;
+import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.EntryLoader;
+import com.wolfie.eskey.model.loader.MasterLoader;
+import com.wolfie.eskey.util.TimeoutMonitor;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
 
+/**
+ * The MainPresenter doesn't use a gui, so the BaseUi parameter to the ctor can be null.
+ * It extends BasePresenter simply so that it can be returned by BaseFragment.findPresenter.
+ */
 public class MainPresenter extends BasePresenter<BaseUi> {
 
+    private Crypter mCrypter;
     private Helper mHelper;
     private SQLiteDatabase mDatabase;
-    private Source mSource;
-    private Crypter mCrypter;
+
+    private TimeoutMonitor mTimeoutMonitor;
+    private TimingOutSource mTimingOutSource;
+
+    private MasterLoader mMasterLoader;
     private EntryLoader mEntryLoader;
 
-    // This presenter needs no ui (all the ui is performed by the frags)
-    public MainPresenter(BaseUi baseUi) {
+    // This presenter needs no ui (all the ui is performed by the other frags)
+    public MainPresenter(BaseUi baseUi, Context context) {
         super(baseUi);
-    }
 
-    public void init(Context context) {
+        mCrypter = new Crypter();
         mHelper = new Helper(context);
         mDatabase = mHelper.getWritableDatabase();
-        mSource = new Source(mDatabase);
-        mCrypter = new Crypter();
-        mEntryLoader = new EntryLoader(context, mSource, mCrypter);
+
+        mTimeoutMonitor = new TimeoutMonitor();
+        mTimingOutSource = new TimingOutSource(mDatabase, mTimeoutMonitor);
+        mTimingOutSource.setAllowEntryAccess(false);        // Disallow entry reading until logged in.
+//        mTimeoutMonitor.setUserInactivityTimeoutListener(this);
+//        mTimeoutMonitor.setDetection(true);
+
+        mMasterLoader = new MasterLoader(mTimingOutSource, mCrypter);
+        mEntryLoader = new EntryLoader(context, mTimingOutSource, mCrypter);
+    }
+
+    public void onUserInteraction() {
+        mTimeoutMonitor.onUserInteraction();
+    }
+
+    public TimeoutMonitor getTimeoutMonitor() {
+        return mTimeoutMonitor;
+    }
+
+    public void setSourceAllowEntryAccess(boolean allowEntryAccess) {
+        mTimingOutSource.setAllowEntryAccess(allowEntryAccess);
+    }
+
+    public MasterLoader getMasterLoader() {
+        return mMasterLoader;
     }
 
     public EntryLoader getEntryLoader() {
         return mEntryLoader;
     }
+
+
 }

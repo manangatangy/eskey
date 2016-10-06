@@ -5,17 +5,16 @@ import android.support.annotation.LayoutRes;
 import android.support.v4.widget.DrawerLayout;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.presenter.BasePresenter;
-import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.presenter.MainPresenter;
-import com.wolfie.eskey.presenter.Presenter;
-import com.wolfie.eskey.view.fragment.BaseFragment;
+import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
+import com.wolfie.eskey.view.fragment.LoginFragment;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
-public class DrawerActivity extends SimpleActivity  {
+public class DrawerActivity extends SimpleActivity {
 
     @BindView(R.id.layout_activity_drawer)
     public DrawerLayout mDrawer;
@@ -30,17 +29,36 @@ public class DrawerActivity extends SimpleActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setBackgroundImage(R.drawable.st_basils_cathedral_1);
 
-        mMainPresenter = new MainPresenter(null);
-        mMainPresenter.init(getApplicationContext());
-
-        // Create the drawer fragment into it's container.
-        setupFragment(DrawerFragment.class.getName(), R.id.fragment_container_activity_drawer, null);
+        mMainPresenter = new MainPresenter(null, getApplicationContext());
 
         // Create the main content fragment into it's container.
         setupFragment(ListFragment.class.getName(), R.id.fragment_container_activity_simple, null);
 
+        // Create the drawer fragment into it's container.
+        setupFragment(DrawerFragment.class.getName(), R.id.fragment_container_activity_drawer, null);
+
+        // Create the entry edit fragment into it's container.
+        setupFragment(EditFragment.class.getName(), R.id.fragment_container_edit, null);
+
+        // Create the login fragment into it's container.
+        setupFragment(LoginFragment.class.getName(), R.id.fragment_container_login, null);
+
     }
+
+    //http://stackoverflow.com/a/12481918
+
+    @OnClick(R.id.fab)
+    public void onNewEntry() {
+
+    }
+
+    @Override
+    public void onUserInteraction() {
+        mMainPresenter.onUserInteraction();
+    }
+
 
     @Override
     @LayoutRes
@@ -52,4 +70,15 @@ public class DrawerActivity extends SimpleActivity  {
         return R.layout.activity_drawer;
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        resetDisconnectTimer();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        stopDisconnectTimer();
+//    }
 }

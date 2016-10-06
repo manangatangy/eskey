@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,9 +26,11 @@ import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DrawerFragment extends BaseFragment implements
         DrawerUi,
+        DrawerLayout.DrawerListener,
         NavMenuRecyclerAdapter.OnNavMenuItemClickListener {
 
     @BindView(R.id.navigation_text_view)
@@ -37,6 +40,7 @@ public class DrawerFragment extends BaseFragment implements
     RecyclerView mRecyclerView;
 
     private DrawerPresenter mDrawerPresenter;
+    private ActionBarDrawerToggle mToggle;
 
     @Nullable
     @Override
@@ -67,13 +71,13 @@ public class DrawerFragment extends BaseFragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getDrawerActivity().setSupportActionBar(getDrawerActivity().mToolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        mToggle = new ActionBarDrawerToggle(
                 getDrawerActivity(),
                 getDrawerActivity().mDrawer,
                 getDrawerActivity().mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        getDrawerActivity().mDrawer.setDrawerListener(toggle);
-        toggle.syncState();
+        mToggle.syncState();
+        getDrawerActivity().mDrawer.setDrawerListener(this);
     }
 
     @Override
@@ -123,11 +127,42 @@ public class DrawerFragment extends BaseFragment implements
 
     @Override
     public void closeDrawer() {
-        getDrawerActivity().mDrawer.closeDrawer(Gravity.LEFT);
+        if (isDrawerOpen()) {
+            getDrawerActivity().mDrawer.closeDrawer(Gravity.LEFT);
+        }
+    }
+
+    @Override
+    public void openDrawer() {
+        if (!isDrawerOpen()) {
+            getDrawerActivity().mDrawer.openDrawer(Gravity.LEFT);
+        }
     }
 
     private DrawerActivity getDrawerActivity() {
         return (DrawerActivity)mBaseActivity;
     }
 
+    // DrawerLayout.DrawerListener methods
+    // We override these because we need to support presenter.onDrawerOpened
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        mToggle.onDrawerOpened(drawerView);
+        mDrawerPresenter.onDrawerOpened();
+    }
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+        mToggle.onDrawerSlide(drawerView, slideOffset);
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+        mToggle.onDrawerClosed(drawerView);
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+        mToggle.onDrawerStateChanged(newState);
+    }
 }

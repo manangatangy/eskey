@@ -8,7 +8,7 @@ import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
-
+import com.wolfie.eskey.model.loader.AsyncListeningTask.Listener;
 import java.util.List;
 
 /**
@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class EntryLoader {
-    private Context mContext;
+    private Context mContext;           // TODO deprecate
     private Source mDataSource;
     private Crypter mCrypter;
 
@@ -30,16 +30,31 @@ public class EntryLoader {
         new ReadTask(listener).execute();
     }
 
+    public void insert(Entry entry, @Nullable Listener<Boolean> listener) {
+        new InsertTask(listener).execute(entry);
+    }
+
+    public void update(Entry entry, @Nullable Listener<Boolean> listener) {
+        new UpdateTask(listener).execute(entry);
+    }
+
+    public void delete(Entry entry, @Nullable Listener<Boolean> listener) {
+        new DeleteTask(listener).execute(entry);
+    }
+
+    // TODO deprecate
     public void insert(Entry entry) {
         ToastListener toastListener = new ToastListener("insert " + entry.getEntryName());
         new InsertTask(toastListener).execute(entry);
     }
 
+    // TODO deprecate
     public void update(Entry entry) {
         ToastListener toastListener = new ToastListener("modify " + entry.getEntryName());
         new UpdateTask(toastListener).execute(entry);
     }
 
+    // TODO deprecate
     public void delete(Entry entry) {
         ToastListener toastListener = new ToastListener("delete " + entry.getEntryName());
         new DeleteTask(toastListener).execute(entry);
@@ -49,20 +64,23 @@ public class EntryLoader {
      * Insert a new Entry ino the database. On completion a toast shows the
      * success or failure.  If successful, then a ReadTask is started for the
      * listener.
+     * TODO deprecate
      */
-    public void insert(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+    public void insertAndRead(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
         ToastListenerReader toastListenerReader
                 = new ToastListenerReader("insert " + entry.getEntryName(), listener);
         new InsertTask(toastListenerReader).execute(entry);
     }
 
-    public void update(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+    // TODO deprecate
+    public void updateAndRead(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
         ToastListenerReader toastListenerReader
                 = new ToastListenerReader("modify " + entry.getEntryName(), listener);
         new UpdateTask(toastListenerReader).execute(entry);
     }
 
-    public void delete(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
+    // TODO deprecate
+    public void deleteAndRead(Entry entry, AsyncListeningTask.Listener<DataSet> listener) {
         ToastListenerReader toastListenerReader
                 = new ToastListenerReader("delete " + entry.getEntryName(), listener);
         new DeleteTask(toastListenerReader).execute(entry);
@@ -116,6 +134,7 @@ public class EntryLoader {
         }
     }
 
+    // TODO deprecate
     private class ToastListener implements AsyncListeningTask.Listener<Boolean> {
         private String mPrefix;
         public ToastListener(String prefix) {
@@ -132,6 +151,7 @@ public class EntryLoader {
      * After the ToastListener completes, this class starts a ReadTask for the dataset
      * listener.
      */
+    // TODO deprecate
     private class ToastListenerReader extends ToastListener {
         private AsyncListeningTask.Listener<DataSet> mDataSetReadListener;
         public ToastListenerReader(String prefix,

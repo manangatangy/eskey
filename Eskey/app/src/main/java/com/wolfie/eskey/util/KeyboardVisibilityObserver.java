@@ -47,10 +47,11 @@ public class KeyboardVisibilityObserver implements ViewTreeObserver.OnGlobalLayo
 
         @KeyboardState int newState = isKeyboardShown ? KeyboardState.SHOWING : KeyboardState.HIDDEN;
 
-//        Log.d(TAG, "isKeyboardShown: " + newState + ", (was: " + mCurrentState +
-//                "), heightDiff:" + heightDiff + ", density:" + dm.density +
-//                ", root view height:" + rootView.getHeight() + ", visibleRect:" + visibleRect +
-//                ", toolbarHeight=" + toolBarHeight);
+        Log.d(TAG, "isKeyboardShown: " + newState + ", (was: " + mCurrentState +
+                "), heightDiff:" + heightDiff + ", density:" + dm.density +
+                ", visibleRect:" + visibleRect +
+                ", toolbarHeight=" + toolBarHeight);
+        Log.d(TAG, "root view height:" + rootView.getHeight() + ", top=" + rootView.getTop() + ", bottom=" + rootView.getBottom() );
         if (mCurrentState != newState) {
             mCurrentState = newState;
             if (mListener != null) {

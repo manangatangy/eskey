@@ -22,6 +22,10 @@ public class Entry {
         mContent = content;
     }
 
+    public boolean isNew() {
+        return mId == -1;
+    }
+
     public static Entry create(String entryName, String groupName, String content) {
         Entry entry = new Entry(-1, entryName, groupName, content);
         return entry;

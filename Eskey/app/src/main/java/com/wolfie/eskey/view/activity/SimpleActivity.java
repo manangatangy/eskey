@@ -1,15 +1,21 @@
 package com.wolfie.eskey.view.activity;
 
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.util.BitmapWorkerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +29,12 @@ public abstract class SimpleActivity extends BaseActivity {
     // Needed public by child frags
     @BindView(R.id.toolbar)
     public Toolbar mToolbar;
+
+    @BindView(R.id.background_image)
+    ImageView mBackgroundImageView;
+
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
 
     protected Unbinder unbinder;
 
@@ -41,6 +53,15 @@ public abstract class SimpleActivity extends BaseActivity {
     @Override
     public View getActivityRootView() {
         return mActivityRootView;
+    }
+
+    public void setBackgroundImage(@DrawableRes int resourceId) {
+        // adapt the image to the size of the display
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(mBackgroundImageView,
+                getResources(), resourceId, size.x, size.y);
     }
 
     /**

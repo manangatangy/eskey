@@ -254,15 +254,15 @@ public class EntryListActivity
             @Override
             public void onSave(Entry entry, boolean isCreate) {
                 if (isCreate) {
-                    mEntryLoader.insert(entry, mDataSetReadListener);
+                    mEntryLoader.insertAndRead(entry, mDataSetReadListener);
                 } else {
-                    mEntryLoader.update(entry, mDataSetReadListener);
+                    mEntryLoader.insertAndRead(entry, mDataSetReadListener);
                 }
                 itemDetailFragment.hide();
             }
             @Override
             public void onDelete(Entry entry) {
-                mEntryLoader.delete(entry, mDataSetReadListener);
+                mEntryLoader.insertAndRead(entry, mDataSetReadListener);
                 itemDetailFragment.hide();
             }
         });

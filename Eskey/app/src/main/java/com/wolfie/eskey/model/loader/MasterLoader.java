@@ -3,59 +3,57 @@ package com.wolfie.eskey.model.loader;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.wolfie.eskey.model.DataSet;
+import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.MasterData;
 
-/**
- * Created by david on 5/09/16.
- */
+import java.util.List;
 
 public class MasterLoader {
 
     private Source mDataSource;
     private Crypter mCrypter;
-    private Listener mListener;
 
-    public interface Listener {
-        void onRetrieve(MasterData masterData);
-    }
-
-    public MasterLoader(Context context, Source dataSource, Crypter crypter) {
+    public MasterLoader(Source dataSource, Crypter crypter) {
         mDataSource = dataSource;
         mCrypter = crypter;
     }
 
-    public void store(MasterData masterData) {
-        new StoreTask().execute(masterData);
+    public void read(AsyncListeningTask.Listener<MasterData> listener) {
+        new MasterLoader.ReadTask(listener).execute();
     }
 
-    public void retrieve(@NonNull Listener listener) {
-        mListener = listener;
-        new RetrieveTask().execute();
+    /**
+     * store == delete then insert
+     */
+    public void store(MasterData masterData, @Nullable AsyncListeningTask.Listener<Boolean> listener) {
+        new MasterLoader.StoreTask(listener).execute(masterData);
     }
 
-    private class StoreTask extends AsyncTask<MasterData, Void, Boolean> {
-        @Override
-        protected Boolean doInBackground(MasterData... params) {
-            MasterData masterData = params[0];
-            return mDataSource.storeMaster(masterData);
-        }
-        @Override
-        protected void onPostExecute(Boolean success) {
+    private class ReadTask extends AsyncListeningTask<Void, MasterData> {
+        public ReadTask(@Nullable Listener<MasterData> listener) {
+            super(listener);
         }
 
-    }
-
-    private class RetrieveTask extends AsyncTask<Void, Void, MasterData> {
         @Override
-        protected MasterData doInBackground(Void... params) {
+        public MasterData runInBackground(Void v) {
             return mDataSource.readMaster();
         }
+    }
+
+    private class StoreTask extends AsyncListeningTask<MasterData, Boolean> {
+        public StoreTask(@Nullable Listener<Boolean> listener) {
+            super(listener);
+        }
+
         @Override
-        protected void onPostExecute(MasterData masterData) {
-            mListener.onRetrieve(masterData);
+        public Boolean runInBackground(MasterData masterData) {
+            return mDataSource.storeMaster(masterData);
         }
     }
+
 }

@@ -11,10 +11,8 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.view.fragment.BaseFragment;
-import com.wolfie.eskey.view.fragment.ListFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -128,11 +126,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private void addKeyboardVisibilityListener() {
+        final View activityRootView = getActivityRootView();
+        if (activityRootView != null) {
+            activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        }
+    }
+
+    private void removeKeyboardVisibilityListener() {
+        final View activityRootView = getActivityRootView();
+        if (activityRootView != null) {
+            activityRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        }
+    }
+
     @NonNull
-    private KeyboardVisibility mKeyboardVisibility = KeyboardVisibility.GONE;
+    private KeyboardVisibility mKeyboardVisibility = KeyboardVisibility.UNKNOWN;
 
     public enum KeyboardVisibility {
-        VISIBLE, GONE, UNKNOWN
+        UNKNOWN, HIDDEN, SHOWING
     }
 
     final ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -163,26 +175,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (getWindowHeight() > 0 && getActivityRootViewHeight() > 0) {
             // if root view takes less space than the allowed by the window - most likely keyboard is displayed
             if (getWindowHeight() - getActivityRootViewHeight() >= getApproxKeyboardViewHeight()) {
-                visibility = KeyboardVisibility.VISIBLE;
+                visibility = KeyboardVisibility.SHOWING;
             } else {
-                visibility = KeyboardVisibility.GONE;
+                visibility = KeyboardVisibility.HIDDEN;
             }
         }
         return visibility;
-    }
-
-    private void addKeyboardVisibilityListener() {
-        final View activityRootView = getActivityRootView();
-        if (activityRootView != null) {
-            activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
-        }
-    }
-
-    private void removeKeyboardVisibilityListener() {
-        final View activityRootView = getActivityRootView();
-        if (activityRootView != null) {
-            activityRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
-        }
     }
 
     int getActivityRootViewHeight() {

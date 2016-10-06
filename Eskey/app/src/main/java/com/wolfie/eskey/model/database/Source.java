@@ -1,6 +1,7 @@
 package com.wolfie.eskey.model.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -18,11 +19,26 @@ import java.util.List;
 
 public class Source {
 
+//    private Helper mHelper;
     private SQLiteDatabase mDatabase;
+    private boolean mAllowEntryAccess;
 
     public Source(SQLiteDatabase database) {
         mDatabase = database;
     }
+
+    /**
+     * Enables read/write of Entry objects.
+     * The MasterData-related access is not prevented because access to the MasterData
+     * is needed prior to login, in order to authenticate the login.
+     */
+    public void setAllowEntryAccess(boolean allowEntryAccess) {
+        mAllowEntryAccess = allowEntryAccess;
+    }
+//    public Source(Context context) {
+//        mHelper = new Helper(context);
+//        mDatabase = mHelper.getWritableDatabase();
+//    }
 
     /**
      * @return null if there was an error
@@ -50,36 +66,40 @@ public class Source {
     }
 
     public boolean insert(Entry entry) {
-        long result = mDatabase.insert(MetaData.ENTRIES_TABLE, null, makeContentValues(entry));
+        long result = mAllowEntryAccess
+                ? mDatabase.insert(MetaData.ENTRIES_TABLE, null, makeContentValues(entry))
+                : -1;
         return result != -1;
     }
 
     public boolean update(Entry entry) {
-        int result = mDatabase.update(MetaData.ENTRIES_TABLE, makeContentValues(entry),
-                MetaData.ENTRIES_ID + "=" + entry.getId(), null);
+        int result = mAllowEntryAccess
+                ? mDatabase.update(MetaData.ENTRIES_TABLE, makeContentValues(entry),
+                    MetaData.ENTRIES_ID + "=" + entry.getId(), null)
+                : -1;
         return result != 0;
     }
 
     public boolean delete(Entry entry) {
-        int result = mDatabase.delete(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ID + "=" + entry.getId(), null);
+        int result = mAllowEntryAccess
+                ? mDatabase.delete(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ID + "=" + entry.getId(), null)
+                : -1;
         return result != 0;
     }
 
     public @NonNull DataSet read() {
-        Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
-                null, null, null, MetaData.QUERY_ORDER);
         List<Entry> entries = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-//                int id = cursor.getInt(cursor.getColumnIndex(MetaData.ENTRIES_ID));
-//                String groupName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_GROUP));
-//                String entryName = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_ENTRY));
-//                String content = cursor.getString(cursor.getColumnIndex(MetaData.ENTRIES_CONTENT));
-                Entry entry = Entry.from(cursor);
-                entries.add(entry);
-                cursor.moveToNext();
+        if (mAllowEntryAccess) {
+            Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
+                    null, null, null, MetaData.QUERY_ORDER);
+            if (cursor != null && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    Entry entry = Entry.from(cursor);
+                    entries.add(entry);
+                    cursor.moveToNext();
+                }
+                cursor.close();
             }
-            cursor.close();
         }
         DataSet dataSet = new DataSet();
         dataSet.setEntries(entries);

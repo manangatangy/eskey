@@ -33,6 +33,6 @@ public interface Presenter {
      */
     boolean homeAsUpPressed();
 
-    boolean onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility);
+    void onKeyboardVisibilityChanged(KeyboardVisibility keyboardVisibility);
 
 }
