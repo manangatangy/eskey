@@ -57,8 +57,11 @@ public class TimeoutMonitor implements Runnable {
         stopInactivityTimer();
     }
 
+    /**
+     * Can still return true, even if stopTimer was called.
+     */
     public boolean isTimedOut() {
-        boolean timedOut =  mDetectionEnabled && (System.currentTimeMillis() - mStartTime >= DISCONNECT_TIMEOUT);
+        boolean timedOut =  (System.currentTimeMillis() - mStartTime >= DISCONNECT_TIMEOUT);
         Log.d("TimeoutMonitor", "isTimedOut called, returned " + timedOut);
         return timedOut;
     }

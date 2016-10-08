@@ -21,28 +21,10 @@ public class Source {
 
 //    private Helper mHelper;
     private SQLiteDatabase mDatabase;
-    private boolean mAllowEntryAccess;
 
     public Source(SQLiteDatabase database) {
         mDatabase = database;
     }
-
-    /**
-     * Enables read/write of Entry objects.
-     * The MasterData-related access is not prevented because access to the MasterData
-     * is needed prior to login, in order to authenticate the login.
-     */
-    public void setAllowEntryAccess(boolean allowEntryAccess) {
-        mAllowEntryAccess = allowEntryAccess;
-    }
-    public boolean getAllowEntryAccess() {
-        return mAllowEntryAccess;
-    }
-
-//    public Source(Context context) {
-//        mHelper = new Helper(context);
-//        mDatabase = mHelper.getWritableDatabase();
-//    }
 
     /**
      * @return null if there was an error
@@ -70,40 +52,32 @@ public class Source {
     }
 
     public boolean insert(Entry entry) {
-        long result = mAllowEntryAccess
-                ? mDatabase.insert(MetaData.ENTRIES_TABLE, null, makeContentValues(entry))
-                : -1;
+        long result = mDatabase.insert(MetaData.ENTRIES_TABLE, null, makeContentValues(entry));
         return result != -1;
     }
 
     public boolean update(Entry entry) {
-        int result = mAllowEntryAccess
-                ? mDatabase.update(MetaData.ENTRIES_TABLE, makeContentValues(entry),
-                    MetaData.ENTRIES_ID + "=" + entry.getId(), null)
-                : -1;
+        int result = mDatabase.update(MetaData.ENTRIES_TABLE, makeContentValues(entry),
+                    MetaData.ENTRIES_ID + "=" + entry.getId(), null);
         return result != 0;
     }
 
     public boolean delete(Entry entry) {
-        int result = mAllowEntryAccess
-                ? mDatabase.delete(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ID + "=" + entry.getId(), null)
-                : -1;
+        int result =  mDatabase.delete(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ID + "=" + entry.getId(), null);
         return result != 0;
     }
 
     public @NonNull DataSet read() {
         List<Entry> entries = new ArrayList<>();
-        if (mAllowEntryAccess) {
-            Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
-                    null, null, null, MetaData.QUERY_ORDER);
-            if (cursor != null && cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    Entry entry = Entry.from(cursor);
-                    entries.add(entry);
-                    cursor.moveToNext();
-                }
-                cursor.close();
+        Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
+                null, null, null, MetaData.QUERY_ORDER);
+        if (cursor != null && cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                Entry entry = Entry.from(cursor);
+                entries.add(entry);
+                cursor.moveToNext();
             }
+            cursor.close();
         }
         DataSet dataSet = new DataSet();
         dataSet.setEntries(entries);

@@ -64,10 +64,14 @@ public class ListFragment extends BaseFragment implements
 
     @Override
     public void refreshListWithDataSet(List<EntryGroup> groups) {
-        getAdapter().setGroups(groups);
-        // Briefly hide the sticky heading since its text won't be correctly
-        // set until a scroll event occurs.
-        mRecyclerView.scrollToPosition(0);
+        if (groups == null) {
+            getAdapter().clearItems();
+        } else {
+            getAdapter().setGroups(groups);
+            // Briefly hide the sticky heading since its text won't be correctly
+            // set until a scroll event occurs.
+            mRecyclerView.scrollToPosition(0);
+        }
     }
 
     private GroupingRecyclerAdapter getAdapter() {

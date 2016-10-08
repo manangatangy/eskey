@@ -99,8 +99,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         super.pause();
         mIsShowing = getUi().isShowing();
         Log.d("LoginPresenter", "pause, mIsShowing is " + mIsShowing);
-        // Leave entry access in current state so that listPresenter can reload upon resume()
-        unregisterTimeoutListenerAndStopTimer(false);
+        unregisterTimeoutListenerAndStopTimer();
     }
 
     @Override
@@ -122,14 +121,19 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         mState = State.valueOf(savedState.getString(KEY_LOGIN_STATE));
     }
 
+    /**
+     * Used by other presenters (eg during resume()) to check if data can be displayed.
+     * Note that LoginPresenter.mState has its value restored by onRestoreState, before
+     * any presenter's resume()s are called.
+     */
+    public boolean isLoggedIn() {
+        return (mState == State.LOGGED_IN);
+    }
+
     @Override
     public void onUserInactivityTimeout() {
-        // This can only occur when the presenter is resumed, since pause disables
-        // timer, therefore the other frags must be hidden/cleared explicitly.
-
-        // Must stop timer so that MasterLoader is not blocked by TimingOutSource
-        // This will also force disallow access to the Entries for listPresenter.
-        unregisterTimeoutListenerAndStopTimer(true);
+        // Note that MasterLoader won't be blocked by TimingOutSource
+        unregisterTimeoutListenerAndStopTimer();
 
         DrawerPresenter drawerPresenter = getUi().findPresenter(DrawerFragment.class);
         drawerPresenter.closeDrawer();
@@ -180,7 +184,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         mState = State.UNKNOWN;
         mMasterData = null;
 
-        // Make the load master data call, callback to onLoadFinished()
+        // Make the load master data call,
         MainPresenter mainPresenter = getUi().findPresenter(null);
         mainPresenter.getMasterLoader().read(new AsyncListeningTask.Listener<MasterData>() {
             @Override
@@ -202,16 +206,17 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         MainPresenter mainPresenter = getUi().findPresenter(null);
         mainPresenter.getTimeoutMonitor().setUserInactivityTimeoutListener(this);
         mainPresenter.getTimeoutMonitor().markTimeAndStart();
-        mainPresenter.setSourceAllowEntryAccess(true);
     }
 
-    private void unregisterTimeoutListenerAndStopTimer(boolean forceDisAllowEntryAccess) {
+    /**
+     * Note that after this call, and before the call to registerTimeoutListenerAndStartTimer,
+     * call to isTimedOut() can still return true/false.  This allows the listPresenter to
+     * populate itself upon resume.
+     */
+    private void unregisterTimeoutListenerAndStopTimer() {
         MainPresenter mainPresenter = getUi().findPresenter(null);
         mainPresenter.getTimeoutMonitor().setUserInactivityTimeoutListener(null);
         mainPresenter.getTimeoutMonitor().stopTimer();
-        if (forceDisAllowEntryAccess) {
-            mainPresenter.setSourceAllowEntryAccess(false);
-        }
     }
 
     public void onClickLogin(String password) {

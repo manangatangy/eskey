@@ -16,17 +16,13 @@ public class TimingOutSource extends Source {
 
     private TimeoutMonitor mTimeoutMonitor;
 
+    /**
+     * This inhibits access to just the Entry records, if timedOut (which is not
+     * dependent on the stopTimer call.
+     */
     public TimingOutSource(SQLiteDatabase database, TimeoutMonitor timeoutMonitor) {
         super(database);
         mTimeoutMonitor = timeoutMonitor;
-    }
-
-    public MasterData readMaster() {
-        return mTimeoutMonitor.isTimedOut() ? null : super.readMaster();
-    }
-
-    public boolean storeMaster(MasterData masterData) {
-        return mTimeoutMonitor.isTimedOut() ? false : super.storeMaster(masterData);
     }
 
     public boolean insert(Entry entry) {

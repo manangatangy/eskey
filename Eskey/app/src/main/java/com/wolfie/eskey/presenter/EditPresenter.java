@@ -43,6 +43,7 @@ public class EditPresenter extends BasePresenter<EditUi> implements
     public void pause() {
         super.pause();
         mIsShowing = getUi().isShowing();
+        getUi().dismissKeyboard(false);
     }
 
     @Override

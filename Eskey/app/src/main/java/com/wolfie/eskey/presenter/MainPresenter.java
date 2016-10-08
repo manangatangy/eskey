@@ -37,7 +37,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
         mTimeoutMonitor = new TimeoutMonitor();
         mTimingOutSource = new TimingOutSource(mDatabase, mTimeoutMonitor);
-        mTimingOutSource.setAllowEntryAccess(false);        // Disallow entry reading until logged in.
 //        mTimeoutMonitor.setUserInactivityTimeoutListener(this);
 //        mTimeoutMonitor.setDetection(true);
 
@@ -51,14 +50,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
     public TimeoutMonitor getTimeoutMonitor() {
         return mTimeoutMonitor;
-    }
-
-    public void setSourceAllowEntryAccess(boolean allowEntryAccess) {
-        mTimingOutSource.setAllowEntryAccess(allowEntryAccess);
-    }
-
-    public boolean getSourceAllowEntryAccess() {
-        return mTimingOutSource.getAllowEntryAccess();
     }
 
     public MasterLoader getMasterLoader() {

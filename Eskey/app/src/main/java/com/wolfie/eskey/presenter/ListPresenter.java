@@ -10,6 +10,7 @@ import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.presenter.ListPresenter.ListUi;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.view.fragment.EditFragment;
+import com.wolfie.eskey.view.fragment.LoginFragment;
 
 import java.util.List;
 
@@ -35,10 +36,7 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     @Override
     public void resume() {
         super.resume();
-        MainPresenter mainPresenter = getUi().findPresenter(null);
-        if (mainPresenter != null && !mainPresenter.getTimeoutMonitor().isTimedOut()) {
-            loadEntries();
-        }
+        loadEntries();
     }
 
     @Override
@@ -56,9 +54,27 @@ public class ListPresenter extends BasePresenter<ListUi> implements
         mGroupName = savedState.getString(KEY_LIST_GROUPNAME);
     }
 
+    /**
+     * This will clear the list view if TimeoutMonitor.isTimeout() or if
+     * not loginPresenter.isLoggedIn().  The former test is needed to handle when
+     * resume()ing from a pause.  The latter test is needed when first starting
+     * up, and no timeout has yet occurred.
+     */
     public void loadEntries() {
+        boolean clearTheList = true;
         MainPresenter mainPresenter = getUi().findPresenter(null);
-        mainPresenter.getEntryLoader().read(this);
+        if (mainPresenter != null && !mainPresenter.getTimeoutMonitor().isTimedOut()) {
+            // Disallow entry reading until logged in.
+            LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
+            if (loginPresenter.isLoggedIn()) {
+                mainPresenter.getEntryLoader().read(this);
+                clearTheList = false;
+            }
+        }
+        if (clearTheList) {
+            getUi().refreshListWithDataSet(null);
+        }
+
     }
 
     /**
