@@ -2,7 +2,9 @@ package com.wolfie.eskey.presenter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 
+import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.view.BaseUi;
@@ -46,7 +48,7 @@ public class EditPresenter extends BasePresenter<EditUi> implements
     @Override
     public void onSaveState(Bundle outState) {
         outState.putBoolean(KEY_EDIT_ACTION_SHEET_SHOWING, mIsShowing);
-        // TODO save/restore Entry
+        // TODO save/restore Entry being editted
     }
 
     @Override
@@ -69,15 +71,16 @@ public class EditPresenter extends BasePresenter<EditUi> implements
     public void onShow() {
         getUi().enableDeleteButton(!mEntry.isNew());
         getUi().setTitleText(mEntry.isNew() ? "Create Entry" : "Modify Entry");
+        getUi().clearErrorMessage();
+        getUi().clearDescription();
         getUi().setTextValues(mEntry);
     }
 
     public void onClickSave() {
         mEntry = getUi().getTextValues(mEntry);
-        getUi().dismissKeyboardAndClose();
+        getUi().dismissKeyboard(true);
 
         MainPresenter mainPresenter = getUi().findPresenter(null);
-        // TODO check for loader availability (maybe locked out)
         if (mEntry.isNew()) {
             mainPresenter.getEntryLoader().insert(mEntry, this);
         } else {
@@ -92,16 +95,37 @@ public class EditPresenter extends BasePresenter<EditUi> implements
 
     public void onClickDelete() {
         mEntry = getUi().getTextValues(mEntry);
-        getUi().dismissKeyboardAndClose();
+        getUi().dismissKeyboard(true);
 
         MainPresenter mainPresenter = getUi().findPresenter(null);
-        // TODO check for loader availability (maybe locked out)
         mainPresenter.getEntryLoader().delete(mEntry, this);
     }
 
-    public void onClickClose() {
-        // TODO - check for changes and alert before closing, losing changes
-        getUi().dismissKeyboardAndClose();
+    public void onClickCancel() {
+        getUi().dismissKeyboard(true);
+        if (!showErrorIfModified()) {
+            getUi().hide();
+        }
+    }
+
+    @Override
+    public boolean backPressed() {
+        if (!getUi().isShowing() || getUi().isKeyboardVisible()) {
+            return true;        // Means: not consumed here
+        }
+        // Check if fields have been modified and show error message if so, else close.
+        if (!showErrorIfModified()) {
+            getUi().hide();
+        }
+        return false;
+    }
+
+    private boolean showErrorIfModified() {
+        boolean isModified = getUi().isEntryModified(mEntry);
+        if (isModified) {
+            getUi().setErrorMessage(R.string.st010);
+        }
+        return isModified;
     }
 
     /**
@@ -121,7 +145,15 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         void enableDeleteButton(boolean enable);
         void setTextValues(Entry entry);
         Entry getTextValues(Entry entry);
-        void dismissKeyboardAndClose();
+        boolean isEntryModified(Entry entry);
+        void setDescription(@StringRes int resourceId);
+        void clearDescription();
+        void setErrorMessage(@StringRes int resourceId);
+        void clearErrorMessage();
+
+        // The following are implemented in ActionSheetFragment
+        void dismissKeyboard(boolean andClose);
+        boolean isKeyboardVisible();
         void show();
         void hide();
         boolean isShowing();

@@ -57,6 +57,10 @@ public class MainPresenter extends BasePresenter<BaseUi> {
         mTimingOutSource.setAllowEntryAccess(allowEntryAccess);
     }
 
+    public boolean getSourceAllowEntryAccess() {
+        return mTimingOutSource.getAllowEntryAccess();
+    }
+
     public MasterLoader getMasterLoader() {
         return mMasterLoader;
     }

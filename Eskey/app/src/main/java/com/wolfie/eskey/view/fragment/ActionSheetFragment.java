@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.util.KeyboardUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,6 +92,15 @@ public abstract class ActionSheetFragment extends BaseFragment {
 //                            mPaddingView.setPadding(0, 0, 0, 0);
 //                        }
 //                    });
+        }
+    }
+
+    public void dismissKeyboard(boolean andClose) {
+        if (isKeyboardVisible()) {
+            KeyboardUtils.dismissKeyboard(getActivity());
+        }
+        if (andClose) {
+            hide();
         }
     }
 

@@ -95,7 +95,10 @@ public class LoginFragment extends ActionSheetFragment implements LoginUi {
         return view;
     }
 
-    // TODO handle back press
+    @Override
+    public void finish() {
+        getActivity().finish();
+    }
 
     @Override
     public void setTitle(@StringRes int resourceId) {
@@ -146,16 +149,6 @@ public class LoginFragment extends ActionSheetFragment implements LoginUi {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder2.unbind();
-    }
-
-    @Override
-    public void dismissKeyboard(boolean andClose) {
-        if (getKeyboardVisibility() == BaseActivity.KeyboardVisibility.SHOWING) {
-            KeyboardUtils.dismissKeyboard(getActivity());
-        }
-        if (andClose) {
-            hide();
-        }
     }
 
     @Override

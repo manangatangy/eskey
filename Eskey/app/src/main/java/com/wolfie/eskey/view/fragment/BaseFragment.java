@@ -152,6 +152,10 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         return (mBaseActivity != null) ? mBaseActivity.getKeyboardVisibility() : KeyboardVisibility.UNKNOWN;
     }
 
+    public boolean isKeyboardVisible() {
+        return getKeyboardVisibility() == KeyboardVisibility.SHOWING;
+    }
+
     /**
      * A listener for keyboard visibility change events.
      */

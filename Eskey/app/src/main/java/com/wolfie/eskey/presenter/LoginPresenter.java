@@ -36,6 +36,9 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         UserInactivityTimeoutListener {
 
     private final static String KEY_LOGIN_ACTION_SHEET_SHOWING = "KEY_LOGIN_ACTION_SHEET_SHOWING";
+    private final static String KEY_MASTER_SALT = "KEY_MASTER_SALT";
+    private final static String KEY_MASTER_KEY = "KEY_MASTER_KEY";
+    private final static String KEY_LOGIN_STATE = "KEY_LOGIN_STATE";
 
     private boolean mIsShowing;
     private MasterData mMasterData;
@@ -83,23 +86,40 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
     }
 
     @Override
+    public boolean backPressed() {
+        if (!getUi().isShowing() || getUi().isKeyboardVisible()) {
+            return true;        // Means: not consumed here
+        }
+        getUi().finish();
+        return false;
+    }
+
+    @Override
     public void pause() {
         super.pause();
         mIsShowing = getUi().isShowing();
         Log.d("LoginPresenter", "pause, mIsShowing is " + mIsShowing);
-        // Leave entry access enabled so that listPresenter can reload upon resume()
-        unregisterTimeoutListenerAndStopTimer(true);
+        // Leave entry access in current state so that listPresenter can reload upon resume()
+        unregisterTimeoutListenerAndStopTimer(false);
     }
 
     @Override
     public void onSaveState(Bundle outState) {
         outState.putBoolean(KEY_LOGIN_ACTION_SHEET_SHOWING, mIsShowing);
-        // TODO save/restore MasterData and State
+        String salt = (mMasterData == null) ? null : mMasterData.getSalt();
+        String key = (mMasterData == null) ? null : mMasterData.getMasterKey();
+        outState.putString(KEY_MASTER_SALT, salt);
+        outState.putString(KEY_MASTER_KEY, key);
+        outState.putString(KEY_LOGIN_STATE, mState.name());
     }
 
     @Override
     public void onRestoreState(@Nullable Bundle savedState) {
         mIsShowing = savedState.getBoolean(KEY_LOGIN_ACTION_SHEET_SHOWING, false);
+        String salt = savedState.getString(KEY_MASTER_SALT);
+        String key = savedState.getString(KEY_MASTER_KEY);
+        mMasterData = (key == null || salt == null) ? null : new MasterData(salt, key);
+        mState = State.valueOf(savedState.getString(KEY_LOGIN_STATE));
     }
 
     @Override
@@ -108,8 +128,8 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         // timer, therefore the other frags must be hidden/cleared explicitly.
 
         // Must stop timer so that MasterLoader is not blocked by TimingOutSource
-        // This will also disallow access to the Entries for listPresenter.
-        unregisterTimeoutListenerAndStopTimer(false);
+        // This will also force disallow access to the Entries for listPresenter.
+        unregisterTimeoutListenerAndStopTimer(true);
 
         DrawerPresenter drawerPresenter = getUi().findPresenter(DrawerFragment.class);
         drawerPresenter.closeDrawer();
@@ -143,7 +163,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
      * Optionally display a timeout message on the view.
      */
     private void startLoginSequence(int descriptionId, int errorMessageId) {
-        // - Show login view, set for existing user, which will be adjusted in onCompletion
+        // Show login view, setup for existing user, which will be adjusted in onCompletion
         getUi().setTitle(R.string.st002);
         getUi().setDescription(descriptionId);
 
@@ -156,11 +176,11 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         }
         getUi().show();
 
-        // - Set MasterData null and Mode UNKNOWN
+        // Set MasterData null and Mode UNKNOWN; determined in onCompletion
         mState = State.UNKNOWN;
         mMasterData = null;
 
-        // - Make the load master data call, callback to onLoadFinished()
+        // Make the load master data call, callback to onLoadFinished()
         MainPresenter mainPresenter = getUi().findPresenter(null);
         mainPresenter.getMasterLoader().read(new AsyncListeningTask.Listener<MasterData>() {
             @Override
@@ -185,11 +205,13 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         mainPresenter.setSourceAllowEntryAccess(true);
     }
 
-    private void unregisterTimeoutListenerAndStopTimer(boolean allowEntryAccess) {
+    private void unregisterTimeoutListenerAndStopTimer(boolean forceDisAllowEntryAccess) {
         MainPresenter mainPresenter = getUi().findPresenter(null);
         mainPresenter.getTimeoutMonitor().setUserInactivityTimeoutListener(null);
         mainPresenter.getTimeoutMonitor().stopTimer();
-        mainPresenter.setSourceAllowEntryAccess(allowEntryAccess);
+        if (forceDisAllowEntryAccess) {
+            mainPresenter.setSourceAllowEntryAccess(false);
+        }
     }
 
     public void onClickLogin(String password) {
@@ -248,12 +270,16 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         void setButtonsVisibleAndEnabled(boolean firstTime, boolean enabled);
         String getPassword();
         String getConfirm();
+        void setErrorMessage(@StringRes int resourceId);
+        void clearErrorMessage();
+        void finish();
+
+        // The following are implemented in ActionSheetFragment
         void dismissKeyboard(boolean andClose);
+        boolean isKeyboardVisible();
         void show();
         void hide();
         boolean isShowing();
-        void setErrorMessage(@StringRes int resourceId);
-        void clearErrorMessage();
     }
 
 }

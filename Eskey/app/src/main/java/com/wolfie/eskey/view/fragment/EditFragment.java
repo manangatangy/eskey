@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +32,8 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
     TextView mTextTitle;
 
     @Nullable
-    @BindView(R.id.image_view_close)
-    View mViewClose;
+    @BindView(R.id.text_description)
+    TextView mTextDescription;
 
     @Nullable
     @BindView(R.id.edit_text_name)
@@ -47,8 +48,16 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
     EditText mEditContent;
 
     @Nullable
+    @BindView(R.id.text_error)
+    TextView mTextError;
+
+    @Nullable
     @BindView(R.id.button_save)
     Button mButtonSave;
+
+    @Nullable
+    @BindView(R.id.button_cancel)
+    Button mButtonCancel;
 
     @Nullable
     @BindView(R.id.button_delete)
@@ -67,9 +76,6 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
         mEditPresenter = new EditPresenter(this);
     }
 
-    /**
-     *
-     */
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -80,10 +86,10 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
         // This bind will re-bind the superclass members, so the entire view hierarchy must be
         // available, hence the content should be added to the parent view first.
         mUnbinder2 = ButterKnife.bind(this, view);
-        mViewClose.setOnClickListener(new View.OnClickListener() {
+        mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditPresenter.onClickClose();
+                mEditPresenter.onClickCancel();
             }
         });
         mButtonSave.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +132,6 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
 
     @Override
     public Entry getTextValues(Entry entry) {
-        // Place the view component values into the entry, check for emptiness and call the listener.
         String name = mEditName.getText().toString();
         String group = mEditGroup.getText().toString();
         String content = mEditContent.getText().toString();
@@ -137,11 +142,44 @@ public class EditFragment extends ActionSheetFragment implements EditUi {
     }
 
     @Override
-    public void dismissKeyboardAndClose() {
-        if (getKeyboardVisibility() == BaseActivity.KeyboardVisibility.SHOWING) {
-            KeyboardUtils.dismissKeyboard(getActivity());
+    public boolean isEntryModified(Entry entry) {
+        String name = mEditName.getText().toString();
+        String group = mEditGroup.getText().toString();
+        String content = mEditContent.getText().toString();
+        return !equals(name, (entry == null) ? null : entry.getEntryName()) ||
+                !equals(group, (entry == null) ? null : entry.getGroupName()) ||
+                !equals(content, (entry == null) ? null : entry.getContent());
+    }
+
+    private boolean equals(@Nullable String val1, @Nullable String val2) {
+        if (val1 == null) {
+            val1 = "";
         }
-        hide();
+        if (val2 == null) {
+            val2 = "";
+        }
+        return val1.equals(val2);
+    }
+
+    @Override
+    public void setDescription(@StringRes int resourceId) {
+        mTextDescription.setText(resourceId);
+    }
+
+    @Override
+    public void clearDescription() {
+        mTextDescription.setText("");
+    }
+
+    @Override
+    public void setErrorMessage(@StringRes int resourceId) {
+        mTextError.setVisibility(View.VISIBLE);
+        mTextError.setText(resourceId);
+    }
+
+    @Override
+    public void clearErrorMessage() {
+        mTextError.setVisibility(View.GONE);
     }
 
     @Override

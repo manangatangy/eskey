@@ -15,5 +15,6 @@
     <string name="st007">Password and confirm-password don\'t match</string>
     <string name="st008">Password write failed</string>
     <string name="st009">Initialisation succeeded, you may now login\nPlease enter your master password</string>
+    <string name="st010">Fields have been modified\nclick CANCEL to close without saving</string>
 
 </resources>

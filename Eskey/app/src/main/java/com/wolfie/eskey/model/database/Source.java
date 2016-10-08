@@ -35,6 +35,10 @@ public class Source {
     public void setAllowEntryAccess(boolean allowEntryAccess) {
         mAllowEntryAccess = allowEntryAccess;
     }
+    public boolean getAllowEntryAccess() {
+        return mAllowEntryAccess;
+    }
+
 //    public Source(Context context) {
 //        mHelper = new Helper(context);
 //        mDatabase = mHelper.getWritableDatabase();
