@@ -6,13 +6,10 @@ import android.support.annotation.Nullable;
  * Created by david on 4/09/16.
  */
 
-public class Crypter {
+public interface Crypter {
 
-    public String encrypt(@Nullable String plainText) {
-        return plainText;
-    }
+    String encrypt(@Nullable String plainText);
 
-    public String decrypt(@Nullable String cipherText) {
-        return cipherText;
-    }
+    String decrypt(@Nullable String cipherText);
+
 }

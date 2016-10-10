@@ -85,7 +85,6 @@ public class EntryListActivity
     private Helper mHelper;
     private SQLiteDatabase mDatabase;
     private Source mSource;
-    private Crypter mCrypter;
     private EntryLoader mEntryLoader;
 
     private Menu mMenu;
@@ -128,8 +127,7 @@ public class EntryListActivity
         mHelper = new Helper(this.getApplicationContext());
         mDatabase = mHelper.getWritableDatabase();
         mSource = new Source(mDatabase);
-        mCrypter = new Crypter();
-        mEntryLoader = new EntryLoader(this, mSource, mCrypter);
+        mEntryLoader = new EntryLoader(this, mSource);
 
         mRecyclerView.setLayoutManager(new DefaultLayoutManager(this.getApplicationContext()));
         mRecyclerView.setItemScrollListener(this);

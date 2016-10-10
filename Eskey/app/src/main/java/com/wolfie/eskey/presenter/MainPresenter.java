@@ -8,7 +8,6 @@ import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.EntryLoader;
 import com.wolfie.eskey.model.loader.MasterLoader;
 import com.wolfie.eskey.util.TimeoutMonitor;
-import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
 
 /**
@@ -17,7 +16,6 @@ import com.wolfie.eskey.view.BaseUi;
  */
 public class MainPresenter extends BasePresenter<BaseUi> {
 
-    private Crypter mCrypter;
     private Helper mHelper;
     private SQLiteDatabase mDatabase;
 
@@ -31,7 +29,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
     public MainPresenter(BaseUi baseUi, Context context) {
         super(baseUi);
 
-        mCrypter = new Crypter();
         mHelper = new Helper(context);
         mDatabase = mHelper.getWritableDatabase();
 
@@ -40,8 +37,8 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 //        mTimeoutMonitor.setUserInactivityTimeoutListener(this);
 //        mTimeoutMonitor.setDetection(true);
 
-        mMasterLoader = new MasterLoader(mTimingOutSource, mCrypter);
-        mEntryLoader = new EntryLoader(context, mTimingOutSource, mCrypter);
+        mMasterLoader = new MasterLoader(mTimingOutSource);
+        mEntryLoader = new EntryLoader(context, mTimingOutSource);
     }
 
     public void onUserInteraction() {
@@ -59,6 +56,5 @@ public class MainPresenter extends BasePresenter<BaseUi> {
     public EntryLoader getEntryLoader() {
         return mEntryLoader;
     }
-
 
 }

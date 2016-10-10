@@ -8,6 +8,7 @@ import android.util.Log;
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
+import com.wolfie.eskey.util.crypto.SpongyCrypter;
 import com.wolfie.eskey.view.BaseUi;
 
 import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
@@ -15,6 +16,9 @@ import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
+
+import static com.wolfie.eskey.util.crypto.SpongyCrypter.MEDIUM_SECRET_KEY_FACTORY_ALGORITHM;
+import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTORY_ALGORITHM;
 
 /**
  * Created by david on 2/10/16.
@@ -223,19 +227,30 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         getUi().dismissKeyboard(false);
         getUi().clearErrorMessage();        // May have been set from startLoginSequence
 
-        // TODO - decrypt and check password (assume ok for now)
-        boolean attempt = true;
-        Log.d("LoginPresenter", "onClickLogin, attempt is " + attempt);
-        if (!attempt) {
+        // Fetch the salt and encrypted master-key from the database.
+        // Set the user-entered password and attempt to decrypt the master-key.
+        SpongyCrypter crypter = new SpongyCrypter(mMasterData.getSalt(), STRONG_SECRET_KEY_FACTORY_ALGORITHM);
+        crypter.setPassword(password);
+        String masterKey = crypter.decrypt(mMasterData.getMasterKey());
+
+        Log.d("LoginPresenter", "onClickLogin, attempt is " + (masterKey == null));
+        if (masterKey == null) {
             getUi().setErrorMessage(R.string.st006);
         } else {
             mState = State.LOGGED_IN;
-            //         mTimingOutSource.setAllowEntryAccess(false);        // Disallow entry reading until logged in.
+            // Give the salt and masterKey to the ListPresenter, because they will be needed
+            // there in onResume, to re-create the crypter.  We can't do that in this presenter
+            // since it isn't guaranteed which resume() will be called first.
+            mMasterData.setMasterKey(masterKey);
 
             registerTimeoutListenerAndStartTimer();
             getUi().hide();
             ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
             if (listPresenter != null) {
+                // If the decryption succeeds, then use the decrypted master-key as the password
+                // on a (medium-strength) crypter, which is set on the EntryLoader and can now be
+                // used for encrypt and decrypt operations on the entry data.
+                listPresenter.setMasterDataAndMakeCrypter(mMasterData);
                 listPresenter.loadEntries();
             }
         }
@@ -245,13 +260,25 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         getUi().dismissKeyboard(false);
         getUi().clearErrorMessage();        // May have been set from startLoginSequence
 
-        // TODO - decrypt and check password (assume ok for now)
         boolean match = (password != null && password.equals(confirm));
+        boolean hasLeadingTrailingWhiteSpace = (password != null &&
+                password.trim().length() != password.length());
         Log.d("LoginPresenter", "onClickInitialise, match is " + match);
         if (!match) {
             getUi().setErrorMessage(R.string.st007);
+        } else if (hasLeadingTrailingWhiteSpace) {
+            getUi().setErrorMessage(R.string.st011);
         } else {
-            MasterData masterData = new MasterData("salt", password);
+            // First time database use; generate new salt and master-key.  Then set the
+            // user-created password in a  strong Crypter and use it to encrypt the master-key.
+            // The resulting encrypted master-kay and the salt are then stored in the database.
+            String salt = SpongyCrypter.generateSalt();
+            String masterKey = SpongyCrypter.generateMasterKey();
+            SpongyCrypter crypter = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
+            crypter.setPassword(password);
+            String encryptedMasterKey = crypter.encrypt(masterKey);
+
+            MasterData masterData = new MasterData(salt, encryptedMasterKey);
             MainPresenter mainPresenter = getUi().findPresenter(null);
             mainPresenter.getMasterLoader().store(masterData, new AsyncListeningTask.Listener<Boolean>() {
                 @Override

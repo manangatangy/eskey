@@ -15,14 +15,21 @@ import java.util.List;
  * Created by david on 4/09/16.
  */
 
+/**
+ * Class that accesses data using a Source, and applies crypto operations to this data
+ * using the Crypter. A null Crypter is allowed and it  will pass data through unchanged.
+ */
 public class EntryLoader {
     private Context mContext;           // TODO deprecate
     private Source mDataSource;
     private Crypter mCrypter;
 
-    public EntryLoader(Context context, Source dataSource, Crypter crypter) {
+    public EntryLoader(Context context, Source dataSource) {
         mContext = context;
         mDataSource = dataSource;
+    }
+
+    public void setCrypter(Crypter crypter) {
         mCrypter = crypter;
     }
 

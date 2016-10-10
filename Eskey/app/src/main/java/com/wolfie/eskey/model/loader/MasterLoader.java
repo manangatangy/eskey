@@ -16,11 +16,9 @@ import java.util.List;
 public class MasterLoader {
 
     private Source mDataSource;
-    private Crypter mCrypter;
 
-    public MasterLoader(Source dataSource, Crypter crypter) {
+    public MasterLoader(Source dataSource) {
         mDataSource = dataSource;
-        mCrypter = crypter;
     }
 
     public void read(AsyncListeningTask.Listener<MasterData> listener) {

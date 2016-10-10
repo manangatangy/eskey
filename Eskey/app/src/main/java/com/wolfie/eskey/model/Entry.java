@@ -41,15 +41,19 @@ public class Entry {
     }
 
     public void encrypt(Crypter crypter) {
-        mEntryName = crypter.encrypt(mEntryName);
-        mGroupName = crypter.encrypt(mGroupName);
-        mContent = crypter.encrypt(mContent);
+        if (crypter != null) {
+            mEntryName = crypter.encrypt(mEntryName);
+            mGroupName = crypter.encrypt(mGroupName);
+            mContent = crypter.encrypt(mContent);
+        }
     }
 
     public void decrypt(Crypter crypter) {
-        mEntryName = crypter.decrypt(mEntryName);
-        mGroupName = crypter.decrypt(mGroupName);
-        mContent = crypter.decrypt(mContent);
+        if (crypter != null) {
+            mEntryName = crypter.decrypt(mEntryName);
+            mGroupName = crypter.decrypt(mGroupName);
+            mContent = crypter.decrypt(mContent);
+        }
     }
 
     public int getId() {

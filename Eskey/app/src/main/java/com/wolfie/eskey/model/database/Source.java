@@ -36,7 +36,10 @@ public class Source {
         if (cursor != null && cursor.moveToFirst()) {
             String salt = cursor.getString(cursor.getColumnIndex(MetaData.MASTER_SALT));
             String maskerKey = cursor.getString(cursor.getColumnIndex(MetaData.MASTER_KEY));
-            masterData = new MasterData(salt, maskerKey);
+            // Both fields must be populated.
+            if (salt != null && salt.length() > 0 && maskerKey != null && maskerKey.length() > 0) {
+                masterData = new MasterData(salt, maskerKey);
+            }
             cursor.close();
         }
         return masterData;
