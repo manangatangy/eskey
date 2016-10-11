@@ -15,7 +15,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.presenter.EditPresenter;
 import com.wolfie.eskey.util.BitmapWorkerTask;
+import com.wolfie.eskey.view.fragment.EditFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,9 +34,6 @@ public abstract class SimpleActivity extends BaseActivity {
 
     @BindView(R.id.background_image)
     ImageView mBackgroundImageView;
-
-    @BindView(R.id.fab)
-    FloatingActionButton mFab;
 
     protected Unbinder unbinder;
 

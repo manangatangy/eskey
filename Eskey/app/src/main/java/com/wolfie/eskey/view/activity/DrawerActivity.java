@@ -39,18 +39,11 @@ public class DrawerActivity extends SimpleActivity {
         // Create the drawer fragment into it's container.
         setupFragment(DrawerFragment.class.getName(), R.id.fragment_container_activity_drawer, null);
 
-        // Create the entry edit fragment into it's container.
+        // Create the entry edit (activity sheet) fragment into it's container.
         setupFragment(EditFragment.class.getName(), R.id.fragment_container_edit, null);
 
-        // Create the login fragment into it's container.
+        // Create the login (activity sheet) fragment into it's container.
         setupFragment(LoginFragment.class.getName(), R.id.fragment_container_login, null);
-
-    }
-
-    //http://stackoverflow.com/a/12481918
-
-    @OnClick(R.id.fab)
-    public void onNewEntry() {
 
     }
 

@@ -146,6 +146,12 @@ public class LoginFragment extends ActionSheetFragment implements LoginUi {
     }
 
     @Override
+    public void clearPasswords() {
+        mEditPassword.setText("");
+        mEditConfirm.setText("");
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder2.unbind();

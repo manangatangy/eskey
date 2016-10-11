@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Class that accesses data using a Source, and applies crypto operations to this data
- * using the Crypter. A null Crypter is allowed and it  will pass data through unchanged.
+ * using the Crypter.
  */
 public class EntryLoader {
     private Context mContext;           // TODO deprecate
@@ -29,6 +29,10 @@ public class EntryLoader {
         mDataSource = dataSource;
     }
 
+    /**
+     * A null Crypter is allowed and it will allow Entry.encrypt and Entry.decrypt
+     * to pass data through unchanged.
+     */
     public void setCrypter(Crypter crypter) {
         mCrypter = crypter;
     }

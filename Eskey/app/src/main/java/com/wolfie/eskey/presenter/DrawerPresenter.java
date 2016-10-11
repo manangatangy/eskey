@@ -45,11 +45,6 @@ public class DrawerPresenter extends BasePresenter<DrawerUi> {
         mIsOpen = savedState.getBoolean(KEY_DRAWER_SHOWING, false);
     }
 
-//    public void setHeadings(List<String> headings, @Nullable String selected) {
-//        getUi().refreshListWithHeadings(headings);
-//        getUi().selectListItem(selected);
-//    }
-
     public void onDrawerOpened() {
         // Fetch the headings and selected from ListPresenter and set to the view
         ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);

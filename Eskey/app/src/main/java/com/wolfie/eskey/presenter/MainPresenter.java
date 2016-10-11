@@ -34,8 +34,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
         mTimeoutMonitor = new TimeoutMonitor();
         mTimingOutSource = new TimingOutSource(mDatabase, mTimeoutMonitor);
-//        mTimeoutMonitor.setUserInactivityTimeoutListener(this);
-//        mTimeoutMonitor.setDetection(true);
 
         mMasterLoader = new MasterLoader(mTimingOutSource);
         mEntryLoader = new EntryLoader(context, mTimingOutSource);

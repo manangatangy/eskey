@@ -34,9 +34,3 @@
         </RelativeLayout>
     </FrameLayout>
 </FrameLayout>
-
-<!--
-
-        <include layout="@layout/fragment_item_detail" />
-
--->

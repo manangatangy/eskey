@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.wolfie.eskey.presenter.ListPresenter.ListUi;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class ListFragment extends BaseFragment implements
         ListUi,
@@ -36,6 +38,11 @@ public class ListFragment extends BaseFragment implements
 
     @BindView(R.id.recycler_view)
     ScrollListeningRecyclerView mRecyclerView;
+
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        mListPresenter.onListItemClick(null);
+    }
 
     private ListPresenter mListPresenter;
 
@@ -68,9 +75,10 @@ public class ListFragment extends BaseFragment implements
             getAdapter().clearItems();
         } else {
             getAdapter().setGroups(groups);
-            // Briefly hide the sticky heading since its text won't be correctly
-            // set until a scroll event occurs.
+            // Scroll back to the top of the list.  If the list is short, no scrolling
+            // will occur and so we also have to trigger the sticky header refresh.
             mRecyclerView.scrollToPosition(0);
+            onItemAlignedToTop(0);
         }
     }
 
@@ -100,6 +108,11 @@ public class ListFragment extends BaseFragment implements
         mStickyHeaderText.setText(headerText);
         mStickyHeaderFrame.setVisibility(View.VISIBLE);
         mStickyHeaderDividerTop.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideStickyHeader() {
+        mStickyHeaderFrame.setVisibility(View.GONE);
     }
 
     @Override

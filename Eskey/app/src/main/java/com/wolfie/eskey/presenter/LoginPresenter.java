@@ -8,6 +8,7 @@ import android.util.Log;
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
+import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.util.crypto.SpongyCrypter;
 import com.wolfie.eskey.view.BaseUi;
 
@@ -17,6 +18,7 @@ import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
 
+import static com.wolfie.eskey.util.StringUtils.isNotBlank;
 import static com.wolfie.eskey.util.crypto.SpongyCrypter.MEDIUM_SECRET_KEY_FACTORY_ALGORITHM;
 import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTORY_ALGORITHM;
 
@@ -47,6 +49,10 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
     private boolean mIsShowing;
     private MasterData mMasterData;
     private State mState = State.UNKNOWN;
+
+    // This member is not saved and restored directly, rather it is recreated
+    // from other saved/restored fields; mMasterData and mState.
+    private Crypter mCrypter;
 
     private enum State {
         UNKNOWN,            // No query has yet been made to the database for the MasterData
@@ -123,15 +129,30 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         String key = savedState.getString(KEY_MASTER_KEY);
         mMasterData = (key == null || salt == null) ? null : new MasterData(salt, key);
         mState = State.valueOf(savedState.getString(KEY_LOGIN_STATE));
+        mCrypter =
+                (mState == State.LOGGED_IN
+                        && mMasterData != null
+                        && isNotBlank(mMasterData.getSalt())
+                        && isNotBlank(mMasterData.getMasterKey())) ? makeCrypter() : null;
     }
 
     /**
-     * Used by other presenters (eg during resume()) to check if data can be displayed.
-     * Note that LoginPresenter.mState has its value restored by onRestoreState, before
-     * any presenter's resume()s are called.
+     * Returns null if not logged in.  Otherwise returns a Crypter ready for use with
+     * the EntryLoader.  This may be called prior to resume, since the mCrypter fields
+     * would have been restored/recreated during onRestoreState().
      */
-    public boolean isLoggedIn() {
-        return (mState == State.LOGGED_IN);
+    public Crypter getCrypter() {
+        return mCrypter;
+    }
+
+    /**
+     * Assumes that state is logged in and uses the mMasterData (which must be
+     * populated) to construct a Crypter.
+     */
+    private Crypter makeCrypter() {
+        SpongyCrypter crypter = new SpongyCrypter(mMasterData.getSalt(), MEDIUM_SECRET_KEY_FACTORY_ALGORITHM);
+        crypter.setPassword(mMasterData.getMasterKey());
+        return crypter;
     }
 
     @Override
@@ -174,6 +195,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         // Show login view, setup for existing user, which will be adjusted in onCompletion
         getUi().setTitle(R.string.st002);
         getUi().setDescription(descriptionId);
+        getUi().clearPasswords();
 
         getUi().setConfirmVisibility(false);
         getUi().setButtonsVisibleAndEnabled(false, false);
@@ -184,9 +206,10 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         }
         getUi().show();
 
-        // Set MasterData null and Mode UNKNOWN; determined in onCompletion
+        // Set MasterData null, Mode UNKNOWN; determined in onCompletion
         mState = State.UNKNOWN;
         mMasterData = null;
+        mCrypter = null;
 
         // Make the load master data call,
         MainPresenter mainPresenter = getUi().findPresenter(null);
@@ -238,19 +261,13 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
             getUi().setErrorMessage(R.string.st006);
         } else {
             mState = State.LOGGED_IN;
-            // Give the salt and masterKey to the ListPresenter, because they will be needed
-            // there in onResume, to re-create the crypter.  We can't do that in this presenter
-            // since it isn't guaranteed which resume() will be called first.
             mMasterData.setMasterKey(masterKey);
+            mCrypter = makeCrypter();   // getCrypter() will now return non-null for ListPresenter to apply to EntryLoader.
 
             registerTimeoutListenerAndStartTimer();
             getUi().hide();
             ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
             if (listPresenter != null) {
-                // If the decryption succeeds, then use the decrypted master-key as the password
-                // on a (medium-strength) crypter, which is set on the EntryLoader and can now be
-                // used for encrypt and decrypt operations on the entry data.
-                listPresenter.setMasterDataAndMakeCrypter(mMasterData);
                 listPresenter.loadEntries();
             }
         }
@@ -302,6 +319,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         void setButtonsVisibleAndEnabled(boolean firstTime, boolean enabled);
         String getPassword();
         String getConfirm();
+        void clearPasswords();
         void setErrorMessage(@StringRes int resourceId);
         void clearErrorMessage();
         void finish();

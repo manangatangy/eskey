@@ -39,6 +39,10 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         }
     }
 
+    // TODO - as the key field (name) is edited to change from original, then the delete
+    // key is renamed to save-as, and has semantics of creating a new entry, not modifying
+    // the current entry (which is what the save button would do).
+
     @Override
     public void pause() {
         super.pause();
@@ -58,15 +62,20 @@ public class EditPresenter extends BasePresenter<EditUi> implements
     }
 
     /**
-     * A null entry is allowed, it means create a new entry for editing.
+     * Use the existing values in the Entry to populate the fields, and show the view.
+     * A null entry is allowed, it means create a new entry with all empty fields for editing.
      */
     public void editEntry(@Nullable Entry entry) {
         mEntry = (entry != null) ? entry : Entry.create("", "", "");
         getUi().show();
     }
 
-    public void editNewEntry(String groupName) {
-        editEntry(Entry.create(groupName, "", ""));
+    /**
+     * Create a new Entry for the specified group, and show its fields for editing.
+     * If the groupname is name, then set all the fields to empty string
+     */
+    public void editNewEntry(@Nullable String groupName) {
+        editEntry(groupName == null ? null : Entry.create("", groupName, ""));
     }
 
     public void onShow() {
