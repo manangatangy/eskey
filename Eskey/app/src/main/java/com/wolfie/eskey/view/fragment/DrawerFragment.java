@@ -17,7 +17,7 @@ import com.wolfie.eskey.view.adapter.NavMenuRecyclerAdapter.MenuItemViewHolder;
 import com.wolfie.eskey.presenter.DrawerPresenter;
 import com.wolfie.eskey.presenter.DrawerPresenter.DrawerUi;
 import com.wolfie.eskey.util.DefaultLayoutManager;
-import com.wolfie.eskey.view.activity.DrawerActivity;
+import com.wolfie.eskey.view.activity.EskeyActivity;
 
 import java.util.List;
 
@@ -65,14 +65,14 @@ public class DrawerFragment extends BaseFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDrawerActivity().setSupportActionBar(getDrawerActivity().mToolbar);
+        getEskeyActivity().setSupportActionBar(getEskeyActivity().mToolbar);
         mToggle = new ActionBarDrawerToggle(
-                getDrawerActivity(),
-                getDrawerActivity().mDrawer,
-                getDrawerActivity().mToolbar,
+                getEskeyActivity(),
+                getEskeyActivity().mDrawer,
+                getEskeyActivity().mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mToggle.syncState();
-        getDrawerActivity().mDrawer.setDrawerListener(this);
+        getEskeyActivity().mDrawer.setDrawerListener(this);
     }
 
     @Override
@@ -117,25 +117,25 @@ public class DrawerFragment extends BaseFragment implements
 
     @Override
     public boolean isDrawerOpen() {
-        return getDrawerActivity().mDrawer.isDrawerOpen(Gravity.LEFT);
+        return getEskeyActivity().mDrawer.isDrawerOpen(Gravity.LEFT);
     }
 
     @Override
     public void closeDrawer() {
         if (isDrawerOpen()) {
-            getDrawerActivity().mDrawer.closeDrawer(Gravity.LEFT);
+            getEskeyActivity().mDrawer.closeDrawer(Gravity.LEFT);
         }
     }
 
     @Override
     public void openDrawer() {
         if (!isDrawerOpen()) {
-            getDrawerActivity().mDrawer.openDrawer(Gravity.LEFT);
+            getEskeyActivity().mDrawer.openDrawer(Gravity.LEFT);
         }
     }
 
-    private DrawerActivity getDrawerActivity() {
-        return (DrawerActivity)mBaseActivity;
+    private EskeyActivity getEskeyActivity() {
+        return (EskeyActivity)mBaseActivity;
     }
 
     // DrawerLayout.DrawerListener methods

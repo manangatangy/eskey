@@ -9,7 +9,7 @@ import com.wolfie.eskey.presenter.Presenter;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.view.activity.BaseActivity;
 import com.wolfie.eskey.view.activity.BaseActivity.KeyboardVisibility;
-import com.wolfie.eskey.view.activity.DrawerActivity;
+import com.wolfie.eskey.view.activity.EskeyActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -110,7 +110,7 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
     /**
      * Will return the Presenter corresponding to the specified fragment, or null if
      * the fragment hasn't yet been created.  As an assistance, specifying null for
-     * the fragment class will return the MainPresenter for the DrawerActivity (or
+     * the fragment class will return the MainPresenter for the EskeyActivity (or
      * null if the activity is the wrong type).
      */
     @Nullable
@@ -119,9 +119,9 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         if (fragClass != null) {
             return mBaseActivity.findPresenter(fragClass);
         }
-        if (mBaseActivity instanceof DrawerActivity) {
+        if (mBaseActivity instanceof EskeyActivity) {
             // noinspection unchecked
-            return (P)((DrawerActivity)mBaseActivity).getPresenter();
+            return (P)((EskeyActivity)mBaseActivity).getPresenter();
         }
         return null;
     }

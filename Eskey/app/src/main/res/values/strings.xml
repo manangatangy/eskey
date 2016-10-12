@@ -4,7 +4,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="menu_item_export">Export</string>
+    <string name="menu_item_import">Import</string>
+    <string name="menu_item_email_backup">Email backup</string>
+    <string name="menu_item_change_password">Change password</string>
+    <string name="menu_item_logout">Logout</string>
 
     <string name="st001">First time Eskey login</string>
     <string name="st002">Eskey login</string>
