@@ -9,7 +9,7 @@
     <string name="menu_item_import">Import</string>
     <string name="menu_item_email_backup">Email backup</string>
     <string name="menu_item_change_password">Change password</string>
-    <string name="menu_item_logout">Logout</string>
+    <string name="menu_item_exit">Exit</string>
 
     <string name="st001">First time Eskey login</string>
     <string name="st002">Eskey login</string>
@@ -22,5 +22,6 @@
     <string name="st009">Initialisation succeeded, you may now login\nPlease enter your master password</string>
     <string name="st010">Fields have been modified\nclick CANCEL to close without saving</string>
     <string name="st011">Password should not have\nleading or trailing white-space</string>
+    <string name="st012">Specify the export filename to be written into directory:\n</string>
 
 </resources>

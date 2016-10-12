@@ -22,14 +22,15 @@ import com.wolfie.eskey.view.activity.EskeyActivity;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class DrawerFragment extends BaseFragment implements
         DrawerUi,
         DrawerLayout.DrawerListener,
         NavMenuRecyclerAdapter.OnNavMenuItemClickListener {
 
-    @BindView(R.id.navigation_text_view)
-    TextView mTextView;
+//    @BindView(R.id.navigation_text_view)
+//    TextView mTextView;
 
     @BindView(R.id.navigation_recycler_view)
     RecyclerView mRecyclerView;
@@ -58,7 +59,7 @@ public class DrawerFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTextView.setText("Hello Preston");
+//        mTextView.setText("Hello Preston");
         mRecyclerView.setLayoutManager(new DefaultLayoutManager(getContext()));
     }
 
@@ -113,6 +114,31 @@ public class DrawerFragment extends BaseFragment implements
     @Override
     public void onNavMenuItemClick(String groupName, boolean hasChanged) {
         mDrawerPresenter.onItemSelected(groupName, hasChanged);
+    }
+
+    @OnClick(R.id.menu_item_settings)
+    void onMenuSettings() {
+        mDrawerPresenter.onMenuSettingsClick();
+    }
+    @OnClick(R.id.menu_item_export)
+    void onMenuExport() {
+        mDrawerPresenter.onMenuExportClick();
+    }
+    @OnClick(R.id.menu_item_import)
+    void onMenuImport() {
+        mDrawerPresenter.onMenuImportClick();
+    }
+    @OnClick(R.id.menu_item_email_backup)
+    void onMenuEmailBackup() {
+        mDrawerPresenter.onMenuEmailBackupClick();
+    }
+    @OnClick(R.id.menu_item_change_password)
+    void onMenuChangePassword() {
+        mDrawerPresenter.onMenuChangePasswordClick();
+    }
+    @OnClick(R.id.menu_item_exit)
+    void onMenuExit() {
+        mDrawerPresenter.onMenuExitClick();
     }
 
     @Override

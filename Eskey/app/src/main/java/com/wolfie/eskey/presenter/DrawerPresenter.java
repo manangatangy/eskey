@@ -1,11 +1,15 @@
 package com.wolfie.eskey.presenter;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.presenter.DrawerPresenter.DrawerUi;
+import com.wolfie.eskey.view.fragment.FileFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
+import com.wolfie.eskey.view.fragment.LoginFragment;
 
 import java.util.List;
 
@@ -78,6 +82,30 @@ public class DrawerPresenter extends BasePresenter<DrawerUi> {
         }
         getUi().closeDrawer();
         return false;
+    }
+
+    public void onMenuSettingsClick() {
+    }
+    public void onMenuExportClick() {
+        getUi().closeDrawer();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.exporting();
+    }
+
+    public void onMenuImportClick() {
+        getUi().closeDrawer();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.importing();
+    }
+    public void onMenuEmailBackupClick() {
+    }
+    public void onMenuChangePasswordClick() {
+    }
+
+    public void onMenuExitClick() {
+        LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
+        loginPresenter.clearAndLogout();
+        getUi().getActivity().finish();
     }
 
     public interface DrawerUi extends BaseUi {

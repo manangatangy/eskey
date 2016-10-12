@@ -3,6 +3,7 @@ package com.wolfie.eskey.presenter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.wolfie.eskey.R;
@@ -13,8 +14,10 @@ import com.wolfie.eskey.util.crypto.SpongyCrypter;
 import com.wolfie.eskey.view.BaseUi;
 
 import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
+import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.EditFragment;
+import com.wolfie.eskey.view.fragment.FileFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
 
@@ -164,10 +167,27 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         drawerPresenter.closeDrawer();
         EditPresenter editPresenter = getUi().findPresenter(EditFragment.class);
         editPresenter.hide();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.hide();
         ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
-        listPresenter.loadEntries();
+        listPresenter.loadEntries();    // This will clear list if timed out.
 
         startLoginForExistingWithTimeoutMessage();
+    }
+
+    public void clearAndLogout() {
+        unregisterTimeoutListenerAndStopTimer();
+
+        DrawerPresenter drawerPresenter = getUi().findPresenter(DrawerFragment.class);
+        drawerPresenter.closeDrawer();
+        EditPresenter editPresenter = getUi().findPresenter(EditFragment.class);
+        editPresenter.hide();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.hide();
+        ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
+
+        mCrypter = null;
+        listPresenter.loadEntries();    // This will clear list if null crypter.
     }
 
     private void startLoginForExisting() {

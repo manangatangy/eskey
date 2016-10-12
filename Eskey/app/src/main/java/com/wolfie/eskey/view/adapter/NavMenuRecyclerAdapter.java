@@ -74,7 +74,7 @@ public class NavMenuRecyclerAdapter extends RecyclerView.Adapter<NavMenuRecycler
 
     @Override
     public MenuItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.navigation_menu_item, null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.drawer_menu_item, null);
         MenuItemViewHolder viewHolder = new MenuItemViewHolder(view);
         return viewHolder;
     }

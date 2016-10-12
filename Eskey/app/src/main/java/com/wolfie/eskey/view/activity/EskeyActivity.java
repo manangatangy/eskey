@@ -1,6 +1,7 @@
 package com.wolfie.eskey.view.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.MainPresenter;
 import com.wolfie.eskey.view.fragment.EditFragment;
+import com.wolfie.eskey.view.fragment.FileFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
@@ -46,6 +48,9 @@ public class EskeyActivity extends SimpleActivity {
         // Create the login (activity sheet) fragment into it's container.
         setupFragment(LoginFragment.class.getName(), R.id.fragment_container_login, null);
 
+        // Create the file (activity sheet) fragment into it's container.
+        setupFragment(FileFragment.class.getName(), R.id.fragment_container_file, null);
+
     }
 
     @Override
@@ -64,37 +69,4 @@ public class EskeyActivity extends SimpleActivity {
         return R.layout.activity_drawer;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.eskey_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_item_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        resetDisconnectTimer();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        stopDisconnectTimer();
-//    }
 }
