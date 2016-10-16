@@ -148,6 +148,12 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         return true;
     }
 
+    /**
+     * This method will be called after the fragment invokes {@link BaseActivity#requestPermissions}
+     */
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    }
+
     public KeyboardVisibility getKeyboardVisibility() {
         return (mBaseActivity != null) ? mBaseActivity.getKeyboardVisibility() : KeyboardVisibility.UNKNOWN;
     }

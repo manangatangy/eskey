@@ -1,10 +1,12 @@
 package com.wolfie.eskey.view.activity;
 
+import android.app.Activity;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
@@ -16,7 +18,9 @@ import com.wolfie.eskey.view.fragment.BaseFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -97,6 +101,24 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    // TODO - save/restore this member
+    private Map<Integer, BaseFragment> mPermissionsFragmentMap= new HashMap<>();
+
+    public void requestPermissions(final @NonNull BaseFragment baseFragment,
+                                   final @NonNull String[] permissions, final int requestCode) {
+        mPermissionsFragmentMap.put(requestCode, baseFragment);
+        ActivityCompat.requestPermissions(this, permissions, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        BaseFragment baseFragment = mPermissionsFragmentMap.get(requestCode);
+        if (baseFragment != null) {
+            baseFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        mPermissionsFragmentMap.remove(requestCode);
     }
 
     /**

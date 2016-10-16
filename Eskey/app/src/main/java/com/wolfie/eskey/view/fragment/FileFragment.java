@@ -8,11 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.FilePresenter;
 import com.wolfie.eskey.presenter.FilePresenter.FileUi;
+import com.wolfie.eskey.presenter.FilePresenter.StorageType;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +26,8 @@ import butterknife.Unbinder;
  */
 
 public class FileFragment extends ActionSheetFragment implements FileUi {
+
+    public static final int PERMISSIONS_REQUEST_STORAGE = 123;
 
     @Nullable
     @BindView(R.id.text_title)
@@ -41,12 +46,26 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     TextView mTextError;
 
     @Nullable
+    @BindView(R.id.storage_radio_group)
+    RadioGroup mStorageTypeGroup;
+
+    @Nullable
+    @BindView(R.id.storage_type_private)
+    RadioButton mStorageTypePrivate;
+
+    @Nullable
+    @BindView(R.id.storage_type_public)
+    RadioButton mStorageTypePublic;
+
+    @Nullable
     @BindView(R.id.button_ok)
     Button mButtonOk;
 
     @Nullable
     @BindView(R.id.button_cancel)
     Button mButtonCancel;
+
+    private boolean mAllowOnRequestCheckedChangeCallback = true;
 
     private Unbinder mUnbinder2;
 
@@ -83,7 +102,61 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
                 mFilePresenter.onClickCancel();
             }
         });
+        mStorageTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            /**
+             * The radio buttons do not change checked'ness immediately upon the user click.
+             * Instead, the OnRequestCheckedChangeListener is called and should it return
+             * true, then change is made to the view.  Otherwise the view state is left with
+             * the previous button still checked.
+             */
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Only process if we're not in the middle of a call to setStorageType().
+                if (mAllowOnRequestCheckedChangeCallback) {
+                    StorageType requestedStorageType;
+                    // First, place radio group (back) in state prior to this click.
+                    if (checkedId == R.id.storage_type_public) {
+                        mStorageTypePrivate.setChecked(true);
+                        mStorageTypePublic.setChecked(false);
+                        requestedStorageType = StorageType.TYPE_PUBLIC;
+                    } else {
+                        mStorageTypePrivate.setChecked(false);
+                        mStorageTypePublic.setChecked(true);
+                        requestedStorageType = StorageType.TYPE_PRIVATE;
+                    }
+                    // Then ask listener to handle it.  They may make call to setStorageType()
+                    // either while this call is active, or after it returns.  Regardless, it
+                    // will not result in further calls to this handler.
+                    mFilePresenter.onRequestStorageTypeSelect(requestedStorageType);
+                }
+            }
+        });
         return view;
+    }
+
+    /**
+     * Calls to the setStorageType do not cause a propagation to the
+     * OnRequestCheckedChangeListener.
+     */
+    @Override
+    public void setStorageType(StorageType storageType) {
+        mAllowOnRequestCheckedChangeCallback = false;
+        if (storageType == StorageType.TYPE_PUBLIC) {
+            mStorageTypePublic.setChecked(true);
+        } else {
+            mStorageTypePrivate.setChecked(true);
+        }
+        mAllowOnRequestCheckedChangeCallback = true;
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        return (mStorageTypePublic.isChecked() ? StorageType.TYPE_PUBLIC : StorageType.TYPE_PRIVATE);
+    }
+
+    @Override
+    public void setStorageTypeEnabled(boolean enabled) {
+        mStorageTypeGroup.setEnabled(enabled);
     }
 
     @Override
@@ -93,8 +166,20 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
     @Override
-    public void setTitleText(String title) {
-        mTextTitle.setText(title);
+    public void requestStoragePermission() {
+        mBaseActivity.requestPermissions(this,
+                new String[] { FilePresenter.STORAGE_PERMISSION },
+                PERMISSIONS_REQUEST_STORAGE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        mFilePresenter.onRequestStoragePermissionsResult(grantResults);
+    }
+
+    @Override
+    public void setTitleText(@StringRes int resourceId) {
+        mTextTitle.setText(resourceId);
     }
 
     @Override
@@ -121,6 +206,11 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     public void setErrorMessage(@StringRes int resourceId) {
         mTextError.setVisibility(View.VISIBLE);
         mTextError.setText(resourceId);
+    }
+
+    @Override
+    public void setEnabledOkButton(boolean enabled) {
+        mButtonOk.setEnabled(enabled);
     }
 
     @Override

@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:paddingTop="20dp"
         android:textSize="20sp"
-        tools:text="Edit Entry"
+        tools:text="Export and Import Cleartext"
         />
     <TextView
         android:id="@+id/text_description"
@@ -42,6 +42,30 @@
         android:layout_marginLeft="10dp"
         android:background="@color/edit_item_body"
         >
+        <RadioGroup
+            android:id="@+id/storage_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <RadioButton
+                android:id="@+id/storage_type_private"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textSize="10sp"
+                android:text="private storage directory\n/storage/emulated/0/Android/data/com.wolfie.eskey/files/"
+                />
+
+            <RadioButton
+                android:id="@+id/storage_type_public"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="public storage directory\n/storage/emulated/0/Download/"
+                />
+
+        </RadioGroup>
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
             android:layout_width="match_parent"

@@ -23,5 +23,12 @@
     <string name="st010">Fields have been modified\nclick CANCEL to close without saving</string>
     <string name="st011">Password should not have\nleading or trailing white-space</string>
     <string name="st012">Specify the export filename to be written into directory:\n</string>
+    <string name="st013">External storage is not available</string>
+    <string name="st014">Export to cleartext</string>
+    <string name="st015">Import from cleartext</string>
+    <string name="st016">Access to public storage has previously been denied\nGo to settings/apps/eskey to grant permission</string>
+    <string name="st017">Access to public storage not permitted</string>
+    <string name="st018">The external storage media is not available for read/write access\nPerhaps it is not mounted</string>
+    <string name="st019">Select the storage type.\nPrivate storage needs adb/root to access.\nPublic storage requires granting STORAGE permission</string>
 
 </resources>
