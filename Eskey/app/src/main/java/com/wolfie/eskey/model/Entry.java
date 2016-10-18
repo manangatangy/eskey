@@ -15,6 +15,9 @@ public class Entry {
     private String mGroupName;
     private String mContent;
 
+    public Entry() {
+    }
+
     private Entry(int id, String entryName, String groupName, String content) {
         mId = id;
         mEntryName = entryName;

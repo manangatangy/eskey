@@ -3,10 +3,12 @@ package com.wolfie.eskey.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,6 +22,8 @@ import com.wolfie.eskey.presenter.FilePresenter.StorageType;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 /**
  * Created by david on 12/10/16.
@@ -44,10 +48,6 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     @Nullable
     @BindView(R.id.text_error)
     TextView mTextError;
-
-    @Nullable
-    @BindView(R.id.storage_radio_group)
-    RadioGroup mStorageTypeGroup;
 
     @Nullable
     @BindView(R.id.storage_type_private)
@@ -102,32 +102,29 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
                 mFilePresenter.onClickCancel();
             }
         });
-        mStorageTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            /**
-             * The radio buttons do not change checked'ness immediately upon the user click.
-             * Instead, the OnRequestCheckedChangeListener is called and should it return
-             * true, then change is made to the view.  Otherwise the view state is left with
-             * the previous button still checked.
-             */
+        mStorageTypePrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // Only process if we're not in the middle of a call to setStorageType().
-                if (mAllowOnRequestCheckedChangeCallback) {
-                    StorageType requestedStorageType;
-                    // First, place radio group (back) in state prior to this click.
-                    if (checkedId == R.id.storage_type_public) {
-                        mStorageTypePrivate.setChecked(true);
-                        mStorageTypePublic.setChecked(false);
-                        requestedStorageType = StorageType.TYPE_PUBLIC;
-                    } else {
+                if (isChecked) {
+                    if (mAllowOnRequestCheckedChangeCallback) {
                         mStorageTypePrivate.setChecked(false);
-                        mStorageTypePublic.setChecked(true);
-                        requestedStorageType = StorageType.TYPE_PRIVATE;
+                        // Ask listener to handle the click/checking.  They may make call to setStorageType()
+                        // either while this call is active, or after it returns.  Regardless, it
+                        // will not result in further calls to this handler.
+                        mFilePresenter.onRequestStorageTypeSelect(StorageType.TYPE_PRIVATE);
                     }
-                    // Then ask listener to handle it.  They may make call to setStorageType()
-                    // either while this call is active, or after it returns.  Regardless, it
-                    // will not result in further calls to this handler.
-                    mFilePresenter.onRequestStorageTypeSelect(requestedStorageType);
+                }
+            }
+        });
+        mStorageTypePublic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (mAllowOnRequestCheckedChangeCallback) {
+                        mStorageTypePublic.setChecked(false);
+                        mFilePresenter.onRequestStorageTypeSelect(StorageType.TYPE_PUBLIC);
+                    }
                 }
             }
         });
@@ -135,7 +132,7 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
     /**
-     * Calls to the setStorageType do not cause a propagation to the
+     * Calls to setStorageType do not cause a propagation to the
      * OnRequestCheckedChangeListener.
      */
     @Override
@@ -143,7 +140,9 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
         mAllowOnRequestCheckedChangeCallback = false;
         if (storageType == StorageType.TYPE_PUBLIC) {
             mStorageTypePublic.setChecked(true);
+            mStorageTypePrivate.setChecked(false);
         } else {
+            mStorageTypePublic.setChecked(false);
             mStorageTypePrivate.setChecked(true);
         }
         mAllowOnRequestCheckedChangeCallback = true;
@@ -156,7 +155,8 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
 
     @Override
     public void setStorageTypeEnabled(boolean enabled) {
-        mStorageTypeGroup.setEnabled(enabled);
+        mStorageTypePublic.setEnabled(enabled);
+        mStorageTypePrivate.setEnabled(enabled);
     }
 
     @Override
@@ -193,8 +193,9 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
     @Override
-    public void setDescription(String text) {
-        mTextDescription.setText(text);
+    public void setErrorMessage(String text) {
+        mTextError.setVisibility(View.VISIBLE);
+        mTextError.setText(text);
     }
 
     @Override
@@ -216,6 +217,26 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     @Override
     public void clearErrorMessage() {
         mTextError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setOkButtonText(@StringRes int resourceId) {
+        mButtonOk.setText(resourceId);
+    }
+
+    @Override
+    public void showBanner(String message) {
+        Snackbar.make(mTextTitle, message, LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setPrivateButtonLabel(String text) {
+        mStorageTypePrivate.setText(text);
+    }
+
+    @Override
+    public void setPublicButtonLabel(String text) {
+        mStorageTypePublic.setText(text);
     }
 
     @Override

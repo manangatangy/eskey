@@ -4,8 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.wolfie.eskey.model.database.Helper;
+import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.EntryLoader;
+import com.wolfie.eskey.model.loader.IoLoader;
 import com.wolfie.eskey.model.loader.MasterLoader;
 import com.wolfie.eskey.util.TimeoutMonitor;
 import com.wolfie.eskey.view.BaseUi;
@@ -18,12 +20,13 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
     private Helper mHelper;
     private SQLiteDatabase mDatabase;
+    private TimingOutSource mTimingOutSource;
+    private Source mSource;         // Used for IoLoader where timeouts not wanted.
 
     private TimeoutMonitor mTimeoutMonitor;
-    private TimingOutSource mTimingOutSource;
-
     private MasterLoader mMasterLoader;
     private EntryLoader mEntryLoader;
+    private IoLoader mIoLoader;
 
     // This presenter needs no ui (all the ui is performed by the other frags)
     public MainPresenter(BaseUi baseUi, Context context) {
@@ -37,6 +40,9 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
         mMasterLoader = new MasterLoader(mTimingOutSource);
         mEntryLoader = new EntryLoader(context, mTimingOutSource);
+
+        mSource = new Source(mDatabase);
+        mIoLoader = new IoLoader(mSource);
     }
 
     public void onUserInteraction() {
@@ -55,4 +61,7 @@ public class MainPresenter extends BasePresenter<BaseUi> {
         return mEntryLoader;
     }
 
+    public IoLoader getIoLoader() {
+        return mIoLoader;
+    }
 }

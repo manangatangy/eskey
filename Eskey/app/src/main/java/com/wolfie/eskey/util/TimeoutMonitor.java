@@ -16,7 +16,7 @@ import android.util.Log;
  */
 public class TimeoutMonitor implements Runnable {
 
-    private static final long DISCONNECT_TIMEOUT = 60000; // 5 min = 5 * 60 * 1000 ms  ==> 300000
+    private static final long DISCONNECT_TIMEOUT = 600000; // 5 min = 5 * 60 * 1000 ms  ==> 300000
     private UserInactivityTimeoutListener mInactivityListener;
     private boolean mDetectionEnabled = false;
     private long mStartTime;

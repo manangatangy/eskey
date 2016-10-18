@@ -30,5 +30,9 @@
     <string name="st017">Access to public storage not permitted</string>
     <string name="st018">The external storage media is not available for read/write access\nPerhaps it is not mounted</string>
     <string name="st019">Select the storage type.\nPrivate storage needs adb/root to access.\nPublic storage requires granting STORAGE permission</string>
+    <string name="st020">Private Storage Directory\n%1$s</string>
+    <string name="st021">Public Storage Directory\n%1$s</string>
+    <string name="st022">Export</string>
+    <string name="st023">Import</string>
 
 </resources>

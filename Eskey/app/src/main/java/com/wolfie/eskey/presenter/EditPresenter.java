@@ -34,8 +34,6 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         MainPresenter mainPresenter = getUi().findPresenter(null);
         if (!mIsShowing || mainPresenter == null || mainPresenter.getTimeoutMonitor().isTimedOut()) {
             getUi().hide();
-        } else {
-            getUi().show();
         }
     }
 
@@ -78,6 +76,9 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         editEntry(groupName == null ? null : Entry.create("", groupName, ""));
     }
 
+    /**
+     * This is not called on resume, only when the view is shown by the user.
+     */
     public void onShow() {
         getUi().enableDeleteButton(!mEntry.isNew());
         getUi().setTitleText(mEntry.isNew() ? "Create Entry" : "Modify Entry");

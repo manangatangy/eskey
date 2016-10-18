@@ -42,30 +42,21 @@
         android:layout_marginLeft="10dp"
         android:background="@color/edit_item_body"
         >
-        <RadioGroup
-            android:id="@+id/storage_radio_group"
+        <RadioButton
+            android:id="@+id/storage_type_private"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <RadioButton
-                android:id="@+id/storage_type_private"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:textSize="10sp"
-                android:text="private storage directory\n/storage/emulated/0/Android/data/com.wolfie.eskey/files/"
-                />
-
-            <RadioButton
-                android:id="@+id/storage_type_public"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="public storage directory\n/storage/emulated/0/Download/"
-                />
-
-        </RadioGroup>
+            android:checked="true"
+            android:textSize="10sp"
+            android:text="private storage directory\n/storage/emulated/0/Android/data/com.wolfie.eskey/files/"
+            />
+        <RadioButton
+            android:id="@+id/storage_type_public"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="public storage directory\n/storage/emulated/0/Download/"
+            />
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
             android:layout_width="match_parent"
