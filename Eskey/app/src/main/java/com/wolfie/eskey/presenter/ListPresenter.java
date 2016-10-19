@@ -70,7 +70,7 @@ public class ListPresenter extends BasePresenter<ListUi> implements
         LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
         if (mainPresenter != null && !mainPresenter.getTimeoutMonitor().isTimedOut()) {
             // Disallow entry reading until logged in, as indicated by getCrypter
-            Crypter crypter = loginPresenter.getCrypter();
+            Crypter crypter = loginPresenter.getMediumCrypter();
             mainPresenter.getEntryLoader().setCrypter(crypter);
             if (crypter != null) {
                 mainPresenter.getEntryLoader().read(this);

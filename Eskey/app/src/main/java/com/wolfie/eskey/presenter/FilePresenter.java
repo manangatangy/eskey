@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.model.loader.IoLoader;
@@ -53,7 +54,9 @@ public class FilePresenter extends BasePresenter<FileUi>
 
     public void exporting() {
         mIsExporting = true;
-        getUi().setTitleText(R.string.st014);
+        getUi().setClearTextChecked(false);
+        // Doesn't call back to onCLearTestToggle so do it ourselves
+        setTitle(false);
         getUi().setOkButtonText(R.string.st022);
         getUi().setFileName("eskey.txt");
         getUi().setStorageType(StorageType.TYPE_PRIVATE);
@@ -62,11 +65,24 @@ public class FilePresenter extends BasePresenter<FileUi>
 
     public void importing() {
         mIsExporting = false;
-        getUi().setTitleText(R.string.st015);
+        getUi().setClearTextChecked(false);
+        setTitle(false);
         getUi().setOkButtonText(R.string.st023);
         getUi().setFileName("eskey.txt");
         getUi().setStorageType(StorageType.TYPE_PRIVATE);
         getUi().show();
+    }
+
+    private void setTitle(boolean isChecked) {
+        int id = (isChecked
+                ? (mIsExporting ? R.string.st014 : R.string.st015)
+                : (mIsExporting ? R.string.st014a : R.string.st015a));
+        getUi().setTitleText(id);
+    }
+
+    public void onClearTextToggle(boolean isChecked) {
+        // Called on user action
+        setTitle(isChecked);
     }
 
     @Override
@@ -195,11 +211,13 @@ public class FilePresenter extends BasePresenter<FileUi>
         MainPresenter mainPresenter = getUi().findPresenter(null);
         LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
         if (mainPresenter != null && loginPresenter != null) {
-            Crypter crypter = loginPresenter.getCrypter();
-            IoLoader ioLoader = mainPresenter.getIoLoader();
-            ioLoader.setCrypter(crypter);
+            MasterData masterData = getUi().isClearTextChecked() ? null : loginPresenter.getMasterData();
+            String password = getUi().isClearTextChecked() ? null : "wolf";   //"getUi().getPassword()";
+            IoLoader ioLoader = mainPresenter.makeIoLoader(loginPresenter.getMediumCrypter());
             if (mIsExporting) {
-                ioLoader.export(ioFile, this);
+                ioLoader.export(masterData, ioFile, this);
+            } else {
+                ioLoader.inport(password, ioFile, this);
             }
         }
     }
@@ -235,6 +253,8 @@ public class FilePresenter extends BasePresenter<FileUi>
         void clearDescription();
         void setErrorMessage(@StringRes int resourceId);
         void setErrorMessage(String text);
+        boolean isClearTextChecked();
+        void setClearTextChecked(boolean isChecked);
         void setEnabledOkButton(boolean enabled);
         void clearErrorMessage();
         void setOkButtonText(@StringRes int resourceId);

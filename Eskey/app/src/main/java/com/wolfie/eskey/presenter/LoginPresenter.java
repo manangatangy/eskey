@@ -3,7 +3,6 @@ package com.wolfie.eskey.presenter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.wolfie.eskey.R;
@@ -14,7 +13,6 @@ import com.wolfie.eskey.util.crypto.SpongyCrypter;
 import com.wolfie.eskey.view.BaseUi;
 
 import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
-import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.FileFragment;
@@ -22,7 +20,6 @@ import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
 
 import static com.wolfie.eskey.util.StringUtils.isNotBlank;
-import static com.wolfie.eskey.util.crypto.SpongyCrypter.MEDIUM_SECRET_KEY_FACTORY_ALGORITHM;
 import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTORY_ALGORITHM;
 
 /**
@@ -44,18 +41,24 @@ import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTO
 public class LoginPresenter extends BasePresenter<LoginUi> implements
         UserInactivityTimeoutListener {
 
-    private final static String KEY_LOGIN_ACTION_SHEET_SHOWING = "KEY_LOGIN_ACTION_SHEET_SHOWING";
+    private final static String KEY_LOGIN_SHOWING = "KEY_LOGIN_SHOWING";
+    private final static String KEY_LOGIN_STATE = "KEY_LOGIN_STATE";
     private final static String KEY_MASTER_SALT = "KEY_MASTER_SALT";
     private final static String KEY_MASTER_KEY = "KEY_MASTER_KEY";
-    private final static String KEY_LOGIN_STATE = "KEY_LOGIN_STATE";
+    private final static String KEY_DECRYPTED_KEY = "KEY_DECRYPTED_KEY";
 
     private boolean mIsShowing;
-    private MasterData mMasterData;
     private State mState = State.UNKNOWN;
+//    private String mMasterSalt;
+//    private String mMasterKey;
+    private String mDecryptedKey;
+    private MasterData mMasterData;
 
-    // This member is not saved and restored directly, rather it is recreated
-    // from other saved/restored fields; mMasterData and mState.
-    private Crypter mCrypter;
+    //private MasterData mMasterData;
+
+    // This member is not saved and restored directly, rather it is recreated from other
+    // saved/restored fields; mState.  Entry decryption needs medium strength
+    private Crypter mMediumCrypter;
 
     private enum State {
         UNKNOWN,            // No query has yet been made to the database for the MasterData
@@ -117,45 +120,44 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
 
     @Override
     public void onSaveState(Bundle outState) {
-        outState.putBoolean(KEY_LOGIN_ACTION_SHEET_SHOWING, mIsShowing);
-        String salt = (mMasterData == null) ? null : mMasterData.getSalt();
-        String key = (mMasterData == null) ? null : mMasterData.getMasterKey();
-        outState.putString(KEY_MASTER_SALT, salt);
-        outState.putString(KEY_MASTER_KEY, key);
+        outState.putBoolean(KEY_LOGIN_SHOWING, mIsShowing);
         outState.putString(KEY_LOGIN_STATE, mState.name());
+        outState.putString(KEY_MASTER_SALT, (mMasterData == null) ? null : mMasterData.getSalt());
+        outState.putString(KEY_MASTER_KEY, (mMasterData == null) ? null : mMasterData.getKey());
+        outState.putString(KEY_DECRYPTED_KEY, mDecryptedKey);
     }
 
     @Override
     public void onRestoreState(@Nullable Bundle savedState) {
-        mIsShowing = savedState.getBoolean(KEY_LOGIN_ACTION_SHEET_SHOWING, false);
+        mIsShowing = savedState.getBoolean(KEY_LOGIN_SHOWING, false);
+        mState = State.valueOf(savedState.getString(KEY_LOGIN_STATE));
         String salt = savedState.getString(KEY_MASTER_SALT);
         String key = savedState.getString(KEY_MASTER_KEY);
-        mMasterData = (key == null || salt == null) ? null : new MasterData(salt, key);
-        mState = State.valueOf(savedState.getString(KEY_LOGIN_STATE));
-        mCrypter =
+        mDecryptedKey = savedState.getString(KEY_DECRYPTED_KEY);
+
+        mMediumCrypter =
                 (mState == State.LOGGED_IN
-                        && mMasterData != null
-                        && isNotBlank(mMasterData.getSalt())
-                        && isNotBlank(mMasterData.getMasterKey())) ? makeCrypter() : null;
+                        && isNotBlank(salt)
+                        && isNotBlank(mDecryptedKey))
+                        ? SpongyCrypter.makeMedium(salt, mDecryptedKey)
+                        : null;
+        mMasterData = (isNotBlank(salt) && isNotBlank(key)) ? new MasterData(salt, key) : null;
     }
 
     /**
      * Returns null if not logged in.  Otherwise returns a Crypter ready for use with
-     * the EntryLoader.  This may be called prior to resume, since the mCrypter fields
+     * the EntryLoader.  This may be called prior to resume, since the mMediumCrypter fields
      * would have been restored/recreated during onRestoreState().
      */
-    public Crypter getCrypter() {
-        return mCrypter;
+    public Crypter getMediumCrypter() {
+        return mMediumCrypter;
     }
 
     /**
-     * Assumes that state is logged in and uses the mMasterData (which must be
-     * populated) to construct a Crypter.
+     * The MasterData, as returned from the database, i.e., with the key encrypted.
      */
-    private Crypter makeCrypter() {
-        SpongyCrypter crypter = new SpongyCrypter(mMasterData.getSalt(), MEDIUM_SECRET_KEY_FACTORY_ALGORITHM);
-        crypter.setPassword(mMasterData.getMasterKey());
-        return crypter;
+    public MasterData getMasterData() {
+        return mMasterData;
     }
 
     @Override
@@ -186,7 +188,7 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         filePresenter.hide();
         ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
 
-        mCrypter = null;
+        mMediumCrypter = null;
         listPresenter.loadEntries();    // This will clear list if null crypter.
     }
 
@@ -226,10 +228,11 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         }
         getUi().show();
 
-        // Set MasterData null, Mode UNKNOWN; determined in onCompletion
+        // Set MasterData info null, Mode UNKNOWN; determined in onCompletion
         mState = State.UNKNOWN;
         mMasterData = null;
-        mCrypter = null;
+        mDecryptedKey = null;
+        mMediumCrypter = null;
 
         // Make the load master data call,
         MainPresenter mainPresenter = getUi().findPresenter(null);
@@ -237,12 +240,13 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
             @Override
             public void onCompletion(MasterData masterData) {
                 Log.d("LoginPresenter", "read.onCompletion, masterData is " + masterData);
-                mMasterData = masterData;
-                mState = (mMasterData == null) ? State.FIRST_TIME : State.EXISTING_USER;
+                mState = (masterData == null) ? State.FIRST_TIME : State.EXISTING_USER;
                 if (mState == State.FIRST_TIME) {
                     getUi().setTitle(R.string.st001);
                     getUi().setDescription(R.string.st003);
                     getUi().setConfirmVisibility(true);
+                } else {
+                    mMasterData = masterData;
                 }
                 getUi().setButtonsVisibleAndEnabled(mState == State.FIRST_TIME, true);
             }
@@ -272,17 +276,17 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
 
         // Fetch the salt and encrypted master-key from the database.
         // Set the user-entered password and attempt to decrypt the master-key.
-        SpongyCrypter crypter = new SpongyCrypter(mMasterData.getSalt(), STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        crypter.setPassword(password);
-        String masterKey = crypter.decrypt(mMasterData.getMasterKey());
+        SpongyCrypter strongCrypter = SpongyCrypter.makeStrong(mMasterData.getSalt(), password);
+        mDecryptedKey = strongCrypter.decrypt(mMasterData.getKey());
+        // decrypted key is stored for re-making mMediumCrypter upon restore
 
-        Log.d("LoginPresenter", "onClickLogin, attempt is " + (masterKey == null));
-        if (masterKey == null) {
+        Log.d("LoginPresenter", "onClickLogin, attempt is " + (mDecryptedKey == null));
+        if (mDecryptedKey == null) {
             getUi().setErrorMessage(R.string.st006);
         } else {
             mState = State.LOGGED_IN;
-            mMasterData.setMasterKey(masterKey);
-            mCrypter = makeCrypter();   // getCrypter() will now return non-null for ListPresenter to apply to EntryLoader.
+            mMediumCrypter = SpongyCrypter.makeMedium(mMasterData.getSalt(), mDecryptedKey);
+            // mMediumCrypter is returned by getCrypter() for ListPresenter to apply to EntryLoader.
 
             registerTimeoutListenerAndStartTimer();
             getUi().hide();
@@ -307,13 +311,11 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
             getUi().setErrorMessage(R.string.st011);
         } else {
             // First time database use; generate new salt and master-key.  Then set the
-            // user-created password in a  strong Crypter and use it to encrypt the master-key.
-            // The resulting encrypted master-kay and the salt are then stored in the database.
+            // user-created password in a strong Crypter and use it to encrypt the master-key.
+            // The resulting encrypted master-key and the salt are then stored in the database.
             String salt = SpongyCrypter.generateSalt();
             String masterKey = SpongyCrypter.generateMasterKey();
-            SpongyCrypter crypter = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-            crypter.setPassword(password);
-            String encryptedMasterKey = crypter.encrypt(masterKey);
+            String encryptedMasterKey = SpongyCrypter.makeStrong(salt, password).encrypt(masterKey);
 
             MasterData masterData = new MasterData(salt, encryptedMasterKey);
             MainPresenter mainPresenter = getUi().findPresenter(null);

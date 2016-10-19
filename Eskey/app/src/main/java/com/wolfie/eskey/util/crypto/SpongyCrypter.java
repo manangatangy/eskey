@@ -1,5 +1,6 @@
 package com.wolfie.eskey.util.crypto;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import javax.crypto.BadPaddingException;
@@ -44,7 +45,21 @@ public class SpongyCrypter implements Crypter {
     private SecretKey mSecretKey;      // was called pbeKey
     private PBEParameterSpec mPbeParameterSpec;
 
-    public SpongyCrypter(String saltString, String secretKeyFactoryAlgorithm)  {
+    public static SpongyCrypter makeStrong(String salt, String password) {
+        return make(salt, password, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
+    }
+
+    public static SpongyCrypter makeMedium(String salt, String password) {
+        return make(salt, password, MEDIUM_SECRET_KEY_FACTORY_ALGORITHM);
+    }
+
+    private static SpongyCrypter make(String salt, String password, String secretKeyFactoryAlgorithm) {
+        SpongyCrypter crypter = new SpongyCrypter(salt, secretKeyFactoryAlgorithm);
+        crypter.setPassword(password);
+        return crypter;
+    }
+
+    private SpongyCrypter(String saltString, String secretKeyFactoryAlgorithm)  {
         byte[] salt = fromHexString(saltString);
         if (salt.length != 8) {
             throw new RuntimeException("bad salt has wrong length: " + salt.length);
@@ -63,7 +78,7 @@ public class SpongyCrypter implements Crypter {
      * Set the password (which could be user generated or generateMasterKey generated) to
      * be used as an encryption key.  This method must be called before encrypt or decrypt.
      */
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
         try {
             mSecretKey = mSecretKeyFactory.generateSecret(pbeKeySpec);
@@ -77,6 +92,7 @@ public class SpongyCrypter implements Crypter {
     /**
      * Generate a new salt (returned as a hex string)
      */
+    @NonNull
     public static String generateSalt() {
         try {
             SecureRandom sr = SecureRandom.getInstance(SALT_GENERATION_ALGORITHM);
@@ -91,6 +107,7 @@ public class SpongyCrypter implements Crypter {
     /**
      * Generate a new master key (returned as a hex string)
      */
+    @NonNull
     public static String generateMasterKey() {
         try {
             KeyGenerator keygen;
@@ -107,6 +124,7 @@ public class SpongyCrypter implements Crypter {
      * The number of chars in the returned string will be
      * twice the number of bytes in the input parameter
      */
+    @NonNull
     public static String toHexString(byte bytes[]) {
 
         StringBuffer retString = new StringBuffer();
@@ -136,6 +154,7 @@ public class SpongyCrypter implements Crypter {
      * A null or empty plaintext will return the empty string.
      * @throws RuntimeException if an internal error occurs.
      */
+    @NonNull
     public String encrypt(@Nullable String plainText) {
         if (plainText == null || plainText.length() == 0) {
             return "";

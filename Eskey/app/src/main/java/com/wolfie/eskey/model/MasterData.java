@@ -4,33 +4,40 @@ package com.wolfie.eskey.model;
  * Created by david on 5/09/16.
  */
 
+import com.google.gson.annotations.Expose;
+
 /**
  * The salt and master key are held in the database, however the salt is held as plaintext
- * while the masterKey is stored as ciphertext.
+ * while the master Key is stored as ciphertext.
  */
 public class MasterData {
 
+    @Expose
     private String mSalt;
-    private String mMasterKey;
+    @Expose
+    private String mKey;
 
-    public MasterData(String salt, String masterKey) {
+    // Needed for serialisation
+    public MasterData() {}
+
+    public MasterData(String salt, String key) {
         mSalt = salt;
-        mMasterKey = masterKey;
+        mKey = key;
     }
 
     public String getSalt() {
         return mSalt;
     }
 
-    public void setSalt(String mSalt) {
-        this.mSalt = mSalt;
+    private void setSalt(String salt) {
+        this.mSalt = salt;
     }
 
-    public String getMasterKey() {
-        return mMasterKey;
+    public String getKey() {
+        return mKey;
     }
 
-    public void setMasterKey(String mMasterKey) {
-        this.mMasterKey = mMasterKey;
+    private void setKey(String key) {
+        this.mKey = key;
     }
 }

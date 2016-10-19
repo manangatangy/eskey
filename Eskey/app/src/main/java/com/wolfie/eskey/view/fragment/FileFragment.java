@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,10 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     @Nullable
     @BindView(R.id.button_cancel)
     Button mButtonCancel;
+
+    @Nullable
+    @BindView(R.id.cleartext_switch)
+    SwitchCompat mSwitchCleartext;
 
     private boolean mAllowOnRequestCheckedChangeCallback = true;
 
@@ -126,6 +131,12 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
                         mFilePresenter.onRequestStorageTypeSelect(StorageType.TYPE_PUBLIC);
                     }
                 }
+            }
+        });
+        mSwitchCleartext.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mFilePresenter.onClearTextToggle(isChecked);
             }
         });
         return view;
@@ -196,6 +207,16 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     public void setErrorMessage(String text) {
         mTextError.setVisibility(View.VISIBLE);
         mTextError.setText(text);
+    }
+
+    @Override
+    public boolean isClearTextChecked() {
+        return mSwitchCleartext.isChecked();
+    }
+
+    @Override
+    public void setClearTextChecked(boolean isChecked) {
+        mSwitchCleartext.setChecked(isChecked);
     }
 
     @Override

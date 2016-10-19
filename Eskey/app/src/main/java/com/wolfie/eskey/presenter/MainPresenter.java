@@ -10,6 +10,7 @@ import com.wolfie.eskey.model.loader.EntryLoader;
 import com.wolfie.eskey.model.loader.IoLoader;
 import com.wolfie.eskey.model.loader.MasterLoader;
 import com.wolfie.eskey.util.TimeoutMonitor;
+import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
 
 /**
@@ -26,7 +27,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
     private TimeoutMonitor mTimeoutMonitor;
     private MasterLoader mMasterLoader;
     private EntryLoader mEntryLoader;
-    private IoLoader mIoLoader;
 
     // This presenter needs no ui (all the ui is performed by the other frags)
     public MainPresenter(BaseUi baseUi, Context context) {
@@ -40,9 +40,6 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
         mMasterLoader = new MasterLoader(mTimingOutSource);
         mEntryLoader = new EntryLoader(context, mTimingOutSource);
-
-        mSource = new Source(mDatabase);
-        mIoLoader = new IoLoader(mSource);
     }
 
     public void onUserInteraction() {
@@ -61,7 +58,9 @@ public class MainPresenter extends BasePresenter<BaseUi> {
         return mEntryLoader;
     }
 
-    public IoLoader getIoLoader() {
-        return mIoLoader;
+    public IoLoader makeIoLoader(Crypter crypter) {
+        // This IoLoader is not expected to hang around for long, so it's ok
+        // to use a non TimingOutSource to create it.
+        return new IoLoader(new Source(mDatabase), crypter);
     }
 }

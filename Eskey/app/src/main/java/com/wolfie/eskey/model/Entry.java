@@ -2,6 +2,7 @@ package com.wolfie.eskey.model;
 
 import android.database.Cursor;
 
+import com.google.gson.annotations.Expose;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.model.database.MetaData;
 
@@ -11,8 +12,11 @@ import com.wolfie.eskey.model.database.MetaData;
 
 public class Entry {
     private int mId = -1;
+    @Expose
     private String mEntryName;
+    @Expose
     private String mGroupName;
+    @Expose
     private String mContent;
 
     public Entry() {

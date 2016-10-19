@@ -38,16 +38,14 @@ public class SpongyCrypterTest {
         String salt = SpongyCrypter.generateSalt();
         String masterKey1 = SpongyCrypter.generateMasterKey();
 
-        SpongyCrypter ch = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        ch.setPassword("wolfgang");
+        SpongyCrypter ch = SpongyCrypter.makeStrong(salt, "wolfgang");
         String encryptedMasterKey = ch.encrypt(masterKey1);
 
         // salt and encryptedMasterKey are stored in the database.
 //        Log.d("Crypter", "'" + salt + "'");
 //        Log.d("Crypter", "'" + encryptedMasterKey + "'");
 
-        ch = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        ch.setPassword("wolfgang");
+        ch = SpongyCrypter.makeStrong(salt, "wolfgang");
         String masterKey2 = ch.decrypt(encryptedMasterKey);
         assertEquals(masterKey1, masterKey2);
     }
@@ -57,12 +55,10 @@ public class SpongyCrypterTest {
         String salt = SpongyCrypter.generateSalt();
         String masterKey1 = SpongyCrypter.generateMasterKey();
 
-        SpongyCrypter ch = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        ch.setPassword("wolfgang");
+        SpongyCrypter ch = SpongyCrypter.makeStrong(salt, "wolfgang");
         String encryptedMasterKey = ch.encrypt(masterKey1);
 
-        ch = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        ch.setPassword("wolfganG");
+        ch = SpongyCrypter.makeStrong(salt, "wolfganG");
         String masterKey2 = ch.decrypt(encryptedMasterKey);
         assertNotEquals(masterKey1, masterKey2);
         assertEquals(null, masterKey2);
@@ -76,13 +72,11 @@ public class SpongyCrypterTest {
 
         String expectedMasterKey = "1b29241291ddf5476bfe213528fd5b66173170967979d23687c42e3ce857d6eb";
 
-        SpongyCrypter ch = new SpongyCrypter(salt, STRONG_SECRET_KEY_FACTORY_ALGORITHM);
-        ch.setPassword("wolfgang");
+        SpongyCrypter ch = SpongyCrypter.makeStrong(salt, "wolfgang");
         String masterKey = ch.decrypt(encryptedMasterKey);
         assertEquals(expectedMasterKey, masterKey);
 
-        SpongyCrypter ch2 = new SpongyCrypter(salt, MEDIUM_SECRET_KEY_FACTORY_ALGORITHM);
-        ch2.setPassword(masterKey);
+        SpongyCrypter ch2 = SpongyCrypter.makeMedium(salt, masterKey);
 
         String original = "some plain text string";
         String cipher = ch2.encrypt(original);

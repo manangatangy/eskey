@@ -98,7 +98,7 @@ public class Source {
     private ContentValues makeContentValues(MasterData masterData) {
         ContentValues values = new ContentValues();
         values.put(MetaData.MASTER_SALT, masterData.getSalt());
-        values.put(MetaData.MASTER_KEY, masterData.getMasterKey());
+        values.put(MetaData.MASTER_KEY, masterData.getKey());
         return values;
     }
 }

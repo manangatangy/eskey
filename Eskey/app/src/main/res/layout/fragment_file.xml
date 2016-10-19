@@ -69,6 +69,16 @@
                 android:hint="File name"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/cleartext_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:switchPadding="20dp"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:text="I/O as cleartext"
+            />
+
     </LinearLayout>
 
     <TextView
