@@ -4,6 +4,8 @@ package com.wolfie.eskey.model;
  * Created by david on 11/09/16.
  */
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class EntryGroup {
         String currentGroupName = null;
         List<Entry> currentEntries = null;
         for (Entry entry : dataSet.getEntries()) {
+            Log.d("eskey", "EntryGroup.buildGroups(): group:" + entry.getGroupName() + ", name=" + entry.getEntryName());
             if (!entry.getGroupName().equals(currentGroupName)) {
                 // This entry is in a different group to the previous one, close
                 // off the current list (if one has been started).

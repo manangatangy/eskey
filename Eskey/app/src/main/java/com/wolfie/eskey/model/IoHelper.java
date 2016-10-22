@@ -50,7 +50,8 @@ public class IoHelper {
             encryptedEntries.get(i).decrypt(dontDecrypt ? null : mMediumCrypter);
         }
         this.masterData = masterData;       // Will be null for exporting cleartext
-        this.entries = encryptedEntries;    // WIll be decrypted for exporting cleartext
+        this.entries = encryptedEntries;    // Will be decrypted for exporting cleartext
+        DataSet.sort(this.entries);         // Do the sort, now that text is decrypted.
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(this);
     }
@@ -103,6 +104,10 @@ public class IoHelper {
             ioHelper.entries.get(i).encrypt(mMediumCrypter);
         }
         return ioHelper.entries;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
     }
 
     public class WrongPasswordException extends Exception { }

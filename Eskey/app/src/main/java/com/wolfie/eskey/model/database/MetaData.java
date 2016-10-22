@@ -26,5 +26,5 @@ public class MetaData {
     };
 
     public static final String DEFAULT_SORT_ORDER = "ENTRIES_ID ASC";
-    public static final String QUERY_ORDER = "group_name ASC, entry_name ASC";
+    public static final String QUERY_ORDER = "lower(group_name), group_name, lower(entry_name), entry_name";
 }

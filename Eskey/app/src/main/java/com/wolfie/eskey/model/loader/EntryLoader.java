@@ -108,6 +108,7 @@ public class EntryLoader {
             for (int i = 0; i < entries.size(); i++) {
                 entries.get(i).decrypt(mCrypter);
             }
+            DataSet.sort(entries);          // Do the sort, now that text is decrypted.
             return dataSet;
         }
     }

@@ -11,7 +11,11 @@ import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.MasterData;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import static org.spongycastle.asn1.x500.style.RFC4519Style.c;
 
 /**
  * Created by david on 4/09/16.
@@ -72,8 +76,9 @@ public class Source {
 
     public @NonNull DataSet read() {
         List<Entry> entries = new ArrayList<>();
+        // No point sorting here - the strings are encrypted - duh!
         Cursor cursor = mDatabase.query(MetaData.ENTRIES_TABLE, MetaData.ENTRIES_ALL_COLUMNS, null,
-                null, null, null, MetaData.QUERY_ORDER);
+                null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 Entry entry = Entry.from(cursor);
