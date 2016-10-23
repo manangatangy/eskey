@@ -1,9 +1,0 @@
-{
-  "entries": [
-    {
-      "mContent": "CLEVER BOY!",
-      "mEntryName": "LEGEND",
-      "mGroupName": "default-group"
-    }
-  ]
-}

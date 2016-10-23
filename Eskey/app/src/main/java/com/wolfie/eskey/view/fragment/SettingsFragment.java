@@ -8,18 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.presenter.HelpPresenter;
-import com.wolfie.eskey.presenter.HelpPresenter.HelpUi;
+import com.wolfie.eskey.presenter.SettingsPresenter.SettingsUi;
+import com.wolfie.eskey.presenter.SettingsPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/**
- * Created by david on 23/10/16.
- */
-
-public class HelpFragment extends ActionSheetFragment implements HelpUi {
+public class SettingsFragment extends ActionSheetFragment implements SettingsUi {
 
     @Nullable
     @BindView(R.id.button_close)
@@ -27,16 +23,16 @@ public class HelpFragment extends ActionSheetFragment implements HelpUi {
 
     private Unbinder mUnbinder2;
 
-    private HelpPresenter mHelpPresenter;
+    private SettingsPresenter mSettingsPresenter;
 
     @Nullable
     @Override
-    public HelpPresenter getPresenter() {
-        return mHelpPresenter;
+    public SettingsPresenter getPresenter() {
+        return mSettingsPresenter;
     }
 
-    public HelpFragment() {
-        mHelpPresenter = new HelpPresenter(this);
+    public SettingsFragment() {
+        mSettingsPresenter = new SettingsPresenter(this);
     }
 
     @Override
@@ -52,7 +48,7 @@ public class HelpFragment extends ActionSheetFragment implements HelpUi {
         mButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mHelpPresenter.onClickClose();
+                mSettingsPresenter.onClickClose();
             }
         });
         return view;
