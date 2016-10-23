@@ -2,10 +2,8 @@ package com.wolfie.eskey.model.loader;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.IoHelper;
@@ -40,8 +38,10 @@ public class IoLoader {
 
     // During import, the password is needed to decrypt the imported cipher text.
     private String mPassword;
-
+    // Cleartext is indicated if we have no password (during import) or no masterdata (during export).
     private boolean mAsClearText;
+    // During import/restore, optionally delete existing entries first.
+    private boolean mIsOverwrite;
 
     /**
      * Should use the non TimingOutSource since we don't want the op to time out
@@ -82,9 +82,10 @@ public class IoLoader {
         new ExportTask(listener).execute(file);
     }
 
-    public void inport(@Nullable String password,
+    public void inport(@Nullable String password, boolean isOverwrite,
                        File file, AsyncListeningTask.Listener<IoResult> listener) {
         mPassword = password;
+        mIsOverwrite = isOverwrite;
         mAsClearText = (mPassword == null);
         new ImportTask(listener).execute(file);
     }
@@ -107,8 +108,9 @@ public class IoLoader {
                 fos = new FileOutputStream(file);
                 bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
                 bw.write(json);
-                ioResult = new SuccessResult("exported " + encryptedEntries.size() + " entries in " +
-                        (mAsClearText ? "CLEARTEXT" : "ciphertext"));
+                ioResult = new SuccessResult((mAsClearText ? "Exported " : "Backed up ")
+                        + encryptedEntries.size() + " entries from "
+                        + (mAsClearText ? "cleartext" : "ciphertext"));
             } catch (FileNotFoundException fnfe) {
                 return new FailureResult("FileNotFound opening: " + file.getPath());
             } catch (UnsupportedEncodingException usce) {
@@ -147,11 +149,15 @@ public class IoLoader {
                 List<Entry> encryptedEntries = new IoHelper(mMediumCrypter).inport(isr, mPassword);
 
                 // Load into database, optionally clearing existing data first. (Retain existing session key).
+                if (mIsOverwrite) {
+                    mDataSource.deleteAll();
+                }
                 for (int i = 0; i < encryptedEntries.size(); i++) {
                     mDataSource.insert(encryptedEntries.get(i));
                 }
-                ioResult = new SuccessResult("imported " + encryptedEntries.size() + " entries in " +
-                        (mAsClearText ? "CLEARTEXT" : "ciphertext"));
+                ioResult = new SuccessResult((mAsClearText ? "Imported" : "Restored")
+                        + encryptedEntries.size() + " entries from "
+                        + (mAsClearText ? "cleartext" : "ciphertext"));
             } catch (FileNotFoundException fnfe) {
                 return new FailureResult("FileNotFound opening: " + file.getPath());
             } catch (JsonIOException jioe) {
@@ -159,11 +165,11 @@ public class IoLoader {
             } catch (JsonSyntaxException jse) {
                 return new FailureResult("JsonSyntaxException parsing: " + file.getPath());
             } catch (IoHelper.WrongPasswordException jse) {
-                return new FailureResult("wrong password for import file");
+                return new FailureResult("wrong password for restore file");
             } catch (IoHelper.MissingPasswordException jse) {
-                return new FailureResult("import file is encrypted - please supply password");
+                return new FailureResult("import file is encrypted - can only be restored");
             } catch (IoHelper.UnexpectedClearTextInputException jse) {
-                return new FailureResult("import file is not encrypted - password not needed");
+                return new FailureResult("restore file is not encrypted - can only be imported");
             } finally {
                 try {
                     if (isr != null) {

@@ -85,27 +85,32 @@ public class DrawerPresenter extends BasePresenter<DrawerUi> {
     }
 
     public void onMenuSettingsClick() {
+        getUi().closeDrawer();
+    }
+    public void onMenuHelp() {
+        getUi().closeDrawer();
+//        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+//        filePresenter.importing();
     }
     public void onMenuExportClick() {
         getUi().closeDrawer();
         FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
         filePresenter.exporting();
     }
-
     public void onMenuImportClick() {
         getUi().closeDrawer();
         FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
         filePresenter.importing();
     }
-    public void onMenuEmailBackupClick() {
+    public void onMenuBackup() {
+        getUi().closeDrawer();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.backup();
     }
-    public void onMenuChangePasswordClick() {
-    }
-
-    public void onMenuExitClick() {
-        LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
-        loginPresenter.clearAndLogout();
-        getUi().getActivity().finish();
+    public void onMenuRestore() {
+        getUi().closeDrawer();
+        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
+        filePresenter.restore();
     }
 
     public interface DrawerUi extends BaseUi {

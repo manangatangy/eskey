@@ -47,6 +47,14 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     EditText mEditName;
 
     @Nullable
+    @BindView(R.id.input_layout_password)
+    View mPasswordLayout;
+
+    @Nullable
+    @BindView(R.id.edit_text_password)
+    EditText mPassword;
+
+    @Nullable
     @BindView(R.id.text_error)
     TextView mTextError;
 
@@ -67,8 +75,8 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     Button mButtonCancel;
 
     @Nullable
-    @BindView(R.id.cleartext_switch)
-    SwitchCompat mSwitchCleartext;
+    @BindView(R.id.overwrite_existing_switch)
+    SwitchCompat mOverwriteSwitch;
 
     private boolean mAllowOnRequestCheckedChangeCallback = true;
 
@@ -133,13 +141,27 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
                 }
             }
         });
-        mSwitchCleartext.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mFilePresenter.onClearTextToggle(isChecked);
-            }
-        });
         return view;
+    }
+
+    @Override
+    public String getPassword() {
+        return mPassword.getText().toString();
+    }
+
+    @Override
+    public void setPasswordVisibility(boolean isVisible) {
+        mPasswordLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public boolean isOverwrite() {
+        return mOverwriteSwitch.isChecked();
+    }
+
+    @Override
+    public void setOverwriteSwitchVisibility(boolean isVisible) {
+        mOverwriteSwitch.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -207,16 +229,6 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     public void setErrorMessage(String text) {
         mTextError.setVisibility(View.VISIBLE);
         mTextError.setText(text);
-    }
-
-    @Override
-    public boolean isClearTextChecked() {
-        return mSwitchCleartext.isChecked();
-    }
-
-    @Override
-    public void setClearTextChecked(boolean isChecked) {
-        mSwitchCleartext.setChecked(isChecked);
     }
 
     @Override

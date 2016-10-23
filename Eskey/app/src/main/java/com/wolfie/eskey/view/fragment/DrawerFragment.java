@@ -128,17 +128,17 @@ public class DrawerFragment extends BaseFragment implements
     void onMenuImport() {
         mDrawerPresenter.onMenuImportClick();
     }
-    @OnClick(R.id.menu_item_email_backup)
-    void onMenuEmailBackup() {
-        mDrawerPresenter.onMenuEmailBackupClick();
+    @OnClick(R.id.menu_item_help)
+    void onMenuHelp() {
+        mDrawerPresenter.onMenuHelp();
     }
-    @OnClick(R.id.menu_item_change_password)
-    void onMenuChangePassword() {
-        mDrawerPresenter.onMenuChangePasswordClick();
+    @OnClick(R.id.menu_item_backup)
+    void onMenuBackup() {
+        mDrawerPresenter.onMenuBackup();
     }
-    @OnClick(R.id.menu_item_exit)
-    void onMenuExit() {
-        mDrawerPresenter.onMenuExitClick();
+    @OnClick(R.id.menu_item_restore)
+    void onMenuRestore() {
+        mDrawerPresenter.onMenuRestore();
     }
 
     @Override

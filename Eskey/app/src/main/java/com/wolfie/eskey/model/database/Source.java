@@ -74,6 +74,10 @@ public class Source {
         return result != 0;
     }
 
+    public void deleteAll() {
+        mDatabase.delete(MetaData.ENTRIES_TABLE, null, null);
+    }
+
     public @NonNull DataSet read() {
         List<Entry> entries = new ArrayList<>();
         // No point sorting here - the strings are encrypted - duh!
@@ -87,8 +91,7 @@ public class Source {
             }
             cursor.close();
         }
-        DataSet dataSet = new DataSet();
-        dataSet.setEntries(entries);
+        DataSet dataSet = new DataSet(entries);
         return dataSet;
     }
 

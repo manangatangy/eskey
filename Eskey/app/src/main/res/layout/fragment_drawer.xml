@@ -13,40 +13,55 @@
         android:paddingTop="24dp"
         android:paddingBottom="12dp"
         android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/menu_item_settings"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_settings"
+                />
+            <TextView
+                android:id="@+id/menu_item_export"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_export"
+                />
+            <TextView
+                android:id="@+id/menu_item_import"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_import"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/menu_item_help"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_help"
+                />
+            <TextView
+                android:id="@+id/menu_item_backup"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_backup"
+                />
+            <TextView
+                android:id="@+id/menu_item_restore"
+                style="@style/MenuItem"
+                android:text="@string/menu_item_restore"
+                />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/menu_item_settings"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_settings"
-            />
-        <TextView
-            android:id="@+id/menu_item_export"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_export"
-            />
-        <TextView
-            android:id="@+id/menu_item_import"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_import"
-            />
-        <TextView
-            android:id="@+id/menu_item_email_backup"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_email_backup"
-            />
-        <TextView
-            android:id="@+id/menu_item_change_password"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_change_password"
-            />
-        <TextView
-            android:id="@+id/menu_item_exit"
-            style="@style/MenuItem"
-            android:text="@string/menu_item_exit"
-            />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

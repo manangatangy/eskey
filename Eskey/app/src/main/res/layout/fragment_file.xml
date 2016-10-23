@@ -69,16 +69,29 @@
                 android:hint="File name"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <EditText
+                android:id="@+id/edit_text_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
         <android.support.v7.widget.SwitchCompat
-            android:id="@+id/cleartext_switch"
+            android:id="@+id/overwrite_existing_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:switchPadding="20dp"
+            android:textOff="Off"
+            android:textOn="On"
             android:layout_gravity="center"
-            android:checked="false"
-            android:text="I/O as cleartext"
+            android:checked="true"
+            android:text="Overwrite existing database entries "
             />
-
     </LinearLayout>
 
     <TextView

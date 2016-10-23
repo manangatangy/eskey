@@ -6,33 +6,22 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.MasterData;
-import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.model.loader.IoLoader;
-import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.presenter.FilePresenter.FileUi;
+import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
 /**
- * Created by david on 12/10/16.
+ * Backup and restore are using cipher text, while export and import and in clear text.
  */
 
 public class FilePresenter extends BasePresenter<FileUi>
@@ -40,9 +29,12 @@ public class FilePresenter extends BasePresenter<FileUi>
 
     public final static String STORAGE_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private final static String KEY_FILE_ACTION_SHEET_SHOWING = "KEY_FILE_ACTION_SHEET_SHOWING";
+    private final static String KEY_FILE_IS_EXPORTING = "KEY_FILE_IS_EXPORTING";
+    private final static String KEY_FILE_IS_CLEAR_TEXT = "KEY_FILE_IS_CLEAR_TEXT";
 
     private boolean mIsShowing;
     private boolean mIsExporting;
+    private boolean mIsClearText;
 
     //These members are assigned by onShow, after resume, so they don't need to be saved.
     private File mPathPublic;
@@ -54,35 +46,44 @@ public class FilePresenter extends BasePresenter<FileUi>
 
     public void exporting() {
         mIsExporting = true;
-        getUi().setClearTextChecked(false);
-        // Doesn't call back to onCLearTestToggle so do it ourselves
-        setTitle(false);
+        mIsClearText = true;
         getUi().setOkButtonText(R.string.st022);
-        getUi().setFileName("eskey.txt");
-        getUi().setStorageType(StorageType.TYPE_PRIVATE);
-        getUi().show();
+        init();
     }
 
     public void importing() {
         mIsExporting = false;
-        getUi().setClearTextChecked(false);
-        setTitle(false);
+        mIsClearText = true;
         getUi().setOkButtonText(R.string.st023);
-        getUi().setFileName("eskey.txt");
-        getUi().setStorageType(StorageType.TYPE_PRIVATE);
-        getUi().show();
+        init();
     }
 
-    private void setTitle(boolean isChecked) {
-        int id = (isChecked
+    public void backup() {
+        mIsExporting = true;
+        mIsClearText = false;
+        getUi().setOkButtonText(R.string.st024);
+        init();
+    }
+
+    public void restore() {
+        mIsExporting = false;
+        mIsClearText = false;
+        getUi().setOkButtonText(R.string.st025);
+        init();
+    }
+
+    private void init() {
+        int id = (mIsClearText
                 ? (mIsExporting ? R.string.st014 : R.string.st015)
                 : (mIsExporting ? R.string.st014a : R.string.st015a));
         getUi().setTitleText(id);
-    }
-
-    public void onClearTextToggle(boolean isChecked) {
-        // Called on user action
-        setTitle(isChecked);
+        // Only need a password from the user if restoring.
+        getUi().setPasswordVisibility(!mIsClearText && !mIsExporting);
+        // Only need overwrite switch for importing
+        getUi().setOverwriteSwitchVisibility(!mIsExporting);
+        getUi().setFileName("eskey.txt");
+        getUi().setStorageType(StorageType.TYPE_PRIVATE);
+        getUi().show();
     }
 
     @Override
@@ -107,11 +108,15 @@ public class FilePresenter extends BasePresenter<FileUi>
     @Override
     public void onSaveState(Bundle outState) {
         outState.putBoolean(KEY_FILE_ACTION_SHEET_SHOWING, mIsShowing);
+        outState.putBoolean(KEY_FILE_IS_EXPORTING, mIsExporting);
+        outState.putBoolean(KEY_FILE_IS_CLEAR_TEXT, mIsClearText);
     }
 
     @Override
     public void onRestoreState(@Nullable Bundle savedState) {
         mIsShowing = savedState.getBoolean(KEY_FILE_ACTION_SHEET_SHOWING, false);
+        mIsExporting = savedState.getBoolean(KEY_FILE_IS_EXPORTING, false);
+        mIsClearText = savedState.getBoolean(KEY_FILE_IS_CLEAR_TEXT, false);
     }
 
     public void onRequestStorageTypeSelect(StorageType requestedStorageType) {
@@ -197,6 +202,11 @@ public class FilePresenter extends BasePresenter<FileUi>
             getUi().setErrorMessage(ioResult.mFailureMessage);
         }
         if (ioResult.mSuccessMessage != null) {
+            if (!mIsExporting) {
+                // Refresh list
+                ListPresenter listPresenter  = getUi().findPresenter(ListFragment.class);
+                listPresenter.loadEntries();
+            }
             getUi().showBanner(ioResult.mSuccessMessage);
         }
     }
@@ -211,13 +221,18 @@ public class FilePresenter extends BasePresenter<FileUi>
         MainPresenter mainPresenter = getUi().findPresenter(null);
         LoginPresenter loginPresenter = getUi().findPresenter(LoginFragment.class);
         if (mainPresenter != null && loginPresenter != null) {
-            MasterData masterData = getUi().isClearTextChecked() ? null : loginPresenter.getMasterData();
-            String password = getUi().isClearTextChecked() ? null : "wolf";   //"getUi().getPassword()";
+            // If cipher text (ie backup/restore) then must provide password (for import) and MasterData
+            MasterData masterData = null;
+            String password = null;
+            if (!mIsClearText) {
+                masterData = loginPresenter.getMasterData();
+                password = getUi().getPassword();
+            }
             IoLoader ioLoader = mainPresenter.makeIoLoader(loginPresenter.getMediumCrypter());
             if (mIsExporting) {
                 ioLoader.export(masterData, ioFile, this);
             } else {
-                ioLoader.inport(password, ioFile, this);
+                ioLoader.inport(password, getUi().isOverwrite(), ioFile, this);
             }
         }
     }
@@ -253,8 +268,6 @@ public class FilePresenter extends BasePresenter<FileUi>
         void clearDescription();
         void setErrorMessage(@StringRes int resourceId);
         void setErrorMessage(String text);
-        boolean isClearTextChecked();
-        void setClearTextChecked(boolean isChecked);
         void setEnabledOkButton(boolean enabled);
         void clearErrorMessage();
         void setOkButtonText(@StringRes int resourceId);
@@ -264,6 +277,10 @@ public class FilePresenter extends BasePresenter<FileUi>
         void setPublicButtonLabel(String text);
 
         void setStorageTypeEnabled(boolean enabled);
+        String getPassword();
+        void setPasswordVisibility(boolean isVisible);
+        boolean isOverwrite();
+        void setOverwriteSwitchVisibility(boolean isVisible);
         void setStorageType(StorageType storageType);
         StorageType getStorageType();
 

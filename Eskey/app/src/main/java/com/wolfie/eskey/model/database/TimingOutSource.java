@@ -40,6 +40,6 @@ public class TimingOutSource extends Source {
     }
 
     public @NonNull DataSet read() {
-        return mTimeoutMonitor.isTimedOut() ? new DataSet() : super.read();
+        return mTimeoutMonitor.isTimedOut() ? new DataSet(null) : super.read();
     }
 }

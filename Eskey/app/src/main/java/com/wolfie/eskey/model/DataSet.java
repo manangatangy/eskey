@@ -17,7 +17,7 @@ public class DataSet {
         return mEntries;
     }
 
-    public void setEntries(List<Entry> pEntries) {
+    public DataSet(List<Entry> pEntries) {
         this.mEntries = pEntries;
     }
 
