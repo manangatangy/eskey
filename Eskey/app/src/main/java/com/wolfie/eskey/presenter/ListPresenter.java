@@ -81,7 +81,7 @@ public class ListPresenter extends BasePresenter<ListUi> implements
             getUi().refreshListWithDataSet(null);
             getUi().hideStickyHeader();
         }
-
+        getUi().setAddEntryVisibility(!clearTheList);
     }
 
     /**
@@ -132,6 +132,7 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     public interface ListUi extends BaseUi {
 
         void refreshListWithDataSet(List<EntryGroup> groups);
+        void setAddEntryVisibility(boolean visible);
         void hideStickyHeader();
 
     }

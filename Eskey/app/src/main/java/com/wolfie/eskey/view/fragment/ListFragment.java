@@ -39,8 +39,11 @@ public class ListFragment extends BaseFragment implements
     @BindView(R.id.recycler_view)
     ScrollListeningRecyclerView mRecyclerView;
 
-    @OnClick(R.id.fab)
-    public void onFabClick() {
+    @BindView(R.id.add_entry_fab)
+    View mAddEntryButton;
+
+    @OnClick(R.id.add_entry_fab)
+    public void onAddEntryClick() {
         mListPresenter.onListItemClick(null);
     }
 
@@ -108,6 +111,11 @@ public class ListFragment extends BaseFragment implements
         mStickyHeaderText.setText(headerText);
         mStickyHeaderFrame.setVisibility(View.VISIBLE);
         mStickyHeaderDividerTop.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setAddEntryVisibility(boolean visible) {
+        mAddEntryButton.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override

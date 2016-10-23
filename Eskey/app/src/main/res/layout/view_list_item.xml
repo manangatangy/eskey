@@ -57,7 +57,7 @@
                 <LinearLayout
                     android:id="@+id/item_detail_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="70dp"
+                    android:layout_height="105dp"
                     android:orientation="vertical"
                     >
 
