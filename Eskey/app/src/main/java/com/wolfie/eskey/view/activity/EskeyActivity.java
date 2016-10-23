@@ -11,6 +11,7 @@ import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.MainPresenter;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.FileFragment;
+import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
@@ -51,6 +52,8 @@ public class EskeyActivity extends SimpleActivity {
         // Create the file (activity sheet) fragment into it's container.
         setupFragment(FileFragment.class.getName(), R.id.fragment_container_file, null);
 
+        // Create the help (activity sheet) fragment into it's container.
+        setupFragment(HelpFragment.class.getName(), R.id.fragment_container_help, null);
     }
 
     @Override

@@ -112,11 +112,11 @@ public class IoLoader {
                         + encryptedEntries.size() + " entries from "
                         + (mAsClearText ? "cleartext" : "ciphertext"));
             } catch (FileNotFoundException fnfe) {
-                return new FailureResult("FileNotFound opening: " + file.getPath());
+                return new FailureResult("FileNotFound opening\n" + file.getName());
             } catch (UnsupportedEncodingException usce) {
-                return new FailureResult("UnsupportedEncodingException: " + file.getPath());
+                return new FailureResult("UnsupportedEncodingException\n" + file.getPath());
             } catch (IOException ioe) {
-                return new FailureResult("IOException writing: " + file.getPath());
+                return new FailureResult("IOException writing\n" + file.getPath());
             } finally {
                 try {
                     if (bw != null) {
@@ -126,7 +126,7 @@ public class IoLoader {
                         fos.close();
                     }
                 } catch (IOException ioe) {
-                    ioResult = new FailureResult("IOException closing: " + file.getPath());
+                    ioResult = new FailureResult("IOException closing\n" + file.getPath());
                     // Won't be returned if exception was thrown prior to the finally clause executing.
                 }
             }
@@ -159,11 +159,11 @@ public class IoLoader {
                         + encryptedEntries.size() + " entries from "
                         + (mAsClearText ? "cleartext" : "ciphertext"));
             } catch (FileNotFoundException fnfe) {
-                return new FailureResult("FileNotFound opening: " + file.getPath());
+                return new FailureResult("FileNotFound opening\n" + file.getPath());
             } catch (JsonIOException jioe) {
-                return new FailureResult("JsonIOException reading: " + file.getPath());
+                return new FailureResult("JsonIOException reading\n" + file.getPath());
             } catch (JsonSyntaxException jse) {
-                return new FailureResult("JsonSyntaxException parsing: " + file.getPath());
+                return new FailureResult("JsonSyntaxException parsing\n" + file.getPath());
             } catch (IoHelper.WrongPasswordException jse) {
                 return new FailureResult("wrong password for restore file");
             } catch (IoHelper.MissingPasswordException jse) {
@@ -176,7 +176,7 @@ public class IoLoader {
                         isr.close();
                     }
                 } catch (IOException ioe) {
-                    ioResult = new FailureResult("IOException closing: " + file.getPath());
+                    ioResult = new FailureResult("IOException closing\n" + file.getPath());
                     // Won't be returned if exception was thrown prior to the finally clause executing.
                 }
             }

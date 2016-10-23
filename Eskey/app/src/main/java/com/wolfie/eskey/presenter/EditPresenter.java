@@ -7,6 +7,7 @@ import android.support.annotation.StringRes;
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
+import com.wolfie.eskey.view.ActionSheetUi;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.presenter.EditPresenter.EditUi;
 import com.wolfie.eskey.view.fragment.ListFragment;
@@ -150,7 +151,7 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         }
     }
 
-    public interface EditUi extends BaseUi {
+    public interface EditUi extends ActionSheetUi {
 
         void setTitleText(String title);
         void enableDeleteButton(boolean enable);
@@ -162,11 +163,5 @@ public class EditPresenter extends BasePresenter<EditUi> implements
         void setErrorMessage(@StringRes int resourceId);
         void clearErrorMessage();
 
-        // The following are implemented in ActionSheetFragment
-        void dismissKeyboard(boolean andClose);
-        boolean isKeyboardVisible();
-        void show();
-        void hide();
-        boolean isShowing();
     }
 }

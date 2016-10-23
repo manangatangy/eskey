@@ -10,6 +10,7 @@ import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.util.crypto.SpongyCrypter;
+import com.wolfie.eskey.view.ActionSheetUi;
 import com.wolfie.eskey.view.BaseUi;
 
 import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
@@ -334,7 +335,8 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         }
     }
 
-    public interface LoginUi extends BaseUi {
+    public interface LoginUi extends ActionSheetUi {
+
         void setTitle(@StringRes int resourceId);
         void setDescription(@StringRes int resourceId);
         void setConfirmVisibility(boolean visibility);
@@ -346,12 +348,6 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         void clearErrorMessage();
         void finish();
 
-        // The following are implemented in ActionSheetFragment
-        void dismissKeyboard(boolean andClose);
-        boolean isKeyboardVisible();
-        void show();
-        void hide();
-        boolean isShowing();
     }
 
 }

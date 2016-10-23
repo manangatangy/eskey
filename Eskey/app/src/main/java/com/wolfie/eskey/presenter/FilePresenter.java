@@ -13,7 +13,7 @@ import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.model.loader.IoLoader;
-import com.wolfie.eskey.view.BaseUi;
+import com.wolfie.eskey.view.ActionSheetUi;
 import com.wolfie.eskey.presenter.FilePresenter.FileUi;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
@@ -91,7 +91,7 @@ public class FilePresenter extends BasePresenter<FileUi>
         super.resume();
         MainPresenter mainPresenter = getUi().findPresenter(null);
         if (!mIsShowing || mainPresenter == null || mainPresenter.getTimeoutMonitor().isTimedOut()) {
-            getUi().hide();
+            hide();
         } else {
             // The user may have altered media/storage-access while we were paused, must re-check
             onShow();
@@ -208,6 +208,7 @@ public class FilePresenter extends BasePresenter<FileUi>
                 listPresenter.loadEntries();
             }
             getUi().showBanner(ioResult.mSuccessMessage);
+            hide();
         }
     }
 
@@ -239,7 +240,6 @@ public class FilePresenter extends BasePresenter<FileUi>
 
     public void onClickCancel() {
         getUi().dismissKeyboard(true);
-        getUi().hide();
     }
 
     @Override
@@ -247,7 +247,7 @@ public class FilePresenter extends BasePresenter<FileUi>
         if (!getUi().isShowing() || getUi().isKeyboardVisible()) {
             return true;        // Means: not consumed here
         }
-        getUi().hide();
+        hide();
         return false;
     }
 
@@ -260,7 +260,7 @@ public class FilePresenter extends BasePresenter<FileUi>
         TYPE_PUBLIC
     }
 
-    public interface FileUi extends BaseUi {
+    public interface FileUi extends ActionSheetUi {
 
         void setTitleText(@StringRes int resourceId);
         void setFileName(String fileName);
@@ -286,12 +286,6 @@ public class FilePresenter extends BasePresenter<FileUi>
 
         void requestStoragePermission();
 
-        // The following are implemented in ActionSheetFragment
-        void dismissKeyboard(boolean andClose);
-        boolean isKeyboardVisible();
-        void show();
-        void hide();
-        boolean isShowing();
     }
 
 }

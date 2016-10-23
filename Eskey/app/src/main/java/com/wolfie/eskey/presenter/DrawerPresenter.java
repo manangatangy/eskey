@@ -8,6 +8,7 @@ import android.util.Log;
 import com.wolfie.eskey.view.BaseUi;
 import com.wolfie.eskey.presenter.DrawerPresenter.DrawerUi;
 import com.wolfie.eskey.view.fragment.FileFragment;
+import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
 
@@ -89,8 +90,8 @@ public class DrawerPresenter extends BasePresenter<DrawerUi> {
     }
     public void onMenuHelp() {
         getUi().closeDrawer();
-//        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
-//        filePresenter.importing();
+        HelpPresenter helpPresenter = getUi().findPresenter(HelpFragment.class);
+        helpPresenter.show();
     }
     public void onMenuExportClick() {
         getUi().closeDrawer();

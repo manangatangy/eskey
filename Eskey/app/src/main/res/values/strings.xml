@@ -39,5 +39,18 @@
     <string name="st023">Import</string>
     <string name="st024">Backup</string>
     <string name="st025">Restore</string>
+    <string name="st026">
+        Eskey manages a local store of encrypted data.
+        \n\nThe cipher-text (ie, encrypted) data may be backed up and restored using local files.
+        You may also export and import the data as clear-text (ie, as un-encrypted data).
+        \n\nWhen performing file I/O operations, the user specifies whether to access
+        the private storage directory or the public storage directory.
+        \n\nIf you select the public storage directory, then you must grant the app storage access permission.
+        This permission may be revoked (or re-granted) by editing the app settings.
+        The public storage directory is normally shared (eg, as a mounted USB drive to a host computer).
+        \n\nNo special permission is needed for Eskey to access the private storage directory. Note that the
+        private storage directory is not shared by Android and can typically only be accessed by root (eg,
+        adb/debugging technique).
+    </string>
 
 </resources>
