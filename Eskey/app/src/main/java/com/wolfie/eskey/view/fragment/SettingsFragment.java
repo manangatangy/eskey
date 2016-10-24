@@ -40,7 +40,7 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi 
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
-        View content = inflater.inflate(R.layout.fragment_help, container, false);
+        View content = inflater.inflate(R.layout.fragment_settings, container, false);
         mHolderView.addView(content);
         // This bind will re-bind the superclass members, so the entire view hierarchy must be
         // available, hence the content should be added to the parent view first.

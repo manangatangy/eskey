@@ -11,6 +11,7 @@ import com.wolfie.eskey.view.fragment.FileFragment;
 import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
+import com.wolfie.eskey.view.fragment.SettingsFragment;
 
 import java.util.List;
 
@@ -87,6 +88,8 @@ public class DrawerPresenter extends BasePresenter<DrawerUi> {
 
     public void onMenuSettingsClick() {
         getUi().closeDrawer();
+        SettingsPresenter settingsPresenter = getUi().findPresenter(SettingsFragment.class);
+        settingsPresenter.show();
     }
     public void onMenuHelp() {
         getUi().closeDrawer();

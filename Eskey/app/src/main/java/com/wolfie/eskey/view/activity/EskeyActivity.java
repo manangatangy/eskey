@@ -15,6 +15,7 @@ import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
+import com.wolfie.eskey.view.fragment.SettingsFragment;
 
 import butterknife.BindView;
 
@@ -54,6 +55,9 @@ public class EskeyActivity extends SimpleActivity {
 
         // Create the help (activity sheet) fragment into it's container.
         setupFragment(HelpFragment.class.getName(), R.id.fragment_container_help, null);
+
+        // Create the settings (activity sheet) fragment into it's container.
+        setupFragment(SettingsFragment.class.getName(), R.id.fragment_container_settings, null);
     }
 
     @Override
