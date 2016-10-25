@@ -60,6 +60,9 @@ public class HelpPresenter extends BasePresenter<HelpUi> {
         return false;
     }
 
+    public void hide() {
+        getUi().hide();
+    }
 
     public interface HelpUi extends ActionSheetUi {
 

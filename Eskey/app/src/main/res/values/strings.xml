@@ -52,5 +52,14 @@
         private storage directory is not shared by Android and can typically only be accessed by root (eg,
         adb/debugging technique).
     </string>
+    <string name="st027">
+        Enter the new password and the confirmation-password,
+        \nand press CHANGE PASSWORD
+        \n\nIf the password change is successful, Eskey will logout
+        \nand return you to the login screen,
+        \nwhere you may re-login using the new password.
+    </string>
+    <string name="st028">Text has been entered; press CANCEL to close</string>
+    <string name="st029">Password change succeeded, you may now login\nPlease enter your master password</string>
 
 </resources>

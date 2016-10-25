@@ -17,8 +17,12 @@ import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.FileFragment;
+import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
+import com.wolfie.eskey.view.fragment.SettingsFragment;
+
+import java.util.Set;
 
 import static com.wolfie.eskey.util.StringUtils.isNotBlank;
 import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTORY_ALGORITHM;
@@ -164,21 +168,16 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
     @Override
     public void onUserInactivityTimeout() {
         // Note that MasterLoader won't be blocked by TimingOutSource
-        unregisterTimeoutListenerAndStopTimer();
-
-        DrawerPresenter drawerPresenter = getUi().findPresenter(DrawerFragment.class);
-        drawerPresenter.closeDrawer();
-        EditPresenter editPresenter = getUi().findPresenter(EditFragment.class);
-        editPresenter.hide();
-        FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
-        filePresenter.hide();
-        ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
-        listPresenter.loadEntries();    // This will clear list if timed out.
-
+        closeAll(false);
         startLoginForExistingWithTimeoutMessage();
     }
 
     public void clearAndLogout() {
+        closeAll(true);
+        startLoginForExistingWithRemasterSuccessMessage();
+    }
+
+    private void closeAll(boolean clearCrypter) {
         unregisterTimeoutListenerAndStopTimer();
 
         DrawerPresenter drawerPresenter = getUi().findPresenter(DrawerFragment.class);
@@ -187,10 +186,19 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
         editPresenter.hide();
         FilePresenter filePresenter = getUi().findPresenter(FileFragment.class);
         filePresenter.hide();
-        ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
+        HelpPresenter helpPresenter = getUi().findPresenter(HelpFragment.class);
+        helpPresenter.hide();
+        SettingsPresenter settingsPresenter = getUi().findPresenter(SettingsFragment.class);
+        settingsPresenter.hide();
 
-        mMediumCrypter = null;
+        ListPresenter listPresenter = getUi().findPresenter(ListFragment.class);
+        // To cause the listPresenter to clear its list, either the time out
+        // should occur, or the crypter should be clear.
+        if (clearCrypter) {
+            mMediumCrypter = null;
+        }
         listPresenter.loadEntries();    // This will clear list if null crypter.
+
     }
 
     private void startLoginForExisting() {
@@ -208,6 +216,10 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
     private void startLoginForExistingWithWriteFailed() {
         Log.d("LoginPresenter", "startLoginForExistingWithWriteFailed");
         startLoginSequence(R.string.st008, -1);
+    }
+    private void startLoginForExistingWithRemasterSuccessMessage() {
+        Log.d("LoginPresenter", "startLoginForExistingWithRemasterSuccessMessage");
+        startLoginSequence(R.string.st029, -1);
     }
 
     /**

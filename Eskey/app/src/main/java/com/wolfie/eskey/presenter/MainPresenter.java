@@ -9,6 +9,7 @@ import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.EntryLoader;
 import com.wolfie.eskey.model.loader.IoLoader;
 import com.wolfie.eskey.model.loader.MasterLoader;
+import com.wolfie.eskey.model.loader.RemasterLoader;
 import com.wolfie.eskey.util.TimeoutMonitor;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
@@ -63,4 +64,9 @@ public class MainPresenter extends BasePresenter<BaseUi> {
         // to use a non TimingOutSource to create it.
         return new IoLoader(new Source(mDatabase), crypter);
     }
+
+    public RemasterLoader makeRemasterLoader(Crypter crypter) {
+        return new RemasterLoader(new Source(mDatabase), crypter);
+    }
+
 }

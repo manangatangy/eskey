@@ -79,13 +79,9 @@ public class SettingItemLayout extends LinearLayout {
             public void onClick(View v) {
                 boolean isShowing = (mContent.getVisibility() == VISIBLE);
                 if (isShowing) {
-                    if (onClickHide()) {
-                        hide();
-                    }
+                    onHide();
                 } else {
-                    if (onClickShow()) {
-                        show();
-                    }
+                    onShow();
                 }
             }
         });
@@ -110,14 +106,21 @@ public class SettingItemLayout extends LinearLayout {
         mHeadingImageView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.red_right_chevron, null));
     }
 
-    /**
-     * The component notifies when user has clicked the heading to open or close.
-     * Method may inhibit the open/close by return false.
-     */
-    public boolean onClickShow() {
+    public boolean onShow() {
+        show();
         return true;        // Default allow show to proceed.
     }
-    public boolean onClickHide() {
+
+    /**
+     * The component notifies when user has clicked the heading to close.
+     * Subclasses that wish to perform some check before closing should override this
+     * method. They should then return false if the close was inhibited, or if the
+     * close is allowed, then simply return super.onClickHide(), which will also do
+     * the close.  This method may also be called from the controller to check/close
+     * the SettingsItem.
+     */
+    public boolean onHide() {
+        hide();
         return true;        // Default allow hide to proceed.
     }
 

@@ -22,4 +22,6 @@ public interface BaseUi {
     <F extends BaseFragment, P extends Presenter> P findPresenter(Class<F> fragClass);
 
     FragmentActivity getActivity();
+
+    void showBanner(String message);
 }

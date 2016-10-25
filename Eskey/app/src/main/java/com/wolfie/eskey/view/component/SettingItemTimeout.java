@@ -1,7 +1,6 @@
 package com.wolfie.eskey.view.component;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.widget.RadioGroup;
 
@@ -38,12 +37,7 @@ public class SettingItemTimeout extends SettingItemLayout implements RadioGroup.
 
     @Override
     public String getHeadingText() {
-        return "Login Timeout";
-    }
-
-    @Override
-    public boolean onClickHide() {
-        return true;        // Default allow hide to proceed.
+        return "Session Timeout";
     }
 
     public void setTimeout(int timeoutInMillis) {
@@ -87,7 +81,7 @@ public class SettingItemTimeout extends SettingItemLayout implements RadioGroup.
         }
     }
 
-    public void onSelection(final OnTimeoutSelectedListener listener) {
+    public void setOnTimeoutSelectedListener(final OnTimeoutSelectedListener listener) {
         mListener = listener;
     }
 

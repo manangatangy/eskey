@@ -258,11 +258,6 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
     @Override
-    public void showBanner(String message) {
-        Snackbar.make(mTextTitle, message, LENGTH_LONG).show();
-    }
-
-    @Override
     public void setPrivateButtonLabel(String text) {
         mStorageTypePrivate.setText(text);
     }

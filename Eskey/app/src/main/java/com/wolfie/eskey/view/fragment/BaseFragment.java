@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -13,6 +14,8 @@ import com.wolfie.eskey.view.activity.EskeyActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 public abstract class BaseFragment extends Fragment implements BaseUi {
 
@@ -169,6 +172,11 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         if (getPresenter() != null) {
             getPresenter().onKeyboardVisibilityChanged(keyboardVisibility);
         }
+    }
+
+    @Override
+    public void showBanner(String message) {
+        Snackbar.make(getView(), message, LENGTH_LONG).show();
     }
 
 }

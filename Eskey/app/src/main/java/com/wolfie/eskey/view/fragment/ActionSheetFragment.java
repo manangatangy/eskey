@@ -3,6 +3,7 @@ package com.wolfie.eskey.view.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.wolfie.eskey.util.KeyboardUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 
 /**

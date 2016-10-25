@@ -271,7 +271,6 @@ public class FilePresenter extends BasePresenter<FileUi>
         void setEnabledOkButton(boolean enabled);
         void clearErrorMessage();
         void setOkButtonText(@StringRes int resourceId);
-        void showBanner(String message);
 
         void setPrivateButtonLabel(String text);
         void setPublicButtonLabel(String text);

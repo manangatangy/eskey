@@ -59,8 +59,8 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     }
 
     /**
-     * This will clear the list view if TimeoutMonitor.isTimeout() or if
-     * not loginPresenter.isLoggedIn().  The former test is needed to handle when
+     * This will clear the list view if TimeoutMonitor.isTimeout() or if not
+     * logged-in as indicated by null crypter.  The former test is needed to handle when
      * resume()ing from a pause.  The latter test is needed when first starting
      * up, and no timeout has yet occurred.
      */

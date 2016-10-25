@@ -18,6 +18,8 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
     @BindView(R.id.background_radio_group)
     RadioGroup mBackgroundGroup;
 
+    private OnBackgroundPicSelectedListener mListener;
+
     public SettingItemBackgroundPic(Context context) {
         super(context);
     }
@@ -37,11 +39,6 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
     @Override
     public String getHeadingText() {
         return "Background Picture";
-    }
-
-    @Override
-    public boolean onClickHide() {
-        return true;        // Default allow hide to proceed.
     }
 
     public void setBackgroundPic(@DrawableRes int drawId) {
@@ -79,9 +76,7 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
         }
     }
 
-    private OnBackgroundPicSelectedListener mListener;
-
-    public void onSelection(final OnBackgroundPicSelectedListener listener) {
+    public void setOnBackgroundPicSelectedListener(final OnBackgroundPicSelectedListener listener) {
         mListener = listener;
     }
 
