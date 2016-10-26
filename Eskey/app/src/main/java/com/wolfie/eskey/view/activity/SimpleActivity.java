@@ -25,6 +25,8 @@ import butterknife.Unbinder;
 
 public abstract class SimpleActivity extends BaseActivity {
 
+    public static final int DEFAULT_BACKGROUND_IMAGE = R.drawable.st_basils_cathedral_1;
+
     @BindView(R.id.layout_activity_simple)
     View mActivityRootView;
 

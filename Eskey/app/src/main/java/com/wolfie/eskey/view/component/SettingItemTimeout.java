@@ -36,6 +36,12 @@ public class SettingItemTimeout extends SettingItemLayout implements RadioGroup.
     }
 
     @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mTimeoutGroup.setOnCheckedChangeListener(this);
+    }
+
+    @Override
     public String getHeadingText() {
         return "Session Timeout";
     }

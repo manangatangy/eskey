@@ -1,7 +1,9 @@
 package com.wolfie.eskey.view.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -9,6 +11,8 @@ import android.view.MenuItem;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.MainPresenter;
+import com.wolfie.eskey.presenter.SettingsPresenter;
+import com.wolfie.eskey.util.TimeoutMonitor;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.FileFragment;
 import com.wolfie.eskey.view.fragment.HelpFragment;
@@ -34,9 +38,15 @@ public class EskeyActivity extends SimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBackgroundImage(R.drawable.st_basils_cathedral_1);
 
         mMainPresenter = new MainPresenter(null, getApplicationContext());
+
+        // Set the initial values for some settings.  May be changed later by SettingsPresenter
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int sessionTimeout = prefs.getInt(SettingsPresenter.PREF_SESSION_TIMEOUT, TimeoutMonitor.DEFAULT_TIMEOUT);
+        mMainPresenter.setTimeout(sessionTimeout);
+        int imageResourceId = prefs.getInt(SettingsPresenter.PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
+        setBackgroundImage(imageResourceId);
 
         // Create the main content fragment into it's container.
         setupFragment(ListFragment.class.getName(), R.id.fragment_container_activity_simple, null);

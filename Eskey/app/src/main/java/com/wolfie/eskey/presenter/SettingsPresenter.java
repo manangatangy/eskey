@@ -1,15 +1,21 @@
 package com.wolfie.eskey.presenter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.model.loader.RemasterLoader;
+import com.wolfie.eskey.util.TimeoutMonitor;
 import com.wolfie.eskey.view.ActionSheetUi;
 import com.wolfie.eskey.presenter.SettingsPresenter.SettingsUi;
+import com.wolfie.eskey.view.activity.SimpleActivity;
 import com.wolfie.eskey.view.fragment.LoginFragment;
 
 /**
@@ -19,10 +25,13 @@ import com.wolfie.eskey.view.fragment.LoginFragment;
 public class SettingsPresenter extends BasePresenter<SettingsUi>
         implements AsyncListeningTask.Listener<String> {
 
-
     private final static String KEY_SETTINGS_ACTION_SHEET_SHOWING = "KEY_SETTINGS_ACTION_SHEET_SHOWING";
+    public final static String PREF_SESSION_TIMEOUT = "PREF_SESSION_TIMEOUT";
+    public final static String PREF_SESSION_BACKGROUND_IMAGE = "PREF_SESSION_BACKGROUND_IMAGE";
 
     private boolean mIsShowing;
+
+    private SharedPreferences mPrefs;
 
     public SettingsPresenter(SettingsUi settingsUi) {
         super(settingsUi);
@@ -35,6 +44,7 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         if (!mIsShowing || mainPresenter == null || mainPresenter.getTimeoutMonitor().isTimedOut()) {
             getUi().hide();
         }
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
     @Override
@@ -55,6 +65,13 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
     }
 
     public void show() {
+        // Load the current settings into the view elements.
+        int sessionTimeout = mPrefs.getInt(PREF_SESSION_TIMEOUT, TimeoutMonitor.DEFAULT_TIMEOUT);
+        getUi().setTimeout(sessionTimeout);
+
+        int backgroundImageId = mPrefs.getInt(PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
+        getUi().setBackgroundImage(backgroundImageId);
+
         getUi().show();
     }
 
@@ -74,8 +91,25 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         return false;
     }
 
-    public void onTimeoutChanged(int timeoutInMillis) {
+    public void onBackgroundPicChanged(@DrawableRes int backgroundImageId) {
+        // Change the background
+        getUi().setActivityBackgroundImage(backgroundImageId);
 
+        // Save in prefs
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(PREF_SESSION_BACKGROUND_IMAGE, backgroundImageId);
+        editor.apply();
+    }
+
+    public void onTimeoutChanged(int timeoutInMillis) {
+        // Change the timing source
+        MainPresenter mainPresenter = getUi().findPresenter(null);
+        mainPresenter.setTimeout(timeoutInMillis);
+
+        // Save in prefs
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(PREF_SESSION_TIMEOUT, timeoutInMillis);
+        editor.apply();
     }
 
     public void onChangePassword(String password, String confirm) {
@@ -105,23 +139,23 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         loginPresenter.clearAndLogout();
     }
 
-    public void onBackgroundPicChanged(@DrawableRes int drawId) {
-
-    }
-
     public void hide() {
         getUi().hide();
     }
 
     public interface SettingsUi extends ActionSheetUi {
 
+        void setTimeout(int timeoutInMillis);
+
         // Try to close all the settings, return true if all closed ok
         boolean onHideAll();
         // Must clear the field so that hide isn't inhibited.
         void clearPasswordsAndHidePasswordsSetting();
-
         void setPasswordError(@StringRes int resId);
-
+        // This method changes the radio-button in the settings frag
+        void setBackgroundImage(@DrawableRes int resourceId);
+        // This method actually changes the image via the EskeyActivity
+        void setActivityBackgroundImage(@DrawableRes int resourceId);
     }
 
 }

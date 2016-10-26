@@ -1,7 +1,9 @@
 package com.wolfie.eskey.presenter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 
 import com.wolfie.eskey.model.database.Helper;
 import com.wolfie.eskey.model.database.Source;
@@ -67,6 +69,10 @@ public class MainPresenter extends BasePresenter<BaseUi> {
 
     public RemasterLoader makeRemasterLoader(Crypter crypter) {
         return new RemasterLoader(new Source(mDatabase), crypter);
+    }
+
+    public void setTimeout(int timeoutInMillis) {
+        mTimeoutMonitor.setTimeout(timeoutInMillis);
     }
 
 }

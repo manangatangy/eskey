@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.SettingsPresenter.SettingsUi;
 import com.wolfie.eskey.presenter.SettingsPresenter;
+import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.component.SettingItemBackgroundPic;
 import com.wolfie.eskey.view.component.SettingItemChangePassword;
 import com.wolfie.eskey.view.component.SettingItemTimeout;
@@ -93,16 +95,17 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
     }
 
     @Override
+    public void setTimeout(int timeoutInMillis) {
+        mSettingItemTimeout.setTimeout(timeoutInMillis);
+    }
+
+    @Override
     public void onTimeoutChanged(int timeoutInMillis) {
         mSettingsPresenter.onTimeoutChanged(timeoutInMillis);
     }
     @Override
     public void onChangePassword(String password, String confirm) {
         mSettingsPresenter.onChangePassword(password, confirm);
-    }
-    @Override
-    public void onBackgroundPicChanged(@DrawableRes int drawId) {
-        mSettingsPresenter.onBackgroundPicChanged(drawId);
     }
 
     @Override
@@ -114,6 +117,24 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
     @Override
     public void setPasswordError(@StringRes int resId) {
         mSettingItemChangePassword.setErrorMessage(resId);
+    }
+
+    @Override
+    public void onBackgroundPicChanged(@DrawableRes int drawId) {
+        mSettingsPresenter.onBackgroundPicChanged(drawId);
+    }
+
+    @Override
+    public void setBackgroundImage(@DrawableRes int resourceId) {
+        mSettingItemBackgroundPic.setBackgroundPic(resourceId);
+    }
+
+    @Override
+    public void setActivityBackgroundImage(@DrawableRes int resourceId) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof EskeyActivity) {
+            ((EskeyActivity)activity).setBackgroundImage(resourceId);
+        }
     }
 
     @Override

@@ -193,22 +193,113 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:text="   St Basil's Cathedral 1"
                 />
             <RadioButton
                 android:id="@+id/background_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:text="   St Basil's Cathedral 2"
                 />
             <RadioButton
                 android:id="@+id/background_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:text="   Tall Trees"
+                />
+            <RadioButton
+                android:id="@+id/background_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Arkhangelsk"
+                />
+            <RadioButton
+                android:id="@+id/background_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Church of The Saviour On Spilt Blood 1"
+                />
+            <RadioButton
+                android:id="@+id/background_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Church of The Saviour On Spilt Blood 2"
+                />
+            <RadioButton
+                android:id="@+id/background_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Cathedral of Immaculate Conception"
+                />
+            <RadioButton
+                android:id="@+id/background_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   The Motherland Calls"
+                />
+            <RadioButton
+                android:id="@+id/background_9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Peter and Paul Fortress Spire"
+                />
+            <RadioButton
+                android:id="@+id/background_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Rostov Citadel"
+                />
+            <RadioButton
+                android:id="@+id/background_11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Sevastopol Memorial to Scuttled Ships 1"
+                />
+            <RadioButton
+                android:id="@+id/background_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Sevastopol Memorial to Scuttled Ships 2"
+                />
+            <RadioButton
+                android:id="@+id/background_13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Valaam Chapel"
+                />
+            <RadioButton
+                android:id="@+id/background_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Valaam Icon"
+                />
+            <RadioButton
+                android:id="@+id/background_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Valaam Monastery 1"
+                />
+            <RadioButton
+                android:id="@+id/background_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="   Valaam Monastery 2"
                 />
         </RadioGroup>
     </com.wolfie.eskey.view.component.SettingItemBackgroundPic>

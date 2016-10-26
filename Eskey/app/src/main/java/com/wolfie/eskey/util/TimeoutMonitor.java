@@ -16,7 +16,9 @@ import android.util.Log;
  */
 public class TimeoutMonitor implements Runnable {
 
-    private static final long DISCONNECT_TIMEOUT = 300000; // 5 min = 5 * 60 * 1000 ms  ==> 300000
+    public static final int DEFAULT_TIMEOUT = 60000; // 1 min = 1 * 60 * 1000 ms  ==> 60000
+
+    private long mTimeoutInMillis;
     private UserInactivityTimeoutListener mInactivityListener;
     private boolean mDetectionEnabled = false;
     private long mStartTime;
@@ -28,6 +30,10 @@ public class TimeoutMonitor implements Runnable {
 
     public interface UserInactivityTimeoutListener {
         void onUserInactivityTimeout();
+    }
+
+    public void setTimeout(int timeoutInMillis) {
+        mTimeoutInMillis = timeoutInMillis;
     }
 
     public void setUserInactivityTimeoutListener(UserInactivityTimeoutListener listener) {
@@ -61,7 +67,7 @@ public class TimeoutMonitor implements Runnable {
      * Can still return true, even if stopTimer was called.
      */
     public boolean isTimedOut() {
-        boolean timedOut =  (System.currentTimeMillis() - mStartTime >= DISCONNECT_TIMEOUT);
+        boolean timedOut =  (System.currentTimeMillis() - mStartTime >= mTimeoutInMillis);
         Log.d("TimeoutMonitor", "isTimedOut called, returned " + timedOut);
         return timedOut;
     }
@@ -80,7 +86,7 @@ public class TimeoutMonitor implements Runnable {
 
     private void resetInactivityTimer() {
         stopInactivityTimer();
-        disconnectHandler.postDelayed(this, DISCONNECT_TIMEOUT);
+        disconnectHandler.postDelayed(this, mTimeoutInMillis);
         mStartTime = System.currentTimeMillis();
     }
 
