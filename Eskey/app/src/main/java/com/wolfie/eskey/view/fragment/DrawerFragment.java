@@ -29,9 +29,6 @@ public class DrawerFragment extends BaseFragment implements
         DrawerLayout.DrawerListener,
         NavMenuRecyclerAdapter.OnNavMenuItemClickListener {
 
-//    @BindView(R.id.navigation_text_view)
-//    TextView mTextView;
-
     @BindView(R.id.navigation_recycler_view)
     RecyclerView mRecyclerView;
 
@@ -59,7 +56,6 @@ public class DrawerFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        mTextView.setText("Hello Preston");
         mRecyclerView.setLayoutManager(new DefaultLayoutManager(getContext()));
     }
 

@@ -16,10 +16,6 @@ import com.wolfie.eskey.model.EntryGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by david on 11/09/16.
- */
-
 public class GroupingRecyclerAdapter
         extends PlaceholderRecyclerAdapter<BaseViewHolder> {
 

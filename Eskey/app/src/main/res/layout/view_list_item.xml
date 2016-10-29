@@ -16,6 +16,7 @@
         android:orientation="horizontal"
         >
 
+        <!-- onExpand; width getWidth() ==> 0 -->
         <View
             android:id="@+id/item_left_spacer"
             android:layout_width="20dp"
@@ -46,6 +47,8 @@
                 android:textSize="15sp"
                 android:visibility="visible" />
 
+            <!-- onExpand; width 0 ==> (R.id.item_layout).getWidth() -->
+            <!-- onExpand; height 0 ==> (R.id.item_detail_view).getHeight() -->
             <FrameLayout
                 android:id="@+id/item_detail_frame"
                 android:layout_width="0dp"

@@ -57,6 +57,9 @@ public abstract class SimpleActivity extends BaseActivity {
     }
 
     public void setBackgroundImage(@DrawableRes int resourceId) {
+        // If this is called before the toolbar is laid out then the height will be zero :/
+        int toolBarHeight = mToolbar.getHeight();
+        mBackgroundImageView.setPadding(0, toolBarHeight, 0, 0);
         // adapt the image to the size of the display
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();

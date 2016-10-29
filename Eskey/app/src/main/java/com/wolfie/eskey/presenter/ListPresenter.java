@@ -38,6 +38,7 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     @Override
     public void resume() {
         super.resume();
+        // TODO - what about the searchCriterion ?
         loadEntries();
     }
 
@@ -97,10 +98,14 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     }
 
     /**
-     * Set the new group name for filtering, use it with the existing (already loaded) DataSet
-     * to build a list of structured entries, and pass to the ui for display.
+     * Set the new group name for filtering, use it with the existing
+     * (already loaded) DataSet to build a list of structured entries,
+     * and pass to the ui for display. Called by the DrawerPresenter.
      */
     public void setGroupName(@Nullable String groupName) {
+        // TODO - since the drawer menu is being used to select a new group, clear the searchCriterion
+        // or not ? Maybe just used the criterion. And only clear the criterion when the user presses
+        // the clear button, or backspace from the edit field
         mGroupName = groupName;
         if (mDataSet != null) {
             List<EntryGroup> groups = EntryGroup.buildGroups(mGroupName, mDataSet);

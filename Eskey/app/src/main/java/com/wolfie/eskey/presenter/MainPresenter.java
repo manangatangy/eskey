@@ -71,8 +71,11 @@ public class MainPresenter extends BasePresenter<BaseUi> {
         return new RemasterLoader(new Source(mDatabase), crypter);
     }
 
-    public void setTimeout(int timeoutInMillis) {
+    public void setTimeout(int timeoutInMillis, boolean doMarkTimeAndStart) {
         mTimeoutMonitor.setTimeout(timeoutInMillis);
+        if (doMarkTimeAndStart) {
+            mTimeoutMonitor.markTimeAndStart();
+        }
     }
 
 }

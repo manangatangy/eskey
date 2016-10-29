@@ -80,9 +80,9 @@ public class ItemViewHolder extends BaseViewHolder {
             mLeftSpacedWidth = mDetailLeftSpacerView.getWidth();        // should be 53
         }
 
-        // onExpand mDetailLayoutFrame    animates from 0 --> mLayoutView.getWidth() [974]
-        // onExpand mDetailLayoutFrame    animates from 0 --> mDetailLayoutView.getHeight() [184]
-        // onExpand mDetailLeftSpacerView animates from mDetailLeftSpacerView.getWidth() [53] --> 0
+        // onExpand mDetailLayoutFrame(R.id.item_detail_frame)    animates from 0 --> mLayoutView.getWidth() [974]
+        // onExpand mDetailLayoutFrame(R.id.item_detail_frame)    animates from 0 --> mDetailLayoutView.getHeight() [184]
+        // onExpand mDetailLeftSpacerView(R.id.item_left_spacer)  animates from mDetailLeftSpacerView.getWidth() [53] --> 0
 
         ViewWidthParamAnimator frameWidthAnimator = new ViewWidthParamAnimator(mDetailLayoutFrame);
         ViewHeightParamAnimator frameHeightAnimator = new ViewHeightParamAnimator(mDetailLayoutFrame);

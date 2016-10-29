@@ -67,9 +67,6 @@ public class LoginFragment extends ActionSheetFragment implements LoginUi {
         mLoginPresenter = new LoginPresenter(this);
     }
 
-    /**
-     *
-     */
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,

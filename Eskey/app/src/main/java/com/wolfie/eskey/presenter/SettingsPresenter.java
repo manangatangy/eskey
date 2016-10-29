@@ -104,7 +104,7 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
     public void onTimeoutChanged(int timeoutInMillis) {
         // Change the timing source
         MainPresenter mainPresenter = getUi().findPresenter(null);
-        mainPresenter.setTimeout(timeoutInMillis);
+        mainPresenter.setTimeout(timeoutInMillis, true);        // Also restart timer
 
         // Save in prefs
         SharedPreferences.Editor editor = mPrefs.edit();

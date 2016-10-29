@@ -85,7 +85,6 @@ public abstract class BaseFragment extends Fragment implements BaseUi {
         if (getPresenter() != null) {
             getPresenter().pause();
         }
-//        hideBannerMessage();
     }
 
     @Override

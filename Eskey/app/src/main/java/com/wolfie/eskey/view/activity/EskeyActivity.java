@@ -44,7 +44,7 @@ public class EskeyActivity extends SimpleActivity {
         // Set the initial values for some settings.  May be changed later by SettingsPresenter
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int sessionTimeout = prefs.getInt(SettingsPresenter.PREF_SESSION_TIMEOUT, TimeoutMonitor.DEFAULT_TIMEOUT);
-        mMainPresenter.setTimeout(sessionTimeout);
+        mMainPresenter.setTimeout(sessionTimeout, false);       // No need to start; we are not yet logged in
         int imageResourceId = prefs.getInt(SettingsPresenter.PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
         setBackgroundImage(imageResourceId);
 
