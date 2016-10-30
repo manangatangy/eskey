@@ -2,10 +2,12 @@ package com.wolfie.eskey.view.component;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.widget.RadioGroup;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.view.adapter.ImagePagerAdapter;
 
 import butterknife.BindView;
 
@@ -17,6 +19,9 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
 
     @BindView(R.id.background_radio_group)
     RadioGroup mBackgroundGroup;
+
+    @BindView(R.id.setting_item_viewpager)
+    ViewPager mViewpager;
 
     private OnBackgroundPicSelectedListener mListener;
 
@@ -40,6 +45,12 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
     protected void onFinishInflate() {
         super.onFinishInflate();
         mBackgroundGroup.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public boolean onShow() {
+        mViewpager.setAdapter(new ImagePagerAdapter(getContext()));
+        return super.onShow();
     }
 
     @Override

@@ -77,6 +77,7 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
         mSettingItemTimeout.setOnTimeoutSelectedListener(this);
         mSettingItemChangePassword.setOnChangePasswordListener(this);
         mSettingItemBackgroundPic.setOnBackgroundPicSelectedListener(this);
+
         return view;
     }
 
