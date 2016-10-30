@@ -62,4 +62,21 @@
     <string name="st028">Text has been entered; press CANCEL to close</string>
     <string name="st029">Password change succeeded, you may now login\nPlease enter your master password</string>
 
+    <string name="im001">St. Basil\'s Cathedral (1)</string>
+    <string name="im002">St. Basil\'s Cathedral (2)</string>
+    <string name="im003">Tall Trees</string>
+    <string name="im004">Arkhangelsk houses</string>
+    <string name="im005">Church of The Saviour on Spilt Blood (1)</string>
+    <string name="im006">Church of The Saviour on Spilt Blood (2)</string>
+    <string name="im007">Church of Immaculate Conception, Moscow</string>
+    <string name="im008">The Motherland Call, Volgograd</string>
+    <string name="im009">Spire from Peter And Paul Fortress</string>
+    <string name="im010">Rostov Citadel</string>
+    <string name="im011">Sevastopol Memorial to Scuttled Ships (1)</string>
+    <string name="im012">Sevastopol Memorial to Scuttled Ships (2)</string>
+    <string name="im013">Chapel at Valaam Monastery</string>
+    <string name="im014">Icon from Valaam Monastery</string>
+    <string name="im015">Valaam Monastery (1)</string>
+    <string name="im016">Valaam Monastery (2)</string>
+
 </resources>

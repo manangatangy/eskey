@@ -15,6 +15,7 @@ import com.wolfie.eskey.util.BitmapWorkerTask;
 
 /**
  * Created by david on 29/10/16.
+ * Ref: https://www.bignerdranch.com/blog/viewpager-without-fragments/
  */
 
 public class ImagePagerAdapter extends PagerAdapter {

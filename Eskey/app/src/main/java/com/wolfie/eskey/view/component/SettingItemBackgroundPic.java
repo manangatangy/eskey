@@ -53,6 +53,10 @@ public class SettingItemBackgroundPic extends SettingItemLayout implements Radio
         return super.onShow();
     }
 
+    public void getCurrentItem() {
+        mViewpager.getCurrentItem();
+    }
+
     @Override
     public String getHeadingText() {
         return "Background Picture";
