@@ -1,7 +1,6 @@
 package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
@@ -14,31 +13,31 @@ import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.SettingsPresenter.SettingsUi;
 import com.wolfie.eskey.presenter.SettingsPresenter;
 import com.wolfie.eskey.view.activity.EskeyActivity;
-import com.wolfie.eskey.view.component.SettingItemBackgroundPic;
-import com.wolfie.eskey.view.component.SettingItemChangePassword;
-import com.wolfie.eskey.view.component.SettingItemTimeout;
+import com.wolfie.eskey.view.component.Settings.GroupSetting;
+import com.wolfie.eskey.view.component.Settings.ItemImageSelector;
+import com.wolfie.eskey.view.component.Settings.ItemChangePassword;
+import com.wolfie.eskey.view.component.Settings.ItemTimeout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
-        SettingItemTimeout.OnTimeoutSelectedListener,
-        SettingItemChangePassword.OnChangePasswordListener,
-        SettingItemBackgroundPic.OnBackgroundPicSelectedListener
-{
+        ItemTimeout.OnTimeoutSelectedListener,
+        ItemChangePassword.OnChangePasswordListener,
+        ItemImageSelector.OnImageSelectedListener {
 
     @Nullable
     @BindView(R.id.setting_item_timeout)
-    SettingItemTimeout mSettingItemTimeout;
+    ItemTimeout mItemTimeout;
 
     @Nullable
     @BindView(R.id.setting_item_change_password)
-    SettingItemChangePassword mSettingItemChangePassword;
+    ItemChangePassword mItemChangePassword;
 
     @Nullable
     @BindView(R.id.setting_item_background)
-    SettingItemBackgroundPic mSettingItemBackgroundPic;
+    ItemImageSelector mItemImageSelector;
 
     @Nullable
     @BindView(R.id.button_close)
@@ -47,6 +46,8 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
     private Unbinder mUnbinder2;
 
     private SettingsPresenter mSettingsPresenter;
+
+    private GroupSetting mGroupSetting = new GroupSetting();
 
     @Nullable
     @Override
@@ -74,19 +75,23 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
                 mSettingsPresenter.onClickClose();
             }
         });
-        mSettingItemTimeout.setOnTimeoutSelectedListener(this);
-        mSettingItemChangePassword.setOnChangePasswordListener(this);
-        mSettingItemBackgroundPic.setOnBackgroundPicSelectedListener(this);
+        mItemTimeout.setOnTimeoutSelectedListener(this);
+        mItemChangePassword.setOnChangePasswordListener(this);
+        mItemImageSelector.setOnImageSelectedListener(this);
+
+        mItemTimeout.setGroupSetting(mGroupSetting);
+        mItemChangePassword.setGroupSetting(mGroupSetting);
+        mItemImageSelector.setGroupSetting(mGroupSetting);
 
         return view;
     }
 
     @Override
-    public boolean onHideAll() {
-        boolean onHide1 = mSettingItemTimeout.onHide();
-        boolean onHide2 = mSettingItemChangePassword.onHide();
-        boolean onHide3 = mSettingItemBackgroundPic.onHide();
-        return (onHide1 && onHide2 && onHide3);
+    public void hide() {
+        // Can only hide the action sheet if the group agrees
+        if (mGroupSetting.requestToHideCurrent()) {
+            super.hide();
+        }
     }
 
     @Override
@@ -97,7 +102,7 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
 
     @Override
     public void setTimeout(int timeoutInMillis) {
-        mSettingItemTimeout.setTimeout(timeoutInMillis);
+        mItemTimeout.setTimeout(timeoutInMillis);
     }
 
     @Override
@@ -111,30 +116,31 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
 
     @Override
     public void clearPasswordsAndHidePasswordsSetting() {
-        mSettingItemChangePassword.clearPasswordFields();
-        mSettingItemChangePassword.onHide();
+        mItemChangePassword.clearPasswordFields();
+        mItemChangePassword.onHide();
     }
 
     @Override
     public void setPasswordError(@StringRes int resId) {
-        mSettingItemChangePassword.setErrorMessage(resId);
+        mItemChangePassword.setErrorMessage(resId);
     }
 
     @Override
-    public void onBackgroundPicChanged(@DrawableRes int drawId) {
-        mSettingsPresenter.onBackgroundPicChanged(drawId);
+    public void onImageSelected(int enumIndex) {
+        // Change the stored pref setting.
+        mSettingsPresenter.onImageSelected(enumIndex);
     }
 
     @Override
-    public void setBackgroundImage(@DrawableRes int resourceId) {
-        mSettingItemBackgroundPic.setBackgroundPic(resourceId);
+    public void setImageItem(int enumIndex) {
+        mItemImageSelector.setCurrentItem(enumIndex);
     }
 
     @Override
-    public void setActivityBackgroundImage(@DrawableRes int resourceId) {
+    public void setActivityBackgroundImage(int enumIndex) {
         FragmentActivity activity = getActivity();
         if (activity instanceof EskeyActivity) {
-            ((EskeyActivity)activity).setBackgroundImage(resourceId);
+            ((EskeyActivity)activity).setBackgroundImage(enumIndex);
         }
     }
 

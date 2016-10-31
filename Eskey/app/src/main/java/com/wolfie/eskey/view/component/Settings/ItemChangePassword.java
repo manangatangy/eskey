@@ -1,9 +1,10 @@
-package com.wolfie.eskey.view.component;
+package com.wolfie.eskey.view.component.Settings;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +19,7 @@ import butterknife.BindView;
  * Created by david on 24/10/16.
  */
 
-public class SettingItemChangePassword extends SettingItemLayout {
+public class ItemChangePassword extends ItemLayout {
 
     @Nullable
     @BindView(R.id.edit_text_password)
@@ -42,19 +43,19 @@ public class SettingItemChangePassword extends SettingItemLayout {
 
     private OnChangePasswordListener mListener;
 
-    public SettingItemChangePassword(Context context) {
+    public ItemChangePassword(Context context) {
         super(context);
     }
 
-    public SettingItemChangePassword(Context context, AttributeSet attrs) {
+    public ItemChangePassword(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SettingItemChangePassword(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ItemChangePassword(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public SettingItemChangePassword(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ItemChangePassword(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
@@ -64,9 +65,8 @@ public class SettingItemChangePassword extends SettingItemLayout {
         mButtonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditPassword.setText("");
-                mEditConfirm.setText("");
-                onHide();
+                clearPasswordFields();
+                hide();
             }
         });
         mButtonChangePassword.setOnClickListener(new OnClickListener() {
@@ -88,8 +88,9 @@ public class SettingItemChangePassword extends SettingItemLayout {
 
     @Override
     public void show() {
-        clearPasswordFields();
+        Log.d("eskey", "ItemChangePassword.show(" + getHeadingText() + ")");
         super.show();
+        clearPasswordFields();
     }
 
     public void clearPasswordFields() {
@@ -106,8 +107,10 @@ public class SettingItemChangePassword extends SettingItemLayout {
         boolean hasText = StringUtils.isNotBlank(password) || StringUtils.isNotBlank(confirm);
         if (hasText) {
             mTextError.setText(R.string.st028);
+            Log.d("eskey", "ItemChangePassword.onHide(" + getHeadingText() + ") ==> NO");
             return false;
         } else {
+            Log.d("eskey", "ItemChangePassword.onHide(" + getHeadingText() + ") defaulting to baseclass");
             return super.onHide();
         }
     }
@@ -115,6 +118,7 @@ public class SettingItemChangePassword extends SettingItemLayout {
     public void setErrorMessage(@StringRes int resId) {
         mTextError.setText(resId);
     }
+
     public void setOnChangePasswordListener(final OnChangePasswordListener listener) {
         mListener = listener;
     }

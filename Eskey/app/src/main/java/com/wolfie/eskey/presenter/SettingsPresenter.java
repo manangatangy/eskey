@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.model.ImageEnum;
 import com.wolfie.eskey.model.database.TimingOutSource;
 import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.model.loader.RemasterLoader;
@@ -69,17 +70,15 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         int sessionTimeout = mPrefs.getInt(PREF_SESSION_TIMEOUT, TimeoutMonitor.DEFAULT_TIMEOUT);
         getUi().setTimeout(sessionTimeout);
 
-        int backgroundImageId = mPrefs.getInt(PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
-        getUi().setBackgroundImage(backgroundImageId);
+        int enumIndex = mPrefs.getInt(PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
+        getUi().setImageItem(enumIndex);
 
         getUi().show();
     }
 
     public void onClickClose() {
         getUi().dismissKeyboard(false);
-        if (getUi().onHideAll()) {
-            getUi().hide();
-        }
+        getUi().hide();
     }
 
     @Override
@@ -91,13 +90,13 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         return false;
     }
 
-    public void onBackgroundPicChanged(@DrawableRes int backgroundImageId) {
-        // Change the background
-        getUi().setActivityBackgroundImage(backgroundImageId);
+    public void onImageSelected(int enumIndex) {
+        // Change the actual background image
+        getUi().setActivityBackgroundImage(enumIndex);
 
         // Save in prefs
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(PREF_SESSION_BACKGROUND_IMAGE, backgroundImageId);
+        editor.putInt(PREF_SESSION_BACKGROUND_IMAGE, enumIndex);
         editor.apply();
     }
 
@@ -147,15 +146,12 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
 
         void setTimeout(int timeoutInMillis);
 
-        // Try to close all the settings, return true if all closed ok
-        boolean onHideAll();
         // Must clear the field so that hide isn't inhibited.
         void clearPasswordsAndHidePasswordsSetting();
         void setPasswordError(@StringRes int resId);
-        // This method changes the radio-button in the settings frag
-        void setBackgroundImage(@DrawableRes int resourceId);
+        void setImageItem(int enumIndex);
         // This method actually changes the image via the EskeyActivity
-        void setActivityBackgroundImage(@DrawableRes int resourceId);
+        void setActivityBackgroundImage(int enumIndex);
     }
 
 }

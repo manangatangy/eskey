@@ -1,4 +1,4 @@
-package com.wolfie.eskey.view.component;
+package com.wolfie.eskey.view.component.Settings;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -12,26 +12,26 @@ import butterknife.BindView;
  * Created by david on 24/10/16.
  */
 
-public class SettingItemTimeout extends SettingItemLayout implements RadioGroup.OnCheckedChangeListener {
+public class ItemTimeout extends ItemLayout implements RadioGroup.OnCheckedChangeListener {
 
     @BindView(R.id.timeout_radio_group)
     RadioGroup mTimeoutGroup;
 
     private OnTimeoutSelectedListener mListener;
 
-    public SettingItemTimeout(Context context) {
+    public ItemTimeout(Context context) {
         super(context);
     }
 
-    public SettingItemTimeout(Context context, AttributeSet attrs) {
+    public ItemTimeout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SettingItemTimeout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ItemTimeout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public SettingItemTimeout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ItemTimeout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

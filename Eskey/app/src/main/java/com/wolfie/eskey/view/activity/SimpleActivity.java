@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.wolfie.eskey.R;
+import com.wolfie.eskey.model.ImageEnum;
 import com.wolfie.eskey.presenter.EditPresenter;
 import com.wolfie.eskey.util.BitmapWorkerTask;
 import com.wolfie.eskey.view.fragment.EditFragment;
@@ -56,7 +57,7 @@ public abstract class SimpleActivity extends BaseActivity {
         return mActivityRootView;
     }
 
-    public void setBackgroundImage(@DrawableRes int resourceId) {
+    public void setBackgroundImage(int enumIndex) {
         // If this is called before the toolbar is laid out then the height will be zero :/
         int toolBarHeight = mToolbar.getHeight();
         mBackgroundImageView.setPadding(0, toolBarHeight, 0, 0);
@@ -64,6 +65,7 @@ public abstract class SimpleActivity extends BaseActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
+        int resourceId = ImageEnum.getImageId(enumIndex);
         BitmapWorkerTask bitmapWorkerTask = new BitmapWorkerTask(mBackgroundImageView,
                 getResources(), resourceId, size.x, size.y);
     }

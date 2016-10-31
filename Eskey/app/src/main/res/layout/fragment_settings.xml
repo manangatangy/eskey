@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="10dp" />
 
-    <com.wolfie.eskey.view.component.SettingItemBackgroundPic
+    <com.wolfie.eskey.view.component.Settings.ItemImageSelector
         android:id="@+id/setting_item_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -172,9 +172,9 @@
                 android:text="   Valaam Monastery 2"
                 />
         </RadioGroup>
-    </com.wolfie.eskey.view.component.SettingItemBackgroundPic>
+    </com.wolfie.eskey.view.component.Settings.ItemImageSelector>
 
-    <com.wolfie.eskey.view.component.SettingItemTimeout
+    <com.wolfie.eskey.view.component.Settings.ItemTimeout
         android:id="@+id/setting_item_timeout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -219,9 +219,9 @@
                 android:text="      10 minutes"
                 />
         </RadioGroup>
-    </com.wolfie.eskey.view.component.SettingItemTimeout>
+    </com.wolfie.eskey.view.component.Settings.ItemTimeout>
 
-    <com.wolfie.eskey.view.component.SettingItemChangePassword
+    <com.wolfie.eskey.view.component.Settings.ItemChangePassword
         android:id="@+id/setting_item_change_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -314,7 +314,7 @@
                     android:text="Cancel" />
             </LinearLayout>
         </LinearLayout>
-    </com.wolfie.eskey.view.component.SettingItemChangePassword>
+    </com.wolfie.eskey.view.component.Settings.ItemChangePassword>
 
     <LinearLayout
         android:paddingTop="20dp"
