@@ -51,7 +51,8 @@ public enum ImageEnum {
     IMAGE35(R.string.im035, R.drawable.motherland_calls_mamayev_kurgan),
     IMAGE36(R.string.im036, R.drawable.smolny_convent_st_petersburg),
     IMAGE37(R.string.im037, R.drawable.vladivostok_trans_siberian_station),
-    IMAGE38(R.string.im038, R.drawable.suzdal_church);
+    IMAGE38(R.string.im038, R.drawable.suzdal_church),
+    IMAGE39(R.string.im039, R.drawable.st_petersburg_rooftop_angels);
 
     private @StringRes int mTitleResId;
     private @DrawableRes int mImageResId;
