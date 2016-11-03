@@ -3,6 +3,7 @@ package com.wolfie.eskey.presenter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import static android.text.TextUtils.isEmpty;
 import android.util.Log;
 
 import com.wolfie.eskey.R;
@@ -11,7 +12,6 @@ import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.util.crypto.SpongyCrypter;
 import com.wolfie.eskey.view.ActionSheetUi;
-import com.wolfie.eskey.view.BaseUi;
 
 import com.wolfie.eskey.presenter.LoginPresenter.LoginUi;
 import com.wolfie.eskey.view.fragment.DrawerFragment;
@@ -21,11 +21,6 @@ import com.wolfie.eskey.view.fragment.HelpFragment;
 import com.wolfie.eskey.view.fragment.ListFragment;
 import com.wolfie.eskey.util.TimeoutMonitor.UserInactivityTimeoutListener;
 import com.wolfie.eskey.view.fragment.SettingsFragment;
-
-import java.util.Set;
-
-import static com.wolfie.eskey.util.StringUtils.isNotBlank;
-import static com.wolfie.eskey.util.crypto.SpongyCrypter.STRONG_SECRET_KEY_FACTORY_ALGORITHM;
 
 /**
  * Created by david on 2/10/16.
@@ -142,11 +137,11 @@ public class LoginPresenter extends BasePresenter<LoginUi> implements
 
         mMediumCrypter =
                 (mState == State.LOGGED_IN
-                        && isNotBlank(salt)
-                        && isNotBlank(mDecryptedKey))
+                        && !isEmpty(salt)
+                        && !isEmpty(mDecryptedKey))
                         ? SpongyCrypter.makeMedium(salt, mDecryptedKey)
                         : null;
-        mMasterData = (isNotBlank(salt) && isNotBlank(key)) ? new MasterData(salt, key) : null;
+        mMasterData = (!isEmpty(salt) && !isEmpty(key)) ? new MasterData(salt, key) : null;
     }
 
     /**

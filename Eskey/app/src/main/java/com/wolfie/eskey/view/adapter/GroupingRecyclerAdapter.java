@@ -95,7 +95,6 @@ public class GroupingRecyclerAdapter
     /**
      * The data in mGroups is mapped to the adapter one to one, plus one item for the
      * heading of each group.  An EntryGroup must not have null fields.
-     * @return
      */
     @Override
     public int getItemCount() {

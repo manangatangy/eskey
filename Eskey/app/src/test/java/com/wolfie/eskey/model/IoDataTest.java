@@ -1,22 +1,16 @@
 package com.wolfie.eskey.model;
 
-import android.support.annotation.Nullable;
+import static android.text.TextUtils.isEmpty;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wolfie.eskey.model.database.Source;
-import com.wolfie.eskey.util.StringUtils;
 
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,22 +56,22 @@ public class IoDataTest {
             String name, group, content;
             group = csv[0];
             //              category
-            if (StringUtils.isNotBlank(csv[1])) {
+            if (!isEmpty(csv[1])) {
                 name = csv[1];
                 //              description
                 content =
                         //              password username website notes
                         csv[4] +
-                                (StringUtils.isNotBlank(csv[3]) ? ("\n" + csv[3]) : "") +
-                                (StringUtils.isNotBlank(csv[2]) ? ("\n" + csv[2]) : "") +
-                                (StringUtils.isNotBlank(csv[5]) ? ("\n" + csv[5]) : "");
+                                (!isEmpty(csv[3]) ? ("\n" + csv[3]) : "") +
+                                (!isEmpty(csv[2]) ? ("\n" + csv[2]) : "") +
+                                (!isEmpty(csv[5]) ? ("\n" + csv[5]) : "");
             } else {
                 name = csv[2];
                 content =
                         csv[4] +
-                                (StringUtils.isNotBlank(csv[3]) ? ("\n" + csv[3]) : "") +
-                                (StringUtils.isNotBlank(csv[2]) ? ("\n" + csv[2]) : "") +
-                                (StringUtils.isNotBlank(csv[5]) ? ("\n" + csv[5]) : "");
+                                (!isEmpty(csv[3]) ? ("\n" + csv[3]) : "") +
+                                (!isEmpty(csv[2]) ? ("\n" + csv[2]) : "") +
+                                (!isEmpty(csv[5]) ? ("\n" + csv[5]) : "");
 
             }
 

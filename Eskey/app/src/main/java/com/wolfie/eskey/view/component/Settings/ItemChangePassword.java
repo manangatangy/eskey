@@ -11,9 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.wolfie.eskey.R;
-import com.wolfie.eskey.util.StringUtils;
 
 import butterknife.BindView;
+
+import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by david on 24/10/16.
@@ -104,7 +105,7 @@ public class ItemChangePassword extends ItemLayout {
         // Only allow hide to proceed if there is no text in the input fields.
         String password = mEditPassword.getText().toString();
         String confirm = mEditConfirm.getText().toString();
-        boolean hasText = StringUtils.isNotBlank(password) || StringUtils.isNotBlank(confirm);
+        boolean hasText = !isEmpty(password) || !isEmpty(confirm);
         if (hasText) {
             mTextError.setText(R.string.st028);
             Log.d("eskey", "ItemChangePassword.onHide(" + getHeadingText() + ") ==> NO");
