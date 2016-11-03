@@ -13,9 +13,6 @@ import butterknife.BindView;
 
 public class ItemImageSelector extends ItemLayout {
 
-    @BindView(R.id.background_radio_group)
-    RadioGroup mBackgroundGroup;
-
     @BindView(R.id.setting_item_viewpager)
     ViewPager mViewpager;
 

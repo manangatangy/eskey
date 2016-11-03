@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.adapter.viewholder;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -56,10 +57,13 @@ public class ItemViewHolder extends BaseViewHolder {
         mListener = listener;
         ButterKnife.bind(this, view);
     }
-    public void bind(Object item) {
+
+    @Override
+    public void bind(Object item, @Nullable String searchText) {
         mEntry = (Entry)item;
-        mTitleTextView.setText(mEntry.getEntryName());
-        mContentTextView.setText(mEntry.getContent());
+        // Note that the content text may or may not actually be showing (depending on the expanded state).
+        mTitleTextView.setText(highlight(mEntry.getEntryName(), searchText));
+        mContentTextView.setText(highlight(mEntry.getContent(), searchText));
         mEditView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

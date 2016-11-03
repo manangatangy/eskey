@@ -10,6 +10,7 @@ import com.wolfie.eskey.model.loader.AsyncListeningTask;
 import com.wolfie.eskey.presenter.ListPresenter.ListUi;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.view.BaseUi;
+import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 
 public class ListPresenter extends BasePresenter<ListUi> implements
-        AsyncListeningTask.Listener<DataSet> {
+        AsyncListeningTask.Listener<DataSet>, EskeyActivity.SearchListener {
 
     private final static String KEY_LIST_GROUPNAME = "KEY_LIST_GROUPNAME";
 
@@ -57,6 +58,11 @@ public class ListPresenter extends BasePresenter<ListUi> implements
         if (savedState != null) {
             mGroupName = savedState.getString(KEY_LIST_GROUPNAME);
         }
+    }
+
+    @Override
+    public boolean backPressed() {
+        return true;        // Means: not consumed here.
     }
 
     /**
@@ -111,6 +117,21 @@ public class ListPresenter extends BasePresenter<ListUi> implements
             List<EntryGroup> groups = EntryGroup.buildGroups(mGroupName, mDataSet);
             getUi().refreshListWithDataSet(groups);
         }
+    }
+
+    @Override
+    public void onQueryClick() {
+
+    }
+
+    @Override
+    public void onQueryTextChange(String newText) {
+
+    }
+
+    @Override
+    public void onQueryClose() {
+
     }
 
     public void onListItemClick(Entry selectedEntry) {

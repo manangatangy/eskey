@@ -2,11 +2,9 @@ package com.wolfie.eskey.view.activity;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
@@ -16,10 +14,7 @@ import android.widget.ImageView;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.model.ImageEnum;
-import com.wolfie.eskey.presenter.EditPresenter;
 import com.wolfie.eskey.util.BitmapWorkerTask;
-import com.wolfie.eskey.view.fragment.EditFragment;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -71,7 +66,7 @@ public abstract class SimpleActivity extends BaseActivity {
     }
 
     /**
-     * Create the named fragment and add its view to the specified container.
+     * Create or lookup the named fragment and add its view to the specified container.
      * If not null, the specified Bundle will be given to the fragment as args.
      */
     protected Fragment setupFragment(String fragClassName, @IdRes int containerViewId,

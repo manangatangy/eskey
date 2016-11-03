@@ -1,5 +1,6 @@
 package com.wolfie.eskey.view.adapter.viewholder;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +22,9 @@ public class HeadingViewHolder extends BaseViewHolder {
         super(view);
         ButterKnife.bind(this, view);
     }
-    public void bind(Object item) {
+
+    @Override
+    public void bind(Object item, @Nullable String searchText) {
         String text = (String)item;
         mTextView.setText(text);
     }

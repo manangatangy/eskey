@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +25,10 @@ public class GroupingRecyclerAdapter
 
     private OnItemInListClickedListener mOnItemInListClickedListener;
     private List<EntryGroup> mGroups = new ArrayList<>();
-    private static Context mContext;
 
-    public GroupingRecyclerAdapter(Context context) {
-        this.mContext = context;
-    }
+    private @Nullable String mSearchText;
+
+    public GroupingRecyclerAdapter() {}
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,12 +69,13 @@ public class GroupingRecyclerAdapter
 
     /**
      * Update the viewHolder with the contents of the item at the given position in the data set.
+     * If searchText is not null then the relevant searchable fields in the item will be highlighted.
      */
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         Object item = getItemAt(position);
         if (holder != null && item != null) {
-            holder.bind(item);
+            holder.bind(item, mSearchText);
         }
     }
 
