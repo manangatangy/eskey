@@ -8,7 +8,9 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.wolfie.eskey.R;
 import com.wolfie.eskey.presenter.ListPresenter;
@@ -91,25 +93,50 @@ public class EskeyActivity extends SimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        // Retrieve the SearchView
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+
         ListPresenter listPresenter = findPresenter(ListFragment.class);
-        new SearchViewHandler(searchView, listPresenter);
+        SearchViewHandler searchViewHandler = new SearchViewHandler(listPresenter);
+
+        // Retrieve the SearchView and setup the callbacks.
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(searchViewHandler);
+        searchView.setOnSearchClickListener(searchViewHandler);
+        MenuItemCompat.setOnActionExpandListener(searchItem, searchViewHandler);
+
         return true;
     }
 
+    /**
+     * The behaviour of the SearchView is as follows:
+     * When the view is open, then the cross in the right hand side will only appear if there is
+     * some text in the field.  Clicking this cross will then clear the text but won't close (which
+     * is called iconify in the SearchView code) the searchView.  To iconify, must either click
+     * back-press (after the keyboard is first hidden), or must click the left arrow in the top
+     * left of the app bar.  When either of these is done, then the onMenuItemActionCollapse
+     * is called.
+     * ref: http://stackoverflow.com/a/18186164
+     */
     private class SearchViewHandler implements
+            MenuItemCompat.OnActionExpandListener,
             SearchView.OnQueryTextListener,
-            SearchView.OnCloseListener,
             View.OnClickListener {
 
         private SearchListener mSearchListener;
 
-        public SearchViewHandler(SearchView searchView, SearchListener searchListener) {
-            searchView.setOnQueryTextListener(this);
-            searchView.setOnCloseListener(this);
-            searchView.setOnCloseListener(this);
+        public SearchViewHandler(SearchListener searchListener) {
             mSearchListener = searchListener;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            mSearchListener.onQueryClose();
+            return true;  // Return true to collapse action view
+        }
+
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            return true;  // Return true to expand action view
         }
 
         @Override
@@ -126,12 +153,6 @@ public class EskeyActivity extends SimpleActivity {
         public boolean onQueryTextChange(String newText) {
             mSearchListener.onQueryTextChange(newText);
             return true;
-        }
-
-        @Override
-        public boolean onClose() {
-            mSearchListener.onQueryClose();
-            return false;
         }
     }
 

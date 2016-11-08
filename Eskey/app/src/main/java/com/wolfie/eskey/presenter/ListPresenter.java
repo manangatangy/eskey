@@ -2,7 +2,10 @@ package com.wolfie.eskey.presenter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.android.internal.util.Predicate;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.EntryGroup;
@@ -14,6 +17,7 @@ import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.fragment.EditFragment;
 import com.wolfie.eskey.view.fragment.LoginFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -85,10 +89,11 @@ public class ListPresenter extends BasePresenter<ListUi> implements
             }
         }
         if (clearTheList) {
-            getUi().refreshListWithDataSet(null);
+            getUi().showEntries(null);
             getUi().hideStickyHeader();
         }
         getUi().setAddEntryVisibility(!clearTheList);
+        getUi().hideNoFilteredEntriesWarning();
     }
 
     /**
@@ -109,29 +114,77 @@ public class ListPresenter extends BasePresenter<ListUi> implements
      * and pass to the ui for display. Called by the DrawerPresenter.
      */
     public void setGroupName(@Nullable String groupName) {
-        // TODO - since the drawer menu is being used to select a new group, clear the searchCriterion
-        // or not ? Maybe just used the criterion. And only clear the criterion when the user presses
-        // the clear button, or backspace from the edit field
         mGroupName = groupName;
         if (mDataSet != null) {
             List<EntryGroup> groups = EntryGroup.buildGroups(mGroupName, mDataSet);
-            getUi().refreshListWithDataSet(groups);
+            getUi().showEntries(groups);
+        }
+    }
+
+    private List<EntryGroup> mTempGroups;           // Contains all entries.
+    private List<EntryGroup> mFilteredGroups;       // Contains entries filtered from mTempGroups.
+
+    @Override
+    public void onQueryClick() {
+        // For the duration of the query, the mGroupName and mDataSet are left untouched
+        // and a new temporary filtered dataSet is used for display.
+
+        // TODO set all entries to expanded
+        // TODO setup a filtering predicate
+        // As the query text changes, filter the tempGroups --> filteredGroups
+        // and pass it into showEntries with the searchText
+
+        mTempGroups = EntryGroup.buildSingleGroup("Matching entries", mDataSet);
+        mFilteredGroups = EntryGroup.buildSingleGroup("Matching entries", null);
+        getUi().showFilteredEntries(mTempGroups, "");       // Will show all all entries, since no search-filtering yet
+        getUi().setAddEntryVisibility(false);               // Add function disabled.
+    }
+
+    @Override
+    public void onQueryTextChange(String criteria) {
+        // Use mTempGroups as a flag to indicate if onQueryClick has been called yet
+        // because onQueryTextChange seems to get called first.
+        if (mTempGroups != null) {
+            getUi().hideNoFilteredEntriesWarning();
+            if (TextUtils.isEmpty(criteria)) {
+                // Use unfiltered list
+                getUi().showFilteredEntries(mTempGroups, "");
+            } else {
+                // Filter
+                List<Entry> filteredEntries = mFilteredGroups.get(0).getEntries();
+                filteredEntries.clear();
+                Predicate<Entry> predicate = getFilterPredicate(criteria);
+                for (Entry entry : mTempGroups.get(0).getEntries()) {
+                    if (predicate.apply(entry)) {
+                        filteredEntries.add(entry);
+                    }
+                }
+                getUi().showFilteredEntries(mFilteredGroups, criteria);
+                if (filteredEntries.size() == 0) {
+                    getUi().showNoFilteredEntriesWarning();
+                }
+            }
         }
     }
 
     @Override
-    public void onQueryClick() {
-
-    }
-
-    @Override
-    public void onQueryTextChange(String newText) {
-
-    }
-
-    @Override
     public void onQueryClose() {
+        // TODO set the entries to unexpanded
+        getUi().hideNoFilteredEntriesWarning();
+        // Refresh the list with the previous groupName/mDataSet
+        onCompletion(mDataSet);
+        getUi().setAddEntryVisibility(true);       // Add function re-enabled.
+        mTempGroups = null;
+    }
 
+    protected Predicate<Entry> getFilterPredicate(final String criteria) {
+        return new Predicate<Entry>() {
+            @Override
+            public boolean apply(Entry entry) {
+                return entry.getEntryName().toLowerCase().contains(criteria.toLowerCase())
+                        || entry.getContent().toLowerCase().contains(criteria.toLowerCase());
+            }
+        };
     }
 
     public void onListItemClick(Entry selectedEntry) {
@@ -157,9 +210,17 @@ public class ListPresenter extends BasePresenter<ListUi> implements
 
     public interface ListUi extends BaseUi {
 
-        void refreshListWithDataSet(List<EntryGroup> groups);
+        // Show entries from the list of groups.
+        void showEntries(@Nullable List<EntryGroup> groups);
+        // Show entries, all expanded (with contract disabled) and search text highlighted in each entry.
+        // The sticky header is static, with the single group heading used.
+        void showFilteredEntries(@Nullable List<EntryGroup> groups, @Nullable String searchText);
+
         void setAddEntryVisibility(boolean visible);
         void hideStickyHeader();
+
+        void showNoFilteredEntriesWarning();
+        void hideNoFilteredEntriesWarning();
 
     }
 

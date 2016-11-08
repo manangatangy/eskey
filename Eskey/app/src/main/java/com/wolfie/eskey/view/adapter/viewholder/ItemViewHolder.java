@@ -3,6 +3,7 @@ package com.wolfie.eskey.view.adapter.viewholder;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -14,10 +15,6 @@ import com.wolfie.eskey.model.Entry;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-/**
- * Created by david on 18/09/16.
- */
 
 public class ItemViewHolder extends BaseViewHolder {
 
@@ -51,6 +48,7 @@ public class ItemViewHolder extends BaseViewHolder {
     private int mLeftSpacedWidth;
     private Entry mEntry;
     private GroupingRecyclerAdapter.OnItemInListClickedListener mListener;
+    private boolean mInhibitToggle;
 
     public ItemViewHolder(View view, GroupingRecyclerAdapter.OnItemInListClickedListener listener) {
         super(view);
@@ -58,12 +56,19 @@ public class ItemViewHolder extends BaseViewHolder {
         ButterKnife.bind(this, view);
     }
 
+    /**
+     * If highlightText is null, then the viewHolders when initially bound, will be contracted but
+     * allowed to expand/contract individually.  If highlightText is not null, the the viewHolders
+     * will be bound expanded, and inhibited from contracting.
+     * Furthermore, the highlightText will (if not empty) be used to highlight matching text in
+     * the views.
+     */
     @Override
-    public void bind(Object item, @Nullable String searchText) {
+    public void bind(Object item, @Nullable String highlightText) {
         mEntry = (Entry)item;
         // Note that the content text may or may not actually be showing (depending on the expanded state).
-        mTitleTextView.setText(highlight(mEntry.getEntryName(), searchText));
-        mContentTextView.setText(highlight(mEntry.getContent(), searchText));
+        mTitleTextView.setText(highlight(mEntry.getEntryName(), highlightText));
+        mContentTextView.setText(highlight(mEntry.getContent(), highlightText));
         mEditView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,10 +77,67 @@ public class ItemViewHolder extends BaseViewHolder {
                 }
             }
         });
+        mInhibitToggle = (highlightText != null);
+        // Don't clog up the ui thread
+        Log.d("eskey", "ItemViewHolder.bind highlightText=" + highlightText + ", isContracted()=" + isContracted());
+        if (mInhibitToggle) {
+            if (isContracted()) {
+                Log.d("eskey", "ItemViewHolder.bind call postExpand");
+                postExpand();
+            }
+        } else {
+            if (!isContracted()) {
+                Log.d("eskey", "ItemViewHolder.bind call postContract");
+                postContract();
+            }
+        }
+    }
+
+    private void postExpand() {
+        mItemView.post(new Runnable() {
+            @Override
+            public void run() {
+                ViewGroup.LayoutParams layoutParams1 = mDetailLayoutFrame.getLayoutParams();
+                layoutParams1.width = mLayoutView.getWidth();
+                layoutParams1.height = mDetailLayoutView.getHeight();
+                mDetailLayoutFrame.setLayoutParams(layoutParams1);
+
+                ViewGroup.LayoutParams layoutParams2 = mDetailLeftSpacerView.getLayoutParams();
+                layoutParams2.width = 0;
+                mDetailLeftSpacerView.setLayoutParams(layoutParams2);
+            }
+        });
+    }
+
+    private void postContract() {
+        mItemView.post(new Runnable() {
+            @Override
+            public void run() {
+                ViewGroup.LayoutParams layoutParams1 = mDetailLayoutFrame.getLayoutParams();
+                layoutParams1.width = 0;
+                layoutParams1.height = 0;
+                mDetailLayoutFrame.setLayoutParams(layoutParams1);
+
+                ViewGroup.LayoutParams layoutParams2 = mDetailLeftSpacerView.getLayoutParams();
+                // Can be sure that mLeftSpacedWidth was initialised because expansion must have
+                // occurred else postContract would not be called.
+                Log.d("eskey", "ItemViewHolder inside postContract, mLeftSpacedWidth=" + mLeftSpacedWidth);
+                layoutParams2.width = 53;
+                mDetailLeftSpacerView.setLayoutParams(layoutParams2);
+            }
+        });
+    }
+
+    public boolean isContracted() {
+        return (mDetailLayoutFrame.getHeight() == 0);
     }
 
     public void toggleDetailView() {
-        boolean doExpand = (mDetailLayoutFrame.getHeight() == 0);
+        if (mInhibitToggle) {
+            return;
+        }
+
+        boolean doExpand = isContracted();
 
         // Of the three dimensions that are animated, two have target values that are determined
         // from other (fixed) view dimensions, but the third does not. Therefore we must store

@@ -13,10 +13,6 @@ import android.view.ViewGroup;
 
 import static android.text.TextUtils.isEmpty;
 
-/**
- * Created by david on 18/09/16.
- */
-
 public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
 
     protected ViewGroup mItemView;
@@ -26,13 +22,13 @@ public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
         mItemView = (ViewGroup)itemView;
     }
 
-    public abstract void bind(Object item, @Nullable String searchText);
+    public abstract void bind(Object item, @Nullable String highlightText);
 
-    public static Spannable highlight(@NonNull String targetText, String searchText) {
+    public static Spannable highlight(@NonNull String targetText, String highlightText) {
         Spannable targetSpannable = Spannable.Factory.getInstance().newSpannable(targetText);
-        if (!isEmpty(searchText) && targetText.toLowerCase().contains(searchText.toLowerCase())) {
-            int start = targetSpannable.toString().toLowerCase().indexOf(searchText.toLowerCase());
-            int end = start + searchText.length();
+        if (!isEmpty(highlightText) && targetText.toLowerCase().contains(highlightText.toLowerCase())) {
+            int start = targetSpannable.toString().toLowerCase().indexOf(highlightText.toLowerCase());
+            int end = start + highlightText.length();
             targetSpannable.setSpan(new BackgroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             targetSpannable.setSpan(new ForegroundColorSpan(Color.WHITE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }

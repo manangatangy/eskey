@@ -18,6 +18,17 @@
             />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/no_filtered_results_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/white"
+        android:text="@string/st030"
+        android:textSize="28sp"
+        />
+
     <FrameLayout
         android:id="@+id/sticky_header"
         android:layout_width="match_parent"

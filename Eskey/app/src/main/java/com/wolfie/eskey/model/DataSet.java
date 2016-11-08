@@ -36,7 +36,14 @@ public class DataSet {
                 return compare;
             }
         });
-
     }
 
+    public static void sortOnName(List<Entry> entries) {
+        Collections.sort(entries, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry lhs, Entry rhs) {
+                return lhs.getEntryName().compareToIgnoreCase(rhs.getEntryName());
+            }
+        });
+    }
 }

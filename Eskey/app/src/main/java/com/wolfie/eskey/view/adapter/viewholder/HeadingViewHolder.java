@@ -24,9 +24,10 @@ public class HeadingViewHolder extends BaseViewHolder {
     }
 
     @Override
-    public void bind(Object item, @Nullable String searchText) {
+    public void bind(Object item, @Nullable String highlightText) {
         String text = (String)item;
         mTextView.setText(text);
     }
+
 }
 

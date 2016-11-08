@@ -61,6 +61,8 @@
     </string>
     <string name="st028">Text has been entered; press CANCEL to close</string>
     <string name="st029">Password change succeeded, you may now login\nPlease enter your master password</string>
+    <string name="st030">There are no entries\nmatching the search text</string>
+
 
     <string name="im001">St. Basil\'s Cathedral (1)</string>
     <string name="im002">St. Basil\'s Cathedral (2)</string>

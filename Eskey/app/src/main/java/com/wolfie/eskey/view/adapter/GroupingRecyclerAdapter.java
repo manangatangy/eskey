@@ -1,7 +1,7 @@
 package com.wolfie.eskey.view.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +17,7 @@ import com.wolfie.eskey.model.EntryGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupingRecyclerAdapter
-        extends PlaceholderRecyclerAdapter<BaseViewHolder> {
+public class GroupingRecyclerAdapter extends PlaceholderRecyclerAdapter<BaseViewHolder> {
 
     private static final int VIEW_TYPE_TITLE = 0;
     private static final int VIEW_TYPE_ENTRY = 1;
@@ -26,7 +25,7 @@ public class GroupingRecyclerAdapter
     private OnItemInListClickedListener mOnItemInListClickedListener;
     private List<EntryGroup> mGroups = new ArrayList<>();
 
-    private @Nullable String mSearchText;
+    private @Nullable String mHighlightText;
 
     public GroupingRecyclerAdapter() {}
 
@@ -51,11 +50,6 @@ public class GroupingRecyclerAdapter
                     @Override
                     public void onClick(View view) {
                         ((ItemViewHolder)viewHolder).toggleDetailView();
-//                        if (mOnItemInListClickedListener != null) {
-//                            int position = viewHolder.getAdapterPosition();
-//                            Entry entry = (Entry) getItemAt(position);
-//                            mOnItemInListClickedListener.onListItemClick(entry);
-//                        }
                     }
                 });
                 break;
@@ -69,13 +63,14 @@ public class GroupingRecyclerAdapter
 
     /**
      * Update the viewHolder with the contents of the item at the given position in the data set.
-     * If searchText is not null then the relevant searchable fields in the item will be highlighted.
+     * If searchText is not empty then the relevant searchable fields in the item will be highlighted.
+     * If searchText is not null, then the views will be expanded (contraction disable).
      */
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         Object item = getItemAt(position);
         if (holder != null && item != null) {
-            holder.bind(item, mSearchText);
+            holder.bind(item, mHighlightText);
         }
     }
 
@@ -132,9 +127,16 @@ public class GroupingRecyclerAdapter
         return null;
     }
 
-    public void setGroups(List<EntryGroup> groups) {
+    /**
+     * Load the specified EntryGroups into the adapter.
+     * @param groups Lists of entries to display.
+     * @param highlightText Used for binding the viewHolders, for details
+     *                      refer to {@link ItemViewHolder#bind(Object, String)}
+     */
+    public void setGroups(List<EntryGroup> groups, @Nullable String highlightText) {
         mGroups.clear();
         mGroups.addAll(groups);
+        mHighlightText = highlightText;
         notifyDataSetChanged();
     }
 

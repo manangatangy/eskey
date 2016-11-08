@@ -69,6 +69,25 @@ public class EntryGroup {
         return groups;
     }
 
+    /**
+     * Build a list of one EntryGroup (with the specified heading) from the DataSet.
+     * The single EntryGroup contains all the Entries from the DataSet, ordered.
+     * As a convenience, a null DataSet parameter means create an empty dataSet in the target.
+     */
+    public static List<EntryGroup> buildSingleGroup(String heading, DataSet dataSet) {
+        List<Entry> entries = new ArrayList<>();
+        if (dataSet != null) {
+            for (Entry entry : dataSet.getEntries()) {
+                entries.add(entry);
+            }
+            DataSet.sortOnName(entries);          // Do the sort, based only on the entry.name
+        }
+        EntryGroup group = new EntryGroup(heading, entries);
+        List<EntryGroup> groups = new ArrayList<>();
+        groups.add(group);
+        return groups;
+    }
+
     public static List<String> buildHeadingsList(DataSet dataSet) {
         List<String> headings = new ArrayList<>();
         String currentGroupName = null;

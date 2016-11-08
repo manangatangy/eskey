@@ -1,6 +1,7 @@
 package com.wolfie.eskey.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -46,12 +47,17 @@ public class ListFragment extends BaseFragment implements
     @BindView(R.id.add_entry_fab)
     View mAddEntryButton;
 
+    @BindView(R.id.no_filtered_results_text_view)
+    TextView mNoFilteredEntriesWarning;
+
     @OnClick(R.id.add_entry_fab)
     public void onAddEntryClick() {
         mListPresenter.onListItemClick(null);
     }
 
     private ListPresenter mListPresenter;
+
+    private boolean mAutoUpdateStickyHeader;
 
     @Override
     public ListPresenter getPresenter() {
@@ -76,17 +82,42 @@ public class ListFragment extends BaseFragment implements
         mRecyclerView.setItemScrollListener(this);
     }
 
+    /**
+     * @param groups Lists of entries to display.  If null, clear the list. Otherwise
+     *               also scroll to the top of the list.
+     */
     @Override
-    public void refreshListWithDataSet(List<EntryGroup> groups) {
+    public void showEntries(@Nullable List<EntryGroup> groups) {
+        mAutoUpdateStickyHeader = true;
         if (groups == null) {
             getAdapter().clearItems();
         } else {
-            getAdapter().setGroups(groups);
+            getAdapter().setGroups(groups, null);       // No highlighting
             // Scroll back to the top of the list.  If the list is short, no scrolling
             // will occur and so we also have to trigger the sticky header refresh.
             mRecyclerView.scrollToPosition(0);
             onItemAlignedToTop(0);
         }
+    }
+
+    /**
+     * Shows all the entries expanded, fixes the sticky header to a static text,
+     * rather than the auto-updating value (depending on which entry is at the top).
+     * @param groups Lists of entries to display.  If null, clear the list. Otherwise
+     *               also scroll to the top of the list.
+     * @param searchText If not blank, then use to highlight the fields in the viewHolders.
+     *                   Non null (even if empty) shows all entries expanded.
+     */
+    public void showFilteredEntries(@NonNull List<EntryGroup> groups, @NonNull String searchText) {
+        mAutoUpdateStickyHeader = false;
+        int matches = groups.get(0).getEntries().size();        // Must be one EntryGroup
+        mStickyHeaderText.setText(groups.get(0).getHeading() + ":  " + matches);
+
+        getAdapter().setGroups(groups, searchText);     // Yes highlighting
+        // Scroll back to the top of the list.  If the list is short, no scrolling
+        // will occur and so we also have to trigger the sticky header refresh.
+        mRecyclerView.scrollToPosition(0);
+        onItemAlignedToTop(0);
     }
 
     private GroupingRecyclerAdapter getAdapter() {
@@ -101,20 +132,32 @@ public class ListFragment extends BaseFragment implements
 
     @Override
     public void onItemAlignedToTop(int position) {
-        Object item = getAdapter().getItemAt(position);
-        String headerText;
-        if (item instanceof Entry) {
-            Entry entry = (Entry) item;
-            headerText = entry.getGroupName();
+        if (mAutoUpdateStickyHeader) {
+            Object item = getAdapter().getItemAt(position);
+            String headerText;
+            if (item instanceof Entry) {
+                Entry entry = (Entry) item;
+                headerText = entry.getGroupName();
 //            if (headerText == null || headerText.length() == 0) {
 //                return;
 //            }
-        } else {
-            headerText = (String) item;
+            } else {
+                headerText = (String) item;
+            }
+            mStickyHeaderText.setText(headerText);
+            mStickyHeaderFrame.setVisibility(View.VISIBLE);
+            mStickyHeaderDividerTop.setVisibility(View.GONE);
         }
-        mStickyHeaderText.setText(headerText);
-        mStickyHeaderFrame.setVisibility(View.VISIBLE);
-        mStickyHeaderDividerTop.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showNoFilteredEntriesWarning() {
+        mNoFilteredEntriesWarning.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideNoFilteredEntriesWarning() {
+        mNoFilteredEntriesWarning.setVisibility(View.GONE);
     }
 
     @Override
