@@ -29,9 +29,4 @@ public class HelperTest {
 
     }
 
-    /*
-            mHelper = new Helper(context);
-        mDatabase = mHelper.getWritableDatabase();
-
-     */
 }

@@ -9,10 +9,6 @@ import com.wolfie.eskey.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by david on 18/09/16.
- */
-
 public class HeadingViewHolder extends BaseViewHolder {
 
     @BindView(R.id.heading_text_view)

@@ -128,9 +128,6 @@ public class ListPresenter extends BasePresenter<ListUi> implements
     public void onQueryClick() {
         // For the duration of the query, the mGroupName and mDataSet are left untouched
         // and a new temporary filtered dataSet is used for display.
-
-        // TODO set all entries to expanded
-        // TODO setup a filtering predicate
         // As the query text changes, filter the tempGroups --> filteredGroups
         // and pass it into showEntries with the searchText
 
@@ -169,7 +166,6 @@ public class ListPresenter extends BasePresenter<ListUi> implements
 
     @Override
     public void onQueryClose() {
-        // TODO set the entries to unexpanded
         getUi().hideNoFilteredEntriesWarning();
         // Refresh the list with the previous groupName/mDataSet
         onCompletion(mDataSet);

@@ -23,7 +23,6 @@ import static org.spongycastle.asn1.x500.style.RFC4519Style.c;
 
 public class Source {
 
-//    private Helper mHelper;
     private SQLiteDatabase mDatabase;
 
     public Source(SQLiteDatabase database) {

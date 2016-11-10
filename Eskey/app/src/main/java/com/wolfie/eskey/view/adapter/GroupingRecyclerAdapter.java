@@ -1,7 +1,7 @@
 package com.wolfie.eskey.view.adapter;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,15 +26,21 @@ public class GroupingRecyclerAdapter extends PlaceholderRecyclerAdapter<BaseView
     private List<EntryGroup> mGroups = new ArrayList<>();
 
     private @Nullable String mHighlightText;
+    private @AdapterMode int mMode;
 
-    public GroupingRecyclerAdapter() {}
+    public GroupingRecyclerAdapter(@AdapterMode int mode) {
+        mMode = mode;
+    }
+
+    public @AdapterMode int getMode() {
+        return mMode;
+    }
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == -1) {
             return null;
         }
-
         View view;
         final BaseViewHolder viewHolder;
         switch (viewType) {
@@ -44,14 +50,20 @@ public class GroupingRecyclerAdapter extends PlaceholderRecyclerAdapter<BaseView
                 break;
             case VIEW_TYPE_ENTRY:
             default:
-                view = inflateView(parent, R.layout.view_list_item);
+                // For FIXED_EXPANDED mode, inflate the already expanded layout and
+                // don't set the listener for toggling.
+                view = inflateView(parent,
+                        (mMode == AdapterMode.FIXED_EXPANDED)
+                                ? R.layout.view_list_item_expanded : R.layout.view_list_item_contracted);
                 viewHolder = new ItemViewHolder(view, mOnItemInListClickedListener);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ((ItemViewHolder)viewHolder).toggleDetailView();
-                    }
-                });
+                if  (mMode == AdapterMode.EXPANDING_CONTRACTING) {
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ((ItemViewHolder)viewHolder).toggleDetailView();
+                        }
+                    });
+                }
                 break;
         }
         return viewHolder;
@@ -151,6 +163,12 @@ public class GroupingRecyclerAdapter extends PlaceholderRecyclerAdapter<BaseView
 
     public interface OnItemInListClickedListener {
         void onListItemClick(Entry selectedEntry);
+    }
+
+    @IntDef({AdapterMode.EXPANDING_CONTRACTING, AdapterMode.FIXED_EXPANDED})
+    public @interface AdapterMode {
+        int EXPANDING_CONTRACTING = 0;
+        int FIXED_EXPANDED = 1;
     }
 
 }

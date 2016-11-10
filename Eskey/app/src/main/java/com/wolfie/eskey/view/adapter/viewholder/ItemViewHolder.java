@@ -48,7 +48,6 @@ public class ItemViewHolder extends BaseViewHolder {
     private int mLeftSpacedWidth;
     private Entry mEntry;
     private GroupingRecyclerAdapter.OnItemInListClickedListener mListener;
-    private boolean mInhibitToggle;
 
     public ItemViewHolder(View view, GroupingRecyclerAdapter.OnItemInListClickedListener listener) {
         super(view);
@@ -77,75 +76,16 @@ public class ItemViewHolder extends BaseViewHolder {
                 }
             }
         });
-        mInhibitToggle = (highlightText != null);
-        // Don't clog up the ui thread
-        Log.d("eskey", "ItemViewHolder.bind highlightText=" + highlightText + ", isContracted()=" + isContracted());
-        if (mInhibitToggle) {
-            if (isContracted()) {
-                Log.d("eskey", "ItemViewHolder.bind call postExpand");
-                postExpand();
-            }
-        } else {
-            if (!isContracted()) {
-                Log.d("eskey", "ItemViewHolder.bind call postContract");
-                postContract();
-            }
-        }
-    }
-
-    private void postExpand() {
-        mItemView.post(new Runnable() {
-            @Override
-            public void run() {
-                ViewGroup.LayoutParams layoutParams1 = mDetailLayoutFrame.getLayoutParams();
-                layoutParams1.width = mLayoutView.getWidth();
-                layoutParams1.height = mDetailLayoutView.getHeight();
-                mDetailLayoutFrame.setLayoutParams(layoutParams1);
-
-                ViewGroup.LayoutParams layoutParams2 = mDetailLeftSpacerView.getLayoutParams();
-                layoutParams2.width = 0;
-                mDetailLeftSpacerView.setLayoutParams(layoutParams2);
-            }
-        });
-    }
-
-    private void postContract() {
-        mItemView.post(new Runnable() {
-            @Override
-            public void run() {
-                ViewGroup.LayoutParams layoutParams1 = mDetailLayoutFrame.getLayoutParams();
-                layoutParams1.width = 0;
-                layoutParams1.height = 0;
-                mDetailLayoutFrame.setLayoutParams(layoutParams1);
-
-                ViewGroup.LayoutParams layoutParams2 = mDetailLeftSpacerView.getLayoutParams();
-                // Can be sure that mLeftSpacedWidth was initialised because expansion must have
-                // occurred else postContract would not be called.
-                Log.d("eskey", "ItemViewHolder inside postContract, mLeftSpacedWidth=" + mLeftSpacedWidth);
-                layoutParams2.width = 53;
-                mDetailLeftSpacerView.setLayoutParams(layoutParams2);
-            }
-        });
-    }
-
-    public boolean isContracted() {
-        return (mDetailLayoutFrame.getHeight() == 0);
     }
 
     public void toggleDetailView() {
-        if (mInhibitToggle) {
-            return;
-        }
-
-        boolean doExpand = isContracted();
-
+        boolean doExpand = (mDetailLayoutFrame.getHeight() == 0);
         // Of the three dimensions that are animated, two have target values that are determined
         // from other (fixed) view dimensions, but the third does not. Therefore we must store
         // the width of the leftSpacer while in the "collapsed" state, for later use during collapse.
         if (doExpand) {
             mLeftSpacedWidth = mDetailLeftSpacerView.getWidth();        // should be 53
         }
-
         // onExpand mDetailLayoutFrame(R.id.item_detail_frame)    animates from 0 --> mLayoutView.getWidth() [974]
         // onExpand mDetailLayoutFrame(R.id.item_detail_frame)    animates from 0 --> mDetailLayoutView.getHeight() [184]
         // onExpand mDetailLeftSpacerView(R.id.item_left_spacer)  animates from mDetailLeftSpacerView.getWidth() [53] --> 0

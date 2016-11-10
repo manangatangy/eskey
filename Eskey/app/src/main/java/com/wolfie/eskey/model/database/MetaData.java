@@ -5,7 +5,6 @@ package com.wolfie.eskey.model.database;
  */
 
 public class MetaData {
-    public static final String AUTHORITY = "com.wolfie.eskey";
     public static final String DATABASE_NAME = "eskey.db";
     public static final int DATABASE_VERSION = 1;
 
@@ -25,6 +24,4 @@ public class MetaData {
             ENTRIES_ID, ENTRIES_GROUP, ENTRIES_ENTRY, ENTRIES_CONTENT
     };
 
-    public static final String DEFAULT_SORT_ORDER = "ENTRIES_ID ASC";
-    public static final String QUERY_ORDER = "lower(group_name), group_name, lower(entry_name), entry_name";
 }

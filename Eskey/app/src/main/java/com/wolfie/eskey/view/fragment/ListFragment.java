@@ -19,6 +19,7 @@ import com.wolfie.eskey.model.EntryGroup;
 import com.wolfie.eskey.presenter.ListPresenter;
 import com.wolfie.eskey.util.DefaultLayoutManager;
 import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter;
+import com.wolfie.eskey.view.adapter.GroupingRecyclerAdapter.AdapterMode;
 import com.wolfie.eskey.view.adapter.ScrollListeningRecyclerView;
 import com.wolfie.eskey.presenter.ListPresenter.ListUi;
 
@@ -83,6 +84,7 @@ public class ListFragment extends BaseFragment implements
     }
 
     /**
+     * Display the entries in an expanding/contracting list view, with no highlighting.
      * @param groups Lists of entries to display.  If null, clear the list. Otherwise
      *               also scroll to the top of the list.
      */
@@ -90,9 +92,9 @@ public class ListFragment extends BaseFragment implements
     public void showEntries(@Nullable List<EntryGroup> groups) {
         mAutoUpdateStickyHeader = true;
         if (groups == null) {
-            getAdapter().clearItems();
+            getAdapter(AdapterMode.EXPANDING_CONTRACTING).clearItems();
         } else {
-            getAdapter().setGroups(groups, null);       // No highlighting
+            getAdapter(AdapterMode.EXPANDING_CONTRACTING).setGroups(groups, null);
             // Scroll back to the top of the list.  If the list is short, no scrolling
             // will occur and so we also have to trigger the sticky header refresh.
             mRecyclerView.scrollToPosition(0);
@@ -101,29 +103,35 @@ public class ListFragment extends BaseFragment implements
     }
 
     /**
+     * Display the entries in an fixed expanded list view, with highlighting.
      * Shows all the entries expanded, fixes the sticky header to a static text,
      * rather than the auto-updating value (depending on which entry is at the top).
      * @param groups Lists of entries to display.  If null, clear the list. Otherwise
      *               also scroll to the top of the list.
      * @param searchText If not blank, then use to highlight the fields in the viewHolders.
-     *                   Non null (even if empty) shows all entries expanded.
      */
     public void showFilteredEntries(@NonNull List<EntryGroup> groups, @NonNull String searchText) {
         mAutoUpdateStickyHeader = false;
         int matches = groups.get(0).getEntries().size();        // Must be one EntryGroup
         mStickyHeaderText.setText(groups.get(0).getHeading() + ":  " + matches);
 
-        getAdapter().setGroups(groups, searchText);     // Yes highlighting
+        getAdapter(AdapterMode.FIXED_EXPANDED).setGroups(groups, searchText);
         // Scroll back to the top of the list.  If the list is short, no scrolling
         // will occur and so we also have to trigger the sticky header refresh.
         mRecyclerView.scrollToPosition(0);
         onItemAlignedToTop(0);
     }
 
-    private GroupingRecyclerAdapter getAdapter() {
+    /**
+     * @param mode specifies if the list items should be shown as initially contracted or
+     *             expanded. If this mode is different to the current adapter's mode, then
+     *             create a new one with the required mode.
+     * @return the GroupingRecyclerAdapter which should be used for supplying the recyclerView
+     */
+    private GroupingRecyclerAdapter getAdapter(@GroupingRecyclerAdapter.AdapterMode int mode) {
         GroupingRecyclerAdapter adapter = (GroupingRecyclerAdapter)mRecyclerView.getAdapter();
-        if (adapter == null) {
-            adapter = new GroupingRecyclerAdapter();
+        if (adapter == null || adapter.getMode() != mode) {
+            adapter = new GroupingRecyclerAdapter(mode);
             adapter.setOnItemInListClickerListener(this);
             mRecyclerView.setAdapter(adapter);
         }
@@ -133,20 +141,27 @@ public class ListFragment extends BaseFragment implements
     @Override
     public void onItemAlignedToTop(int position) {
         if (mAutoUpdateStickyHeader) {
-            Object item = getAdapter().getItemAt(position);
-            String headerText;
-            if (item instanceof Entry) {
-                Entry entry = (Entry) item;
-                headerText = entry.getGroupName();
+            // This method is called by the ScrollListeningRecyclerView.  At this stage,
+            // showEntries or showFilteredEntries should have already been called to populate
+            // the list, so there should be an adapter instance already associated with the
+            // recyclerView (and we don't need to specify the AdapterMode).
+            if (mRecyclerView.getAdapter() != null) {
+                GroupingRecyclerAdapter adapter = (GroupingRecyclerAdapter)mRecyclerView.getAdapter();
+                Object item = adapter.getItemAt(position);
+                String headerText;
+                if (item instanceof Entry) {
+                    Entry entry = (Entry) item;
+                    headerText = entry.getGroupName();
 //            if (headerText == null || headerText.length() == 0) {
 //                return;
 //            }
-            } else {
-                headerText = (String) item;
+                } else {
+                    headerText = (String) item;
+                }
+                mStickyHeaderText.setText(headerText);
+                mStickyHeaderFrame.setVisibility(View.VISIBLE);
+                mStickyHeaderDividerTop.setVisibility(View.GONE);
             }
-            mStickyHeaderText.setText(headerText);
-            mStickyHeaderFrame.setVisibility(View.VISIBLE);
-            mStickyHeaderDividerTop.setVisibility(View.GONE);
         }
     }
 

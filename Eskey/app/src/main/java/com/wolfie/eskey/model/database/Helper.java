@@ -32,17 +32,6 @@ public class Helper extends SQLiteOpenHelper {
         } catch (SQLException e) {
             Log.d(TAG, "SQLite exception: " + e.getLocalizedMessage());
         }
-
-        /*
-            private static final String MASTER_KEY_CREATE =
-            "create table " + TABLE_MASTER_KEY + " ("
-                    + "encryptedkey text not null);";
-
-    private static final String SALT_CREATE =
-            "create table " + TABLE_SALT + " ("
-                    + "salt text not null);";
-
-         */
     }
 
     public void dropTables(SQLiteDatabase db) {
@@ -58,8 +47,7 @@ public class Helper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "upgrading database from version " + oldVersion + " to " + newVersion);
         if (oldVersion == 1 && newVersion == 2) {
-//            db.execSQL("ALTER ENTRIES_TABLE " + SpendsTableMetaData.SPEND_TABLE_NAME + " ADD COLUMN " + SpendsTableMetaData.SPEND_ACCOUNT + " TEXT");
-//            db.execSQL("UPDATE " + SpendsTableMetaData.SPEND_TABLE_NAME + " SET " + SpendsTableMetaData.SPEND_ACCOUNT + " = 'PERSONAL'");
+            // Execute sql to migrate from oldVersion to newVersion
         }
         onCreate(db);
     }
