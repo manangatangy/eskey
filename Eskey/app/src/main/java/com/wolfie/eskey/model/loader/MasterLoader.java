@@ -1,18 +1,14 @@
 package com.wolfie.eskey.model.loader;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.wolfie.eskey.model.DataSet;
-import com.wolfie.eskey.model.Entry;
-import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.model.database.Source;
 import com.wolfie.eskey.model.MasterData;
 
-import java.util.List;
-
+/**
+ * Performs MasterData access operations (in the background) via the database Source.
+ * The records are not encrypted.
+ */
 public class MasterLoader {
 
     private Source mDataSource;

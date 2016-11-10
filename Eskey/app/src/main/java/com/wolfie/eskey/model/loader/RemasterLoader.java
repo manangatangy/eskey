@@ -2,8 +2,6 @@ package com.wolfie.eskey.model.loader;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.MasterData;
@@ -13,6 +11,12 @@ import com.wolfie.eskey.util.crypto.SpongyCrypter;
 
 import java.util.List;
 
+/**
+ * This is a single purpose loader for reading all entries from the data Source, decrypting
+ * them with the old crypter, re-encrypting them with a new password and then writing
+ * back to the Source.  The new password/salt are also written to the database.  The
+ * entire process is performed on background thread.
+ */
 public class RemasterLoader {
 
     // The crypter is used to decrypt entries from the dataBase.
@@ -32,7 +36,6 @@ public class RemasterLoader {
     public void remaster(String newPassword, AsyncListeningTask.Listener<String> listener) {
         new RemasterTask(listener).execute(newPassword);
     }
-
 
     private class RemasterTask extends AsyncListeningTask<String, String> {
 

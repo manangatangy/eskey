@@ -5,13 +5,14 @@ import android.support.annotation.NonNull;
 
 import com.wolfie.eskey.model.DataSet;
 import com.wolfie.eskey.model.Entry;
-import com.wolfie.eskey.model.MasterData;
 import com.wolfie.eskey.util.TimeoutMonitor;
 
 /**
- * Created by david on 4/10/16.
+ * Uses a TimeoutMonitor to allow or disallow Source operations.  Only the
+ * accesses to the entries table are checked in this way.  Access to master
+ * table is not inhibited since that would prevent re-logging in after a timeout.
+ * Duh
  */
-
 public class TimingOutSource extends Source {
 
     private TimeoutMonitor mTimeoutMonitor;

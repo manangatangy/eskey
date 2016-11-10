@@ -3,9 +3,11 @@ package com.wolfie.eskey.model.loader;
 import android.os.AsyncTask;
 
 /**
- * Created by david on 6/09/16.
+ * Extends AsyncTask with an optional listener callback onCompletion.
+ * Used in the loaders
+ * @param <PARAMS> passed in to the worker thread
+ * @param <RESULT> passed to the onCompletion listener in the ctor's thread
  */
-
 public abstract class AsyncListeningTask<PARAMS, RESULT> extends AsyncTask<PARAMS, Void, RESULT> {
 
     private Listener<RESULT> mListener;

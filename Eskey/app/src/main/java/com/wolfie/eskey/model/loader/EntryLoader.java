@@ -12,12 +12,9 @@ import com.wolfie.eskey.model.loader.AsyncListeningTask.Listener;
 import java.util.List;
 
 /**
- * Created by david on 4/09/16.
- */
-
-/**
- * Class that accesses data using a Source, and applies crypto operations to this data
- * using the Crypter.
+ * Accesses Entry's via the database Source. The entries are encrypted/decrypted on their
+ * way to/from the database.  The CRUD operations occur in background threads with results
+ * passed back to the calling thread listener.
  */
 public class EntryLoader {
     private Context mContext;           // TODO deprecate

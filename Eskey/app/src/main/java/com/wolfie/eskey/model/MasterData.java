@@ -1,9 +1,5 @@
 package com.wolfie.eskey.model;
 
-/**
- * Created by david on 5/09/16.
- */
-
 import com.google.gson.annotations.Expose;
 
 /**
@@ -29,15 +25,8 @@ public class MasterData {
         return mSalt;
     }
 
-    private void setSalt(String salt) {
-        this.mSalt = salt;
-    }
-
     public String getKey() {
         return mKey;
     }
 
-    private void setKey(String key) {
-        this.mKey = key;
-    }
 }

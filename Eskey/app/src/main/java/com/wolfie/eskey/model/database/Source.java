@@ -1,7 +1,6 @@
 package com.wolfie.eskey.model.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -11,16 +10,12 @@ import com.wolfie.eskey.model.Entry;
 import com.wolfie.eskey.model.MasterData;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import static org.spongycastle.asn1.x500.style.RFC4519Style.c;
-
 /**
- * Created by david on 4/09/16.
+ * Wraps a database to provide the basic CRUD operations for both tables; master and entries.
+ * These methods are best called in a background thread, using a loader.
  */
-
 public class Source {
 
     private SQLiteDatabase mDatabase;

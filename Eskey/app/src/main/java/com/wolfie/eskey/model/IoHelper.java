@@ -8,8 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
-import com.wolfie.eskey.R;
-import com.wolfie.eskey.presenter.LoginPresenter;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.util.crypto.SpongyCrypter;
 
@@ -20,7 +18,6 @@ import java.util.List;
  * Support for passing data between the database form and the file form.
  * This class also is the structure used for json serialisation.
  */
-
 public class IoHelper {
 
     private Crypter mMediumCrypter;      // Current session entry crypter, not serialised.

@@ -6,9 +6,8 @@ import android.support.annotation.StringRes;
 import com.wolfie.eskey.R;
 
 /**
- * Created by david on 29/10/16.
+ * Organises the images used as background pics.
  */
-
 public enum ImageEnum {
 
     IMAGE01(R.string.im001, R.drawable.st_basils_cathedral_1),

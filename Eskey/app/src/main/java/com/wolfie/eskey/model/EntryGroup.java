@@ -1,16 +1,13 @@
 package com.wolfie.eskey.model;
 
-/**
- * Created by david on 11/09/16.
- */
-
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Built from fields within the DataSet and used to display via the adapter.
+ * Used to organise the entries, prior to displaying them.  Typically all
+ * the records in mEntries have the same groupName (which is held in mHeading).
  * All the entries in mEntries belong to the same group (named as the heading).
  */
 public class EntryGroup {

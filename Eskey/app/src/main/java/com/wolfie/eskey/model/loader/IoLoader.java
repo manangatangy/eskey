@@ -23,9 +23,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
- * Created by david on 17/10/16.
+ * Performs export and import tasks in a background thread.  Either clear text or cipher
+ * text may be specified.  The IoHelper is a key helper class.
  */
-
 public class IoLoader {
 
     // The Crypter is used to decrypt entries from the dataBase, exported as cleartext
@@ -57,11 +57,13 @@ public class IoLoader {
         public String mSuccessMessage;
         public String mFailureMessage;
     }
+
     public class SuccessResult extends IoResult {
         public SuccessResult(String successMessage) {
             mSuccessMessage = successMessage;
         }
     }
+
     public class FailureResult extends IoResult {
         public FailureResult(String failureMessage) {
             mFailureMessage = failureMessage;

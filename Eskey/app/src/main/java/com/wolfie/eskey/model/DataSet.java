@@ -6,9 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by david on 4/09/16.
+ * This is a collection of Entry's passed between the database and the UI.
  */
-
 public class DataSet {
 
     private List<Entry> mEntries = new ArrayList<>();

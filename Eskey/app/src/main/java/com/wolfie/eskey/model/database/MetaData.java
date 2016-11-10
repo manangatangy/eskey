@@ -1,10 +1,7 @@
 package com.wolfie.eskey.model.database;
 
-/**
- * Created by david on 4/09/16.
- */
-
 public class MetaData {
+
     public static final String DATABASE_NAME = "eskey.db";
     public static final int DATABASE_VERSION = 1;
 

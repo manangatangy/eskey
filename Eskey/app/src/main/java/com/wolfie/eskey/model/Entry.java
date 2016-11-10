@@ -6,13 +6,11 @@ import com.google.gson.annotations.Expose;
 import com.wolfie.eskey.util.crypto.Crypter;
 import com.wolfie.eskey.model.database.MetaData;
 
-import java.util.Collections;
-import java.util.Comparator;
-
 /**
- * Created by david on 4/09/16.
+ * The primary data class, held on the database and represented in the ListFragment.
+ * Only the mId field is unique.  There are no relationships between the entry-name,
+ * group-name and any other field.
  */
-
 public class Entry {
     private int mId = -1;
     @Expose
