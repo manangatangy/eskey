@@ -2,9 +2,11 @@ package com.wolfie.eskey.presenter;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +25,7 @@ import java.io.File;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.wolfie.eskey.presenter.SettingsPresenter.PREF_SESSION_BACKUP_EMAIL_ADDRESS;
 
 /**
  * Backup and restore are using cipher text, while export and import are in clear text.
@@ -276,8 +279,10 @@ public class FilePresenter extends BasePresenter<FileUi>
                 listPresenter.loadEntries();
             }
             if (mIsExporting && !mIsClearText && getUi().isEmailBackup()) {
+                SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                String emailAddress =  mPrefs.getString(PREF_SESSION_BACKUP_EMAIL_ADDRESS, "");
                 File ioFile = getFile();
-                getUi().navigateToEmail("david.x.weiss@gmail.com", "Eskey backup file", ioFile);
+                getUi().navigateToEmail(emailAddress, "Eskey backup file", ioFile);
             } else {
                 getUi().showBanner(ioResult.mSuccessMessage);       // Result of file i/o
             }

@@ -136,13 +136,4 @@ public abstract class ItemLayout extends LinearLayout {
 
     public abstract String getHeadingText();
 
-//    public void setOnVisibilityChangeListener(OnSettingItemVisibilityChangeListener listener) {
-//        mOnSettingItemVisibilityChangeListener = listener;
-//    }
-//
-//    public interface OnSettingItemVisibilityChangeListener {
-//        boolean onShowSettingItem(ItemLayout itemLayout);   // Returns true if this item is allowed to open.
-//        void onHideSettingItem(ItemLayout itemLayout);      // Notify listener that this item is now hidden.
-//    }
-
 }

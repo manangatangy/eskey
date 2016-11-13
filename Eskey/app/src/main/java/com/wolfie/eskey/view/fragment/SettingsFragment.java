@@ -14,6 +14,7 @@ import com.wolfie.eskey.presenter.SettingsPresenter.SettingsUi;
 import com.wolfie.eskey.presenter.SettingsPresenter;
 import com.wolfie.eskey.view.activity.EskeyActivity;
 import com.wolfie.eskey.view.component.Settings.GroupSetting;
+import com.wolfie.eskey.view.component.Settings.ItemEmailAddress;
 import com.wolfie.eskey.view.component.Settings.ItemImageSelector;
 import com.wolfie.eskey.view.component.Settings.ItemChangePassword;
 import com.wolfie.eskey.view.component.Settings.ItemTimeout;
@@ -25,7 +26,8 @@ import butterknife.Unbinder;
 public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
         ItemTimeout.OnTimeoutSelectedListener,
         ItemChangePassword.OnChangePasswordListener,
-        ItemImageSelector.OnImageSelectedListener {
+        ItemImageSelector.OnImageSelectedListener,
+        ItemEmailAddress.OnHideEmailSettingListener {
 
     @Nullable
     @BindView(R.id.setting_item_timeout)
@@ -38,6 +40,10 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
     @Nullable
     @BindView(R.id.setting_item_background)
     ItemImageSelector mItemImageSelector;
+
+    @Nullable
+    @BindView(R.id.setting_item_email_address)
+    ItemEmailAddress mItemEmailAddress;
 
     @Nullable
     @BindView(R.id.button_close)
@@ -78,10 +84,12 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
         mItemTimeout.setOnTimeoutSelectedListener(this);
         mItemChangePassword.setOnChangePasswordListener(this);
         mItemImageSelector.setOnImageSelectedListener(this);
+        mItemEmailAddress.setOnHideEmailSettingListener(this);
 
         mItemTimeout.setGroupSetting(mGroupSetting);
         mItemChangePassword.setGroupSetting(mGroupSetting);
         mItemImageSelector.setGroupSetting(mGroupSetting);
+        mItemEmailAddress.setGroupSetting(mGroupSetting);
 
         return view;
     }
@@ -105,6 +113,10 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
         mItemTimeout.setTimeout(timeoutInMillis);
     }
 
+    public void setEmailAddress(String emailAddress) {
+        mItemEmailAddress.setEmailAddress(emailAddress);
+    }
+
     @Override
     public void onTimeoutChanged(int timeoutInMillis) {
         mSettingsPresenter.onTimeoutChanged(timeoutInMillis);
@@ -112,6 +124,10 @@ public class SettingsFragment extends ActionSheetFragment implements SettingsUi,
     @Override
     public void onChangePassword(String password, String confirm) {
         mSettingsPresenter.onChangePassword(password, confirm);
+    }
+    @Override
+    public void onHideEmailSetting(String emailAddress) {
+        mSettingsPresenter.onHideEmailSetting(emailAddress);
     }
 
     @Override

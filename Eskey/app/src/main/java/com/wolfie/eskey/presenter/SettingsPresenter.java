@@ -29,6 +29,7 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
     private final static String KEY_SETTINGS_ACTION_SHEET_SHOWING = "KEY_SETTINGS_ACTION_SHEET_SHOWING";
     public final static String PREF_SESSION_TIMEOUT = "PREF_SESSION_TIMEOUT";
     public final static String PREF_SESSION_BACKGROUND_IMAGE = "PREF_SESSION_BACKGROUND_IMAGE";
+    public final static String PREF_SESSION_BACKUP_EMAIL_ADDRESS = "PREF_SESSION_BACKUP_EMAIL_ADDRESS";
 
     private boolean mIsShowing;
 
@@ -72,6 +73,9 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
 
         int enumIndex = mPrefs.getInt(PREF_SESSION_BACKGROUND_IMAGE, SimpleActivity.DEFAULT_BACKGROUND_IMAGE);
         getUi().setImageItem(enumIndex);
+
+        String emailAddress =  mPrefs.getString(PREF_SESSION_BACKUP_EMAIL_ADDRESS, "");
+        getUi().setEmailAddress(emailAddress);
 
         getUi().show();
     }
@@ -126,6 +130,13 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
         }
     }
 
+    public void onHideEmailSetting(String emailAddress) {
+        // Save in prefs
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(PREF_SESSION_BACKUP_EMAIL_ADDRESS, emailAddress);
+        editor.apply();
+    }
+
     /**
      * Called from RemasterLoader
      */
@@ -145,6 +156,7 @@ public class SettingsPresenter extends BasePresenter<SettingsUi>
     public interface SettingsUi extends ActionSheetUi {
 
         void setTimeout(int timeoutInMillis);
+        void setEmailAddress(String emailAddress);
 
         // Must clear the field so that hide isn't inhibited.
         void clearPasswordsAndHidePasswordsSetting();
