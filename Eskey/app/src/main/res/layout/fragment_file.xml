@@ -57,10 +57,18 @@
             android:textSize="10sp"
             android:text="public storage directory\n/storage/emulated/0/Download/"
             />
+        <RadioButton
+            android:id="@+id/storage_type_internal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="internal storage directory\n/data/user/0/com.wolfie.eskey/files/"
+            />
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             >
             <EditText
                 android:id="@+id/edit_text_name"
@@ -91,6 +99,16 @@
             android:layout_gravity="center"
             android:checked="true"
             android:text="Overwrite existing database entries "
+            />
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/email_backup_file_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Off"
+            android:textOn="On"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:text="Auto email backup file "
             />
     </LinearLayout>
 

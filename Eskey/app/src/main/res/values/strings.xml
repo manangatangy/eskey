@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Eskey</string>
+    <string name="content_provider_authority">com.wolfie.eskey.fileprovider</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -29,10 +30,15 @@
     <string name="st015">Import from clear text</string>
     <string name="st014a">Backup to cipher text</string>
     <string name="st015a">Restore from cipher text</string>
-    <string name="st016">Access to public storage has previously been denied\nGo to settings/apps/eskey to grant permission</string>
+    <string name="st016">Access to public storage has \npreviously been denied\nGo to settings/apps/eskey \nto grant permission</string>
     <string name="st017">Access to public storage not permitted</string>
-    <string name="st018">The external storage media is not available for read/write access\nPerhaps it is not mounted</string>
-    <string name="st019">Select the storage type.\nPrivate storage needs adb/root to access.\nPublic storage requires granting STORAGE permission</string>
+    <string name="st018">The external storage media is not available\nfor read/write access\nPerhaps it is not mounted</string>
+    <string name="st019">
+        Select the storage type.
+        \nPrivate storage can be access using adb/root
+        \nPublic storage requires granting STORAGE permission
+        \nInternal storage must be selected for auto emailing
+    </string>
     <string name="st020">Private Storage Directory\n%1$s</string>
     <string name="st021">Public Storage Directory\n%1$s</string>
     <string name="st022">Export</string>
@@ -62,7 +68,9 @@
     <string name="st028">Text has been entered; press CANCEL to close</string>
     <string name="st029">Password change succeeded, you may now login\nPlease enter your master password</string>
     <string name="st030">There are no entries\nmatching the search text</string>
-
+    <string name="st031">Backup file emailed successfully</string>
+    <string name="st032">Backup file emailure cancelled</string>
+    <string name="st033">Internal Storage Directory\n%1$s</string>
 
     <string name="im001">St. Basil\'s Cathedral (1)</string>
     <string name="im002">St. Basil\'s Cathedral (2)</string>

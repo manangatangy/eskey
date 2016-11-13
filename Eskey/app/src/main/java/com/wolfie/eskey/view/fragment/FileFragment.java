@@ -1,9 +1,14 @@
 package com.wolfie.eskey.view.fragment;
 
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,19 +25,23 @@ import com.wolfie.eskey.presenter.FilePresenter;
 import com.wolfie.eskey.presenter.FilePresenter.FileUi;
 import com.wolfie.eskey.presenter.FilePresenter.StorageType;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
-/**
- * Created by david on 12/10/16.
- */
-
-public class FileFragment extends ActionSheetFragment implements FileUi {
+public class FileFragment extends ActionSheetFragment implements FileUi, CompoundButton.OnCheckedChangeListener {
 
     public static final int PERMISSIONS_REQUEST_STORAGE = 123;
+    public static final int REQUEST_BACKUP_EMAIL = 555;
 
     @Nullable
     @BindView(R.id.text_title)
@@ -67,6 +76,10 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     RadioButton mStorageTypePublic;
 
     @Nullable
+    @BindView(R.id.storage_type_internal)
+    RadioButton mStorageTypeInternal;
+
+    @Nullable
     @BindView(R.id.button_ok)
     Button mButtonOk;
 
@@ -77,6 +90,10 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     @Nullable
     @BindView(R.id.overwrite_existing_switch)
     SwitchCompat mOverwriteSwitch;
+
+    @Nullable
+    @BindView(R.id.email_backup_file_switch)
+    SwitchCompat mEmailSwitch;
 
     private boolean mAllowOnRequestCheckedChangeCallback = true;
 
@@ -106,7 +123,7 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
         mButtonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFilePresenter.onClickOk(mEditName.getText().toString());
+                mFilePresenter.onClickOk();
             }
         });
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
@@ -115,33 +132,62 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
                 mFilePresenter.onClickCancel();
             }
         });
-        mStorageTypePrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mStorageTypePrivate.setOnCheckedChangeListener(this);
+        mStorageTypePublic.setOnCheckedChangeListener(this);
+        mStorageTypeInternal.setOnCheckedChangeListener(this);
+        mEmailSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Only process if we're not in the middle of a call to setStorageType().
-                if (isChecked) {
-                    if (mAllowOnRequestCheckedChangeCallback) {
-                        mStorageTypePrivate.setChecked(false);
-                        // Ask listener to handle the click/checking.  They may make call to setStorageType()
-                        // either while this call is active, or after it returns.  Regardless, it
-                        // will not result in further calls to this handler.
-                        mFilePresenter.onRequestStorageTypeSelect(StorageType.TYPE_PRIVATE);
-                    }
-                }
-            }
-        });
-        mStorageTypePublic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (mAllowOnRequestCheckedChangeCallback) {
-                        mStorageTypePublic.setChecked(false);
-                        mFilePresenter.onRequestStorageTypeSelect(StorageType.TYPE_PUBLIC);
-                    }
-                }
+                mFilePresenter.onEmailSwitchChanged(isChecked);
             }
         });
         return view;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        // Only process if we're not in the middle of a call to setStorageType().
+        if (isChecked) {
+            if (mAllowOnRequestCheckedChangeCallback) {
+                buttonView.setChecked(false);
+                StorageType storageType =
+                        (buttonView == mStorageTypePrivate) ? StorageType.TYPE_PRIVATE :
+                                (buttonView == mStorageTypePublic) ? StorageType.TYPE_PUBLIC :
+                                        StorageType.TYPE_INTERNAL;
+                // Ask listener to handle the click/checking.  They may make call to setStorageType()
+                // either while this call is active, or after it returns.  Regardless, it
+                // will not result in further calls to this handler.
+                mFilePresenter.onRequestStorageTypeSelect(storageType);
+            }
+        }
+    }
+
+    /**
+     * Calls to setStorageType do not cause a propagation to the
+     * OnRequestCheckedChangeListener.
+     */
+    @Override
+    public void setStorageType(StorageType storageType) {
+        mAllowOnRequestCheckedChangeCallback = false;
+        if (storageType == StorageType.TYPE_PUBLIC) {
+            mStorageTypePublic.setChecked(true);
+            mStorageTypePrivate.setChecked(false);
+            mStorageTypeInternal.setChecked(false);
+        } else if (storageType == StorageType.TYPE_PRIVATE) {
+            mStorageTypePublic.setChecked(false);
+            mStorageTypePrivate.setChecked(true);
+            mStorageTypeInternal.setChecked(false);
+        } else {
+            mStorageTypePublic.setChecked(false);
+            mStorageTypePrivate.setChecked(false);
+            mStorageTypeInternal.setChecked(true);
+        }
+        mAllowOnRequestCheckedChangeCallback = true;
+    }
+
+    @Override
+    public String getFileName() {
+        return mEditName.getText().toString();
     }
 
     @Override
@@ -164,32 +210,36 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
         mOverwriteSwitch.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
-    /**
-     * Calls to setStorageType do not cause a propagation to the
-     * OnRequestCheckedChangeListener.
-     */
     @Override
-    public void setStorageType(StorageType storageType) {
-        mAllowOnRequestCheckedChangeCallback = false;
-        if (storageType == StorageType.TYPE_PUBLIC) {
-            mStorageTypePublic.setChecked(true);
-            mStorageTypePrivate.setChecked(false);
-        } else {
-            mStorageTypePublic.setChecked(false);
-            mStorageTypePrivate.setChecked(true);
-        }
-        mAllowOnRequestCheckedChangeCallback = true;
+    public boolean isEmailBackup() {
+        return mEmailSwitch.isChecked();
+    }
+
+    @Override
+    public void setEmailBackupSwitchVisibility(boolean isVisible) {
+        mEmailSwitch.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setStorageTypePrivateEnabled(boolean enable) {
+        mStorageTypePrivate.setEnabled(enable);
+    }
+
+    @Override
+    public void setStorageTypePublicEnabled(boolean enable) {
+        mStorageTypePublic.setEnabled(enable);
+    }
+
+    @Override
+    public void setStorageTypeInternalEnabled(boolean enable) {
+        mStorageTypeInternal.setEnabled(enable);
     }
 
     @Override
     public StorageType getStorageType() {
-        return (mStorageTypePublic.isChecked() ? StorageType.TYPE_PUBLIC : StorageType.TYPE_PRIVATE);
-    }
-
-    @Override
-    public void setStorageTypeEnabled(boolean enabled) {
-        mStorageTypePublic.setEnabled(enabled);
-        mStorageTypePrivate.setEnabled(enabled);
+        return (mStorageTypePublic.isChecked() ? StorageType.TYPE_PUBLIC :
+                (mStorageTypePrivate.isChecked() ? StorageType.TYPE_PRIVATE :
+                        StorageType.TYPE_INTERNAL));
     }
 
     @Override
@@ -263,6 +313,11 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
     @Override
+    public void setInternalButtonLabel(String text) {
+        mStorageTypeInternal.setText(text);
+    }
+
+    @Override
     public void setPublicButtonLabel(String text) {
         mStorageTypePublic.setText(text);
     }
@@ -281,5 +336,56 @@ public class FileFragment extends ActionSheetFragment implements FileUi {
     }
 
 
-}
+    @Override
+    public void navigateToEmail(String emailAddress, String subject, File backupFile) {
+        Uri uri = FileProvider.getUriForFile(
+                getContext(),
+                getContext().getString(R.string.content_provider_authority),
+                backupFile);
+        ArrayList<Uri> attachments = new ArrayList<>();
+        attachments.add(uri);
+        Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        i.setType("*/*");
+        i.putExtra(Intent.EXTRA_STREAM, attachments);
+        i.putExtra(Intent.EXTRA_EMAIL, new String[] { emailAddress });
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+//        i.putExtra(Intent.EXTRA_TEXT, "some text for the body of the email");
+        Intent emailOnlyIntent = createEmailOnlyChooserIntent(i, "Send via email");
+        startActivityForResult(emailOnlyIntent, REQUEST_BACKUP_EMAIL);
+    }
+    /**
+     * Returns an intent that will be only responded to by activities that can handle
+     * the source intent as well as SENDTO. This will exclude things like skype and
+     * google-drive and the sms-messenger etc.
+     * ref: http://stackoverflow.com/a/12804063
+     */
+    public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
+        Stack<Intent> intents = new Stack<Intent>();
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "info@domain.com", null));
+        List<ResolveInfo> activities = getActivity().getPackageManager().queryIntentActivities(i, 0);
 
+        for(ResolveInfo ri : activities) {
+            Intent target = new Intent(source);
+            if (!"com.android.fallback".equals(ri.activityInfo.packageName)) {
+                target.setPackage(ri.activityInfo.packageName);
+                intents.add(target);
+            }
+        }
+        if(!intents.isEmpty()) {
+            Intent chooserIntent = Intent.createChooser(intents.remove(0), chooserTitle);
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[intents.size()]));
+            return chooserIntent;
+        } else {
+            return Intent.createChooser(source, chooserTitle);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == REQUEST_BACKUP_EMAIL) {
+            mFilePresenter.onEmailActivityResult(resultCode, intent);
+        }
+    }
+
+}
