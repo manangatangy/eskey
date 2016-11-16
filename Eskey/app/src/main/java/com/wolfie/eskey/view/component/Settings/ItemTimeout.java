@@ -2,6 +2,7 @@ package com.wolfie.eskey.view.component.Settings;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.RadioGroup;
 
 import com.wolfie.eskey.R;
@@ -14,8 +15,12 @@ import butterknife.BindView;
 
 public class ItemTimeout extends ItemLayout implements RadioGroup.OnCheckedChangeListener {
 
+    public static final int TIMEOUT_NOT_A_VALUE = -1;
+
     @BindView(R.id.timeout_radio_group)
     RadioGroup mTimeoutGroup;
+
+    private int mTimeoutInMillis = TIMEOUT_NOT_A_VALUE;
 
     private OnTimeoutSelectedListener mListener;
 
@@ -48,7 +53,7 @@ public class ItemTimeout extends ItemLayout implements RadioGroup.OnCheckedChang
 
     public void setTimeout(int timeoutInMillis) {
         int viewId = -1;        // Clears all selections.
-        switch (timeoutInMillis) {
+        switch (mTimeoutInMillis = timeoutInMillis) {
             case 30 * 1000:
                 viewId = R.id.timeout_30_secs;
                 break;
@@ -67,23 +72,37 @@ public class ItemTimeout extends ItemLayout implements RadioGroup.OnCheckedChang
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        int timeoutInMillis = -1;
         switch (checkedId) {
             case R.id.timeout_30_secs:
-                timeoutInMillis = 30 * 1000;
+                mTimeoutInMillis = 30 * 1000;
                 break;
             case R.id.timeout_1_min:
-                timeoutInMillis = 1 * 60 * 1000;
+                mTimeoutInMillis = 1 * 60 * 1000;
                 break;
             case R.id.timeout_2_min:
-                timeoutInMillis = 2 * 60 * 1000;
+                mTimeoutInMillis = 2 * 60 * 1000;
                 break;
             case R.id.timeout_10_min:
-                timeoutInMillis = 10 * 60 * 1000;
+                mTimeoutInMillis = 10 * 60 * 1000;
+                break;
+            default:
+                mTimeoutInMillis = TIMEOUT_NOT_A_VALUE;
                 break;
         }
-        if (mListener != null) {
-            mListener.onTimeoutChanged(timeoutInMillis);
+        // So when Fragment.restoreViewState() is called, it will end up calling
+        // RadioGroup.setCheckedId() which ends up here. The problem is that this
+        // happens before Presenter.resume() is called, which means that we can't
+        // call mListener.onTimeoutChanged() here because it's not restored right.
+        // Instead, just keep the value and callback when the fragment is closed
+        // (like the ItemImageSelector does).
+    }
+
+    @Override
+    public void hide() {
+        Log.d("eskey", "ItemTimeout.hide(" + getHeadingText() + ")");
+        super.hide();
+        if (mListener != null && mTimeoutInMillis != TIMEOUT_NOT_A_VALUE) {
+            mListener.onTimeoutChanged(mTimeoutInMillis);
         }
     }
 
