@@ -1,6 +1,5 @@
 package com.wolfie.eskey.view.activity;
 
-import android.app.Activity;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -135,7 +134,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onBackPressed() {
         boolean shouldPerformBackPressed = true;
         for (BaseFragment baseFragment : getActiveBaseFragments()) {
-            shouldPerformBackPressed = shouldPerformBackPressed & baseFragment.onBackPressed();
+            shouldPerformBackPressed = shouldPerformBackPressed && baseFragment.onBackPressed();
         }
         // If the back press isn't handled by any of the child fragments,
         // then it is passed to the Activity's presenter (if there is one).
