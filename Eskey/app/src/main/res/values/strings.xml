@@ -13,6 +13,13 @@
     <string name="menu_item_backup">Backup</string>
     <string name="menu_item_restore">Restore</string>
 
+    <string name="menu_item_save">Save</string>
+    <string name="menu_item_load">Load</string>
+
+    <string name="menu_item_desc_clear">(clear text)</string>
+    <string name="menu_item_desc_cipher">(cipher text)</string>
+    <string name="menu_item_desc_gdrive">(Google Drive)</string>
+
     <string name="st001">First time Eskey login</string>
     <string name="st002">Eskey login</string>
     <string name="st003">Please define a new master password</string>

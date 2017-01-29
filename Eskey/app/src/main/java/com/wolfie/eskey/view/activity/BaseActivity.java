@@ -156,9 +156,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void removeKeyboardVisibilityListener() {
-        final View activityRootView = getActivityRootView();
-        if (activityRootView != null) {
-            activityRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            final View activityRootView = getActivityRootView();
+            if (activityRootView != null) {
+                activityRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+            }
         }
     }
 

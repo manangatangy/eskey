@@ -10,7 +10,7 @@ android {
     buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "com.wolfie.eskey"
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
