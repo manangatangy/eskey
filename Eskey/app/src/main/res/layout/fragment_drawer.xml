@@ -50,12 +50,10 @@
                 android:id="@+id/menu_item_save"
                 style="@style/MenuItem"
                 android:text="@string/menu_item_save"
-                android:visibility="gone"
                 />
             <TextView
                 style="@style/MenuItemDesc"
                 android:text="@string/menu_item_desc_gdrive"
-                android:visibility="gone"
                 />
         </LinearLayout>
         <LinearLayout
@@ -91,12 +89,10 @@
                 android:id="@+id/menu_item_load"
                 style="@style/MenuItem"
                 android:text="@string/menu_item_load"
-                android:visibility="gone"
                 />
             <TextView
                 style="@style/MenuItemDesc"
                 android:text="@string/menu_item_desc_gdrive"
-                android:visibility="gone"
                 />
         </LinearLayout>
 
